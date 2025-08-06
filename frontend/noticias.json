@@ -1,0 +1,37 @@
+[
+  {
+    "titulo": "Inicio del curso lectivo 2025",
+    "resumen": "El curso lectivo inicia el 5 de febrero con nuevas listas digitalizadas y un sistema renovado para mejorar la gestión de útiles escolares.",
+    "fecha": "2025-01-10",
+    "icono": "fas fa-calendar-alt",
+    "categoria": "Importante"
+  },
+  {
+    "titulo": "Nueva versión del sistema",
+    "resumen": "Ahora puedes gestionar listas desde tu celular con nuestra nueva interfaz móvil mejorada y funciones adicionales.",
+    "fecha": "2025-03-01",
+    "icono": "fas fa-mobile-alt",
+    "categoria": "Actualización"
+  },
+  {
+    "titulo": "Digitalización completa de listas",
+    "resumen": "Todas las listas de útiles escolares han sido digitalizadas para facilitar el acceso desde cualquier dispositivo conectado.",
+    "fecha": "2025-02-15",
+    "icono": "fas fa-list-alt",
+    "categoria": "Mejora"
+  },
+  {
+    "titulo": "Capacitación para docentes",
+    "resumen": "Próximas sesiones de capacitación virtual para docentes sobre el uso del nuevo sistema de gestión educativa.",
+    "fecha": "2025-01-25",
+    "icono": "fas fa-chalkboard-teacher",
+    "categoria": "Formación"
+  },
+  {
+    "titulo": "Soporte técnico mejorado",
+    "resumen": "Nuevo centro de ayuda disponible 24/7 con guías interactivas y chat en vivo para resolver dudas rápidamente.",
+    "fecha": "2025-01-20",
+    "icono": "fas fa-headset",
+    "categoria": "Soporte"
+  }
+]

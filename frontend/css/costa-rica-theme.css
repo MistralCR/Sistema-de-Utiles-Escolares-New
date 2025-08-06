@@ -1,0 +1,466 @@
+/* 🇨🇷 PALETA DE COLORES DE COSTA RICA - Sistema de Útiles Escolares
+   Basado en la bandera nacional: Azul, Rojo y Blanco
+   Cumple con estándares WCAG 2.1 para accesibilidad
+*/
+
+:root {
+  /* ===== COLORES PRINCIPALES DE COSTA RICA ===== */
+  --cr-azul-oscuro: #002b7f; /* Azul de la bandera */
+  --cr-rojo-intenso: #ce1126; /* Rojo de la bandera */
+  --cr-blanco: #ffffff; /* Blanco puro */
+
+  /* ===== VARIACIONES DE AZUL (Tonos más claros para accesibilidad) ===== */
+  --cr-azul-primario: #1e4a8c; /* Azul más claro para texto */
+  --cr-azul-secundario: #3366a0; /* Azul medio */
+  --cr-azul-claro: #4a7bb7; /* Azul claro para hover */
+  --cr-azul-muy-claro: #e3f2fd; /* Azul muy claro para fondos */
+
+  /* ===== VARIACIONES DE ROJO (Tonos más claros para accesibilidad) ===== */
+  --cr-rojo-primario: #d32f2f; /* Rojo más claro para texto */
+  --cr-rojo-secundario: #e53935; /* Rojo medio */
+  --cr-rojo-claro: #ef5350; /* Rojo claro para hover */
+  --cr-rojo-muy-claro: #ffebee; /* Rojo muy claro para fondos */
+
+  /* ===== GRISES COMPLEMENTARIOS ===== */
+  --cr-gris-oscuro: #2c3e50; /* Gris oscuro para texto */
+  --cr-gris-medio: #6c757d; /* Gris medio */
+  --cr-gris-claro: #f8f9fa; /* Gris claro para fondos */
+  --cr-gris-muy-claro: #ffffff; /* Blanco para contraste */
+
+  /* ===== VARIABLES BOOTSTRAP OVERRIDE ===== */
+  --bs-primary: var(--cr-azul-primario);
+  --bs-primary-rgb: 30, 74, 140;
+  --bs-danger: var(--cr-rojo-primario);
+  --bs-danger-rgb: 211, 47, 47;
+  --bs-light: var(--cr-gris-claro);
+  --bs-dark: var(--cr-gris-oscuro);
+
+  /* ===== SOMBRAS Y BORDES ===== */
+  --cr-sombra-suave: 0 2px 4px rgba(0, 43, 127, 0.1);
+  --cr-sombra-media: 0 4px 8px rgba(0, 43, 127, 0.15);
+  --cr-sombra-fuerte: 0 8px 16px rgba(0, 43, 127, 0.2);
+  --cr-borde-azul: 1px solid var(--cr-azul-claro);
+  --cr-borde-rojo: 1px solid var(--cr-rojo-claro);
+}
+
+/* ===== ESTILOS GLOBALES ===== */
+body {
+  background-color: var(--cr-gris-claro);
+  color: var(--cr-gris-oscuro);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== NAVBAR CON COLORES DE COSTA RICA ===== */
+.navbar-costa-rica {
+  background: linear-gradient(
+    135deg,
+    var(--cr-azul-oscuro) 0%,
+    var(--cr-azul-primario) 100%
+  );
+  border-bottom: 3px solid var(--cr-rojo-intenso);
+  box-shadow: var(--cr-sombra-media);
+}
+
+.navbar-costa-rica .navbar-brand {
+  color: var(--cr-blanco) !important;
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.navbar-costa-rica .navbar-brand:hover {
+  color: var(--cr-azul-muy-claro) !important;
+}
+
+.navbar-costa-rica .nav-link {
+  color: var(--cr-blanco) !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.navbar-costa-rica .nav-link:hover {
+  color: var(--cr-azul-muy-claro) !important;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.navbar-costa-rica .btn-link {
+  color: var(--cr-blanco) !important;
+  border: none;
+  text-decoration: none;
+}
+
+.navbar-costa-rica .btn-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--cr-azul-muy-claro) !important;
+}
+
+.navbar-costa-rica .dropdown-menu {
+  border: none;
+  box-shadow: var(--cr-sombra-fuerte);
+}
+
+.navbar-costa-rica .dropdown-header {
+  color: var(--cr-azul-primario);
+  font-weight: 600;
+}
+
+/* ===== BOTONES CON TEMA COSTA RICA ===== */
+.btn-cr-primario {
+  background: linear-gradient(
+    135deg,
+    var(--cr-azul-primario) 0%,
+    var(--cr-azul-oscuro) 100%
+  );
+  border: none;
+  color: var(--cr-blanco);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  box-shadow: var(--cr-sombra-suave);
+  transition: all 0.3s ease;
+}
+
+.btn-cr-primario:hover {
+  background: linear-gradient(
+    135deg,
+    var(--cr-azul-claro) 0%,
+    var(--cr-azul-primario) 100%
+  );
+  box-shadow: var(--cr-sombra-media);
+  color: var(--cr-blanco);
+  transform: translateY(-1px);
+}
+
+.btn-cr-secundario {
+  background: linear-gradient(
+    135deg,
+    var(--cr-rojo-primario) 0%,
+    var(--cr-rojo-intenso) 100%
+  );
+  border: none;
+  color: var(--cr-blanco);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  box-shadow: var(--cr-sombra-suave);
+  transition: all 0.3s ease;
+}
+
+.btn-cr-secundario:hover {
+  background: linear-gradient(
+    135deg,
+    var(--cr-rojo-claro) 0%,
+    var(--cr-rojo-primario) 100%
+  );
+  box-shadow: var(--cr-sombra-media);
+  color: var(--cr-blanco);
+  transform: translateY(-1px);
+}
+
+.btn-cr-outline {
+  background: transparent;
+  border: 2px solid var(--cr-azul-primario);
+  color: var(--cr-azul-primario);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.btn-cr-outline:hover {
+  background: var(--cr-azul-primario);
+  color: var(--cr-blanco);
+  transform: translateY(-1px);
+}
+
+/* ===== OVERRIDE BOTONES BOOTSTRAP ===== */
+.btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--cr-azul-primario) 0%,
+    var(--cr-azul-oscuro) 100%
+  );
+  border: none;
+  font-weight: 600;
+  box-shadow: var(--cr-sombra-suave);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(
+    135deg,
+    var(--cr-azul-claro) 0%,
+    var(--cr-azul-primario) 100%
+  );
+  box-shadow: var(--cr-sombra-media);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: linear-gradient(
+    135deg,
+    var(--cr-rojo-primario) 0%,
+    var(--cr-rojo-intenso) 100%
+  );
+  border: none;
+  font-weight: 600;
+  box-shadow: var(--cr-sombra-suave);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(
+    135deg,
+    var(--cr-rojo-claro) 0%,
+    var(--cr-rojo-primario) 100%
+  );
+  box-shadow: var(--cr-sombra-media);
+  transform: translateY(-1px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  border: none;
+  font-weight: 600;
+  box-shadow: var(--cr-sombra-suave);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #34ce57 0%, #2dd4aa 100%);
+  box-shadow: var(--cr-sombra-media);
+  transform: translateY(-1px);
+}
+
+/* ===== CARDS CON TEMA COSTA RICA ===== */
+.card-cr-principal {
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--cr-sombra-media);
+  overflow: hidden;
+}
+
+.card-cr-principal .card-header {
+  background: linear-gradient(
+    135deg,
+    var(--cr-azul-primario) 0%,
+    var(--cr-azul-oscuro) 100%
+  );
+  color: var(--cr-blanco);
+  border-bottom: 3px solid var(--cr-rojo-intenso);
+  font-weight: 600;
+  padding: 1rem 1.5rem;
+}
+
+.card-cr-principal .card-body {
+  background: var(--cr-blanco);
+  padding: 1.5rem;
+}
+
+.card-cr-secundario {
+  border: 2px solid var(--cr-azul-muy-claro);
+  border-radius: 8px;
+  box-shadow: var(--cr-sombra-suave);
+}
+
+.card-cr-secundario .card-header {
+  background: var(--cr-azul-muy-claro);
+  color: var(--cr-azul-primario);
+  border-bottom: 1px solid var(--cr-azul-claro);
+  font-weight: 600;
+}
+
+/* ===== ALERTS CON COLORES COSTA RICA ===== */
+.alert-cr-info {
+  background: var(--cr-azul-muy-claro);
+  border: 1px solid var(--cr-azul-claro);
+  color: var(--cr-azul-oscuro);
+  border-left: 4px solid var(--cr-azul-primario);
+}
+
+.alert-cr-warning {
+  background: var(--cr-rojo-muy-claro);
+  border: 1px solid var(--cr-rojo-claro);
+  color: var(--cr-rojo-intenso);
+  border-left: 4px solid var(--cr-rojo-primario);
+}
+
+.alert-cr-success {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  border-left: 4px solid #28a745;
+}
+
+/* ===== TÍTULOS Y ENCABEZADOS ===== */
+.titulo-cr-principal {
+  color: var(--cr-azul-oscuro);
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.titulo-cr-principal::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--cr-azul-primario) 0%,
+    var(--cr-rojo-intenso) 100%
+  );
+  border-radius: 2px;
+}
+
+.titulo-cr-secundario {
+  color: var(--cr-azul-primario);
+  font-weight: 600;
+  border-left: 4px solid var(--cr-rojo-intenso);
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* ===== FORMULARIOS ===== */
+.form-control:focus {
+  border-color: var(--cr-azul-primario);
+  box-shadow: 0 0 0 0.2rem rgba(30, 74, 140, 0.25);
+}
+
+.form-control.border-primary {
+  border-color: var(--cr-azul-primario) !important;
+  box-shadow: 0 0 0 0.2rem rgba(30, 74, 140, 0.25);
+}
+
+.form-label {
+  color: var(--cr-gris-oscuro);
+  font-weight: 600;
+}
+
+/* ===== PIE DE PÁGINA ===== */
+.footer-cr {
+  background: linear-gradient(135deg, var(--cr-gris-oscuro) 0%, #34495e 100%);
+  color: var(--cr-blanco);
+  border-top: 3px solid var(--cr-rojo-intenso);
+  padding: 2rem 0;
+  margin-top: 3rem;
+}
+
+/* ===== SPINNER Y LOADING ===== */
+.spinner-border {
+  color: var(--cr-azul-primario);
+}
+
+.loading-container {
+  background: var(--cr-blanco);
+  border-radius: 8px;
+  box-shadow: var(--cr-sombra-suave);
+}
+
+/* ===== TOASTS Y NOTIFICACIONES ===== */
+.toast-header {
+  background: var(--cr-azul-muy-claro);
+  color: var(--cr-azul-primario);
+  border-bottom: 1px solid var(--cr-azul-claro);
+}
+
+.toast-body {
+  background: var(--cr-blanco);
+}
+
+/* ===== UTILIDADES DE COLORES ===== */
+.text-cr-azul {
+  color: var(--cr-azul-primario) !important;
+}
+.text-cr-rojo {
+  color: var(--cr-rojo-primario) !important;
+}
+.text-cr-azul-oscuro {
+  color: var(--cr-azul-oscuro) !important;
+}
+.text-cr-rojo-intenso {
+  color: var(--cr-rojo-intenso) !important;
+}
+
+.bg-cr-azul {
+  background-color: var(--cr-azul-primario) !important;
+}
+.bg-cr-rojo {
+  background-color: var(--cr-rojo-primario) !important;
+}
+.bg-cr-azul-claro {
+  background-color: var(--cr-azul-muy-claro) !important;
+}
+.bg-cr-rojo-claro {
+  background-color: var(--cr-rojo-muy-claro) !important;
+}
+
+.border-cr-azul {
+  border-color: var(--cr-azul-primario) !important;
+}
+.border-cr-rojo {
+  border-color: var(--cr-rojo-primario) !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .navbar-costa-rica .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .btn-cr-primario,
+  .btn-cr-secundario,
+  .btn-cr-outline {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .titulo-cr-principal {
+    font-size: 1.5rem;
+  }
+
+  .card-cr-principal .card-header,
+  .card-cr-principal .card-body {
+    padding: 1rem;
+  }
+}
+
+/* ===== ANIMACIONES Y TRANSICIONES ===== */
+.card-cr-principal,
+.btn-cr-primario,
+.btn-cr-secundario,
+.btn-cr-outline {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-cr-principal:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--cr-sombra-fuerte);
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible para accesibilidad de teclado */
+.btn-cr-primario:focus-visible,
+.btn-cr-secundario:focus-visible,
+.btn-cr-outline:focus-visible {
+  outline: 2px solid var(--cr-rojo-intenso);
+  outline-offset: 2px;
+}
+
+/* ===== OVERRIDE PARA DARK MODE (futuro) ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cr-gris-claro: #1a1a1a;
+    --cr-gris-oscuro: #ffffff;
+  }
+}

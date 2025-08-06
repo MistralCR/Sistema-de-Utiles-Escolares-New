@@ -1,0 +1,402 @@
+/* 🌗 SISTEMA DE TEMAS ACCESIBLES - Cumple WCAG 2.1 AA/AAA
+   Soporte para modo claro, oscuro y múltiples niveles de contraste
+   Compatible con Bootstrap 5 y sistema Costa Rica
+*/
+
+/* ===== VARIABLES BASE POR TEMA ===== */
+
+/* MODO CLARO (Por defecto) */
+:root {
+  /* Colores principales */
+  --tema-fondo: #ffffff;
+  --tema-fondo-secundario: #f8f9fa;
+  --tema-texto: #212529;
+  --tema-texto-secundario: #6c757d;
+  --tema-texto-muted: #868e96;
+
+  /* Costa Rica colors conservados */
+  --tema-azul-primario: #1e4a8c;
+  --tema-azul-oscuro: #002b7f;
+  --tema-rojo-primario: #d32f2f;
+  --tema-blanco: #ffffff;
+
+  /* Elementos UI */
+  --tema-borde: #dee2e6;
+  --tema-sombra: rgba(0, 0, 0, 0.1);
+  --tema-hover: rgba(30, 74, 140, 0.1);
+
+  /* Bootstrap overrides */
+  --bs-body-bg: var(--tema-fondo);
+  --bs-body-color: var(--tema-texto);
+  --bs-border-color: var(--tema-borde);
+
+  /* Cards y formularios */
+  --tema-card-bg: #ffffff;
+  --tema-input-bg: #ffffff;
+  --tema-input-border: #ced4da;
+  --tema-input-focus: #86b7fe;
+
+  /* Navbar */
+  --tema-navbar-bg: #ffffff;
+  --tema-navbar-text: var(--tema-azul-primario);
+
+  /* Estados */
+  --tema-success: #198754;
+  --tema-warning: #ffc107;
+  --tema-danger: #dc3545;
+  --tema-info: #0dcaf0;
+}
+
+/* MODO OSCURO */
+body.tema-oscuro {
+  --tema-fondo: #121212;
+  --tema-fondo-secundario: #1e1e1e;
+  --tema-texto: #ffffff;
+  --tema-texto-secundario: #b3b3b3;
+  --tema-texto-muted: #8a8a8a;
+
+  /* Costa Rica colors adaptados */
+  --tema-azul-primario: #4a7bb7;
+  --tema-azul-oscuro: #3366a0;
+  --tema-rojo-primario: #ef5350;
+  --tema-blanco: #1e1e1e;
+
+  /* Elementos UI */
+  --tema-borde: #404040;
+  --tema-sombra: rgba(0, 0, 0, 0.3);
+  --tema-hover: rgba(74, 123, 183, 0.2);
+
+  /* Bootstrap overrides */
+  --bs-body-bg: var(--tema-fondo);
+  --bs-body-color: var(--tema-texto);
+  --bs-border-color: var(--tema-borde);
+
+  /* Cards y formularios */
+  --tema-card-bg: #2d2d2d;
+  --tema-input-bg: #3d3d3d;
+  --tema-input-border: #555555;
+  --tema-input-focus: #4a7bb7;
+
+  /* Navbar */
+  --tema-navbar-bg: #1e1e1e;
+  --tema-navbar-text: #ffffff;
+
+  /* Estados */
+  --tema-success: #4caf50;
+  --tema-warning: #ff9800;
+  --tema-danger: #f44336;
+  --tema-info: #2196f3;
+}
+
+/* CONTRASTE ALTO */
+body.tema-contraste-alto {
+  --tema-fondo: #000000;
+  --tema-fondo-secundario: #000000;
+  --tema-texto: #ffffff;
+  --tema-texto-secundario: #ffffff;
+  --tema-texto-muted: #cccccc;
+
+  /* Costa Rica colors en alto contraste */
+  --tema-azul-primario: #ffffff;
+  --tema-azul-oscuro: #ffffff;
+  --tema-rojo-primario: #ffffff;
+  --tema-blanco: #000000;
+
+  /* Elementos UI */
+  --tema-borde: #ffffff;
+  --tema-sombra: rgba(255, 255, 255, 0.3);
+  --tema-hover: rgba(255, 255, 255, 0.2);
+
+  /* Bootstrap overrides */
+  --bs-body-bg: #000000;
+  --bs-body-color: #ffffff;
+  --bs-border-color: #ffffff;
+
+  /* Cards y formularios */
+  --tema-card-bg: #000000;
+  --tema-input-bg: #000000;
+  --tema-input-border: #ffffff;
+  --tema-input-focus: #ffffff;
+
+  /* Navbar */
+  --tema-navbar-bg: #000000;
+  --tema-navbar-text: #ffffff;
+
+  /* Estados */
+  --tema-success: #ffffff;
+  --tema-warning: #ffffff;
+  --tema-danger: #ffffff;
+  --tema-info: #ffffff;
+}
+
+/* CONTRASTE BAJO (Modo suave) */
+body.tema-contraste-bajo {
+  --tema-fondo: #f5f5f5;
+  --tema-fondo-secundario: #eeeeee;
+  --tema-texto: #757575;
+  --tema-texto-secundario: #9e9e9e;
+  --tema-texto-muted: #bdbdbd;
+
+  /* Costa Rica colors suavizados */
+  --tema-azul-primario: #5c7cba;
+  --tema-azul-oscuro: #4a6ba3;
+  --tema-rojo-primario: #e57373;
+  --tema-blanco: #f5f5f5;
+
+  /* Elementos UI */
+  --tema-borde: #e0e0e0;
+  --tema-sombra: rgba(0, 0, 0, 0.05);
+  --tema-hover: rgba(92, 124, 186, 0.1);
+
+  /* Bootstrap overrides */
+  --bs-body-bg: var(--tema-fondo);
+  --bs-body-color: var(--tema-texto);
+  --bs-border-color: var(--tema-borde);
+
+  /* Cards y formularios */
+  --tema-card-bg: #ffffff;
+  --tema-input-bg: #ffffff;
+  --tema-input-border: #e0e0e0;
+  --tema-input-focus: #5c7cba;
+
+  /* Navbar */
+  --tema-navbar-bg: #ffffff;
+  --tema-navbar-text: var(--tema-azul-primario);
+
+  /* Estados */
+  --tema-success: #81c784;
+  --tema-warning: #ffb74d;
+  --tema-danger: #e57373;
+  --tema-info: #64b5f6;
+}
+
+/* ===== APLICACIÓN DE TEMAS ===== */
+
+/* Fondo general */
+body {
+  background-color: var(--tema-fondo) !important;
+  color: var(--tema-texto) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Navbar */
+.navbar-landing,
+.navbar-cr,
+.navbar {
+  background-color: var(--tema-navbar-bg) !important;
+  border-bottom: 1px solid var(--tema-borde);
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: var(--tema-navbar-text) !important;
+}
+
+.navbar-nav .nav-link:hover {
+  background-color: var(--tema-hover);
+  border-radius: 6px;
+}
+
+/* Cards */
+.card,
+.news-card,
+.login-section,
+.admin-card,
+.config-card {
+  background-color: var(--tema-card-bg) !important;
+  border: 1px solid var(--tema-borde) !important;
+  color: var(--tema-texto) !important;
+}
+
+/* Formularios */
+.form-control,
+.form-control-landing,
+.form-select {
+  background-color: var(--tema-input-bg) !important;
+  border: 1px solid var(--tema-input-border) !important;
+  color: var(--tema-texto) !important;
+}
+
+.form-control:focus,
+.form-control-landing:focus {
+  background-color: var(--tema-input-bg) !important;
+  border-color: var(--tema-input-focus) !important;
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25) !important;
+}
+
+/* Botones */
+.btn-primary,
+.btn-cr-primary,
+.btn-login {
+  background-color: var(--tema-azul-primario) !important;
+  border-color: var(--tema-azul-primario) !important;
+  color: var(--tema-blanco) !important;
+}
+
+.btn-primary:hover,
+.btn-cr-primary:hover,
+.btn-login:hover {
+  background-color: var(--tema-azul-oscuro) !important;
+  border-color: var(--tema-azul-oscuro) !important;
+}
+
+/* Alertas */
+.alert {
+  border: 1px solid var(--tema-borde);
+}
+
+.alert-success {
+  background-color: var(--tema-success);
+  color: var(--tema-blanco);
+  border-color: var(--tema-success);
+}
+
+.alert-warning {
+  background-color: var(--tema-warning);
+  color: var(--tema-texto);
+  border-color: var(--tema-warning);
+}
+
+.alert-danger {
+  background-color: var(--tema-danger);
+  color: var(--tema-blanco);
+  border-color: var(--tema-danger);
+}
+
+.alert-info {
+  background-color: var(--tema-info);
+  color: var(--tema-blanco);
+  border-color: var(--tema-info);
+}
+
+/* Badges */
+.badge {
+  color: var(--tema-blanco) !important;
+}
+
+/* Footer */
+footer {
+  background-color: var(--tema-fondo-secundario) !important;
+  border-top: 1px solid var(--tema-borde) !important;
+  color: var(--tema-texto-secundario) !important;
+}
+
+/* Texto secundario y muted */
+.text-muted {
+  color: var(--tema-texto-muted) !important;
+}
+
+.text-secondary {
+  color: var(--tema-texto-secundario) !important;
+}
+
+/* ===== SELECTOR DE TEMA ===== */
+.theme-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.theme-toggle-btn {
+  background: var(--tema-card-bg);
+  border: 2px solid var(--tema-borde);
+  border-radius: 25px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--tema-texto);
+  font-size: 1.1rem;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--tema-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--tema-sombra);
+}
+
+.theme-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--tema-card-bg);
+  border: 2px solid var(--tema-borde);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px var(--tema-sombra);
+  min-width: 200px;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.theme-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: var(--tema-texto);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.theme-option:hover {
+  background: var(--tema-hover);
+}
+
+.theme-option.active {
+  background: var(--tema-azul-primario);
+  color: var(--tema-blanco);
+}
+
+.theme-option i {
+  margin-right: 12px;
+  width: 20px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .theme-toggle-btn {
+    padding: 6px 10px;
+    font-size: 1rem;
+  }
+
+  .theme-dropdown {
+    min-width: 180px;
+  }
+}
+
+/* ===== ANIMACIONES DE TRANSICIÓN ===== */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease !important;
+}
+
+/* Mejoras de accesibilidad para usuarios con sensibilidad al movimiento */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* Soporte para modo oscuro del sistema */
+@media (prefers-color-scheme: dark) {
+  :root:not(.tema-iniciado) {
+    /* Solo aplica si no se ha seleccionado tema manualmente */
+    --tema-fondo: #121212;
+    --tema-fondo-secundario: #1e1e1e;
+    --tema-texto: #ffffff;
+    --tema-texto-secundario: #b3b3b3;
+    --tema-navbar-bg: #1e1e1e;
+    --tema-card-bg: #2d2d2d;
+  }
+}

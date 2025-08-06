@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Administrador - MEP Costa Rica</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Temas Accesibles -->
+    <link rel="stylesheet" href="css/temas-accesibles.css" />
+
+    <style>
+      .dashboard-header {
+        background: linear-gradient(135deg, #002b7f 0%, #004494 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+      }
+
+      .stats-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .nav-tabs .nav-link {
+        border: none;
+        border-radius: 10px 10px 0 0;
+        margin-right: 5px;
+        font-weight: 600;
+      }
+
+      .nav-tabs .nav-link.active {
+        background-color: var(--cr-azul);
+        color: white;
+      }
+
+      .table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-cr-primary {
+        background: linear-gradient(135deg, var(--cr-azul) 0%, #004494 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cr-primary:hover {
+        background: linear-gradient(135deg, #004494 0%, var(--cr-azul) 100%);
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .btn-cr-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cr-success:hover {
+        background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, var(--cr-azul) 0%, #004494 100%);
+        color: white;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .alert-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1060;
+        width: 300px;
+      }
+
+      @media (max-width: 768px) {
+        .table-container {
+          padding: 1rem;
+        }
+        .alert-container {
+          width: calc(100% - 40px);
+          right: 20px;
+          left: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Alertas Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <!-- Header Dashboard -->
+    <div class="dashboard-header">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h1 class="display-6 fw-bold mb-2">
+              <i class="fas fa-user-shield me-3"></i>Panel de Administrador
+            </h1>
+            <p class="mb-0 opacity-75">
+              <i class="fas fa-school me-2"></i>
+              <span id="centroEducativo">Centro Educativo</span>
+            </p>
+          </div>
+          <div class="col-md-6 text-end">
+            <div class="d-flex align-items-center justify-content-end">
+              <div class="me-4">
+                <div class="fw-bold" id="nombreUsuario">Administrador</div>
+                <small class="opacity-75">
+                  <i class="fas fa-calendar me-1"></i>
+                  <span id="fechaActual"></span>
+                </small>
+              </div>
+              <button id="logoutBtn" class="btn btn-outline-light">
+                <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container-fluid">
+      <!-- Estadísticas Rápidas -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-chalkboard-teacher fa-2x text-primary mb-2"></i>
+              <h5 class="card-title">Docentes</h5>
+              <h3 class="text-primary" id="totalDocentes">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-users fa-2x text-success mb-2"></i>
+              <h5 class="card-title">Padres</h5>
+              <h3 class="text-success" id="totalPadres">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-user-graduate fa-2x text-warning mb-2"></i>
+              <h5 class="card-title">Alumnos</h5>
+              <h3 class="text-warning" id="totalAlumnos">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-box fa-2x text-info mb-2"></i>
+              <h5 class="card-title">Materiales</h5>
+              <h3 class="text-info" id="totalMateriales">0</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegación por Pestañas -->
+      <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="docentes-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#docentes"
+            type="button"
+            role="tab"
+            aria-controls="docentes"
+            aria-selected="true"
+          >
+            <i class="fas fa-chalkboard-teacher me-2"></i>Gestión de Docentes
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="padres-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#padres"
+            type="button"
+            role="tab"
+            aria-controls="padres"
+            aria-selected="false"
+          >
+            <i class="fas fa-users me-2"></i>Gestión de Padres
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="usuarios-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#usuarios"
+            type="button"
+            role="tab"
+            aria-controls="usuarios"
+            aria-selected="false"
+          >
+            <i class="fas fa-user-friends me-2"></i>Todos los Usuarios
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="materiales-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#materiales"
+            type="button"
+            role="tab"
+            aria-controls="materiales"
+            aria-selected="false"
+          >
+            <i class="fas fa-box me-2"></i>Materiales
+          </button>
+        </li>
+      </ul>
+
+      <!-- Contenido de las Pestañas -->
+      <div class="tab-content" id="adminTabsContent">
+        <!-- GESTIÓN DE DOCENTES -->
+        <div class="tab-pane fade show active" id="docentes" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0">
+                <i class="fas fa-chalkboard-teacher me-2"></i>Gestión de
+                Docentes
+              </h4>
+              <button
+                class="btn btn-cr-success"
+                data-bs-toggle="modal"
+                data-bs-target="#modalAgregarDocente"
+              >
+                <i class="fas fa-plus me-2"></i>Agregar Docente
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Último Login</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaDocentes">
+                  <tr>
+                    <td colspan="5" class="text-center py-4">
+                      <i class="fas fa-spinner fa-spin me-2"></i>Cargando
+                      docentes...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- GESTIÓN DE PADRES -->
+        <div class="tab-pane fade" id="padres" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0">
+                <i class="fas fa-users me-2"></i>Gestión de Padres de Familia
+              </h4>
+              <button
+                class="btn btn-cr-success"
+                data-bs-toggle="modal"
+                data-bs-target="#modalAgregarPadre"
+              >
+                <i class="fas fa-plus me-2"></i>Agregar Padre
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Hijos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaPadres">
+                  <tr>
+                    <td colspan="5" class="text-center py-4">
+                      <i class="fas fa-spinner fa-spin me-2"></i>Cargando
+                      padres...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TODOS LOS USUARIOS -->
+        <div class="tab-pane fade" id="usuarios" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0">
+                <i class="fas fa-user-friends me-2"></i>Todos los Usuarios del
+                Centro
+              </h4>
+              <div class="d-flex gap-2">
+                <select
+                  id="filtroRol"
+                  class="form-select"
+                  style="width: auto"
+                  title="Filtrar por rol"
+                >
+                  <option value="">Todos los roles</option>
+                  <option value="docente">Docentes</option>
+                  <option value="padre">Padres</option>
+                  <option value="alumno">Alumnos</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Fecha Registro</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaUsuarios">
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <i class="fas fa-spinner fa-spin me-2"></i>Cargando
+                      usuarios...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- MATERIALES -->
+        <div class="tab-pane fade" id="materiales" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-box me-2"></i>Materiales Disponibles
+            </h4>
+
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>Información:</strong> Estos son los materiales que los
+              docentes pueden usar en sus listas.
+            </div>
+
+            <form id="formMateriales">
+              <div id="materialesContainer" class="row">
+                <div class="col-12 text-center py-4">
+                  <i class="fas fa-spinner fa-spin me-2"></i>Cargando
+                  materiales...
+                </div>
+              </div>
+              <div class="mt-4">
+                <button type="submit" class="btn btn-cr-primary">
+                  <i class="fas fa-save me-2"></i>Guardar Configuración
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal agregar docente -->
+    <div
+      class="modal fade"
+      id="modalAgregarDocente"
+      tabindex="-1"
+      aria-labelledby="modalAgregarDocenteLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalAgregarDocenteLabel">
+              <i class="fas fa-chalkboard-teacher me-2"></i>Agregar Docente
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formAgregarDocente">
+              <div class="mb-3">
+                <label for="docenteNombre" class="form-label">
+                  <i class="fas fa-user me-2"></i>Nombre Completo
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docenteNombre"
+                  required
+                  placeholder="Ej: María González Pérez"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="docenteCorreo" class="form-label">
+                  <i class="fas fa-envelope me-2"></i>Correo Electrónico
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="docenteCorreo"
+                  required
+                  placeholder="nombre@mep.go.cr"
+                />
+                <div class="form-text">
+                  Debe ser un correo del dominio @mep.go.cr
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="docentePassword" class="form-label">
+                  <i class="fas fa-lock me-2"></i>Contraseña Temporal
+                </label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="docentePassword"
+                  required
+                  placeholder="Mínimo 6 caracteres"
+                />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="formAgregarDocente"
+              class="btn btn-cr-primary"
+            >
+              <i class="fas fa-save me-2"></i>Crear Docente
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal agregar padre -->
+    <div
+      class="modal fade"
+      id="modalAgregarPadre"
+      tabindex="-1"
+      aria-labelledby="modalAgregarPadreLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalAgregarPadreLabel">
+              <i class="fas fa-users me-2"></i>Agregar Padre de Familia
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formAgregarPadre">
+              <div class="mb-3">
+                <label for="padreNombre" class="form-label">
+                  <i class="fas fa-user me-2"></i>Nombre Completo
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="padreNombre"
+                  required
+                  placeholder="Ej: Juan Carlos Rodríguez"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="padreCorreo" class="form-label">
+                  <i class="fas fa-envelope me-2"></i>Correo Electrónico
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="padreCorreo"
+                  required
+                  placeholder="nombre@mep.go.cr"
+                />
+                <div class="form-text">
+                  Debe ser un correo del dominio @mep.go.cr
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="padrePassword" class="form-label">
+                  <i class="fas fa-lock me-2"></i>Contraseña Temporal
+                </label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="padrePassword"
+                  required
+                  placeholder="Mínimo 6 caracteres"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="padreHijos" class="form-label">
+                  <i class="fas fa-child me-2"></i>Nombres de los Hijos
+                </label>
+                <textarea
+                  class="form-control"
+                  id="padreHijos"
+                  rows="3"
+                  placeholder="Escriba los nombres separados por comas. Ej: Ana Rodríguez, Luis Rodríguez"
+                ></textarea>
+                <div class="form-text">Opcional: Puede agregarse después</div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="formAgregarPadre"
+              class="btn btn-cr-primary"
+            >
+              <i class="fas fa-save me-2"></i>Crear Padre
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal confirmar eliminación -->
+    <div
+      class="modal fade"
+      id="modalConfirmarEliminacion"
+      tabindex="-1"
+      aria-labelledby="modalConfirmarEliminacionLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="modalConfirmarEliminacionLabel">
+              <i class="fas fa-exclamation-triangle me-2"></i>Confirmar
+              Eliminación
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3">¿Está seguro que desea eliminar este usuario?</p>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Atención:</strong> Esta acción no se puede deshacer.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminar">
+              <i class="fas fa-trash me-2"></i>Eliminar Usuario
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+      // Importar funciones de autenticación
+      import {
+        authenticatedGet,
+        authenticatedPost,
+        authenticatedPut,
+        authenticatedDelete,
+        logoutUsuario,
+        isAuthenticated,
+      } from "./auth.js";
+
+      // Verificar autenticación
+      if (!isAuthenticated()) {
+        window.location.href = "login.html";
+      }
+
+      // Variables globales
+      let docentes = [];
+      let padres = [];
+      let usuarios = [];
+      let materiales = [];
+      let centroEducativoId = null;
+      let usuarioEliminando = null;
+
+      // Función global para logout
+      window.logoutUsuario = logoutUsuario;
+
+      // Función para mostrar alertas
+      function mostrarAlerta(mensaje, tipo = "success") {
+        const alertContainer = document.getElementById("alertContainer");
+        const alertId = "alert-" + Date.now();
+
+        const alertHTML = `
+          <div id="${alertId}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${
+              tipo === "success" ? "check-circle" : "exclamation-triangle"
+            } me-2"></i>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        `;
+
+        alertContainer.insertAdjacentHTML("beforeend", alertHTML);
+
+        // Auto-remove después de 5 segundos
+        setTimeout(() => {
+          const alert = document.getElementById(alertId);
+          if (alert) {
+            alert.remove();
+          }
+        }, 5000);
+      }
+
+      // Inicializar datos del usuario
+      async function inicializarUsuario() {
+        try {
+          const perfil = await authenticatedGet("/api/auth/perfil");
+          if (perfil && perfil.usuario) {
+            const { nombre, centroEducativo } = perfil.usuario;
+
+            document.getElementById("nombreUsuario").textContent =
+              nombre || "Administrador";
+
+            if (centroEducativo) {
+              centroEducativoId = centroEducativo._id || centroEducativo;
+              const centroNombre = centroEducativo.nombre || "Centro Educativo";
+              document.getElementById("centroEducativo").textContent =
+                centroNombre;
+            }
+          }
+        } catch (error) {
+          console.error("Error obteniendo perfil:", error);
+          mostrarAlerta("Error al cargar información del usuario", "danger");
+        }
+      }
+
+      // Cargar estadísticas
+      async function cargarEstadisticas() {
+        try {
+          const params = centroEducativoId
+            ? `?centroEducativo=${centroEducativoId}`
+            : "";
+
+          // Cargar usuarios del centro
+          const usuariosResponse = await authenticatedGet(
+            `/api/usuarios${params}`
+          );
+          if (usuariosResponse && usuariosResponse.data) {
+            const todosUsuarios =
+              usuariosResponse.data.docs || usuariosResponse.data;
+
+            const docentesCount = todosUsuarios.filter(
+              (u) => u.rol === "docente"
+            ).length;
+            const padresCount = todosUsuarios.filter(
+              (u) => u.rol === "padre"
+            ).length;
+            const alumnosCount = todosUsuarios.filter(
+              (u) => u.rol === "alumno"
+            ).length;
+
+            document.getElementById("totalDocentes").textContent =
+              docentesCount;
+            document.getElementById("totalPadres").textContent = padresCount;
+            document.getElementById("totalAlumnos").textContent = alumnosCount;
+          }
+
+          // Cargar materiales
+          const materialesResponse = await authenticatedGet("/api/materiales");
+          if (materialesResponse && materialesResponse.data) {
+            const materialesData =
+              materialesResponse.data.docs || materialesResponse.data;
+            document.getElementById("totalMateriales").textContent =
+              materialesData.length;
+          }
+        } catch (error) {
+          console.error("Error cargando estadísticas:", error);
+        }
+      }
+
+      // Cargar docentes
+      async function cargarDocentes() {
+        try {
+          const params = centroEducativoId
+            ? `?centroEducativo=${centroEducativoId}`
+            : "";
+          const response = await authenticatedGet(`/api/usuarios${params}`);
+
+          if (response && response.data) {
+            const todosUsuarios = response.data.docs || response.data;
+            docentes = todosUsuarios.filter(
+              (usuario) => usuario.rol === "docente"
+            );
+            renderDocentes();
+          }
+        } catch (error) {
+          console.error("Error cargando docentes:", error);
+          mostrarAlerta("Error al cargar docentes", "danger");
+        }
+      }
+
+      // Render docentes
+      function renderDocentes() {
+        const tbody = document.getElementById("tablaDocentes");
+
+        if (docentes.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <i class="fas fa-inbox me-2"></i>No hay docentes registrados
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = docentes
+          .map(
+            (docente) => `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>
+                ${docente.nombre}
+              </div>
+            </td>
+            <td>${docente.correo}</td>
+            <td>
+              <span class="badge bg-${
+                docente.estado === "activo" ? "success" : "danger"
+              }">
+                ${docente.estado === "activo" ? "Activo" : "Inactivo"}
+              </span>
+            </td>
+            <td>
+              ${
+                docente.fechaUltimoLogin
+                  ? new Date(docente.fechaUltimoLogin).toLocaleDateString()
+                  : "Nunca"
+              }
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-warning" onclick="toggleEstadoUsuario('${
+                  docente._id
+                }', '${docente.estado}')" title="${
+              docente.estado === "activo" ? "Desactivar" : "Activar"
+            }">
+                  <i class="fas fa-${
+                    docente.estado === "activo" ? "pause" : "play"
+                  }"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarUsuario('${
+                  docente._id
+                }', '${docente.nombre}')" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `
+          )
+          .join("");
+      }
+
+      // Cargar padres
+      async function cargarPadres() {
+        try {
+          const params = centroEducativoId
+            ? `?centroEducativo=${centroEducativoId}`
+            : "";
+          const response = await authenticatedGet(`/api/usuarios${params}`);
+
+          if (response && response.data) {
+            const todosUsuarios = response.data.docs || response.data;
+            padres = todosUsuarios.filter((usuario) => usuario.rol === "padre");
+            renderPadres();
+          }
+        } catch (error) {
+          console.error("Error cargando padres:", error);
+          mostrarAlerta("Error al cargar padres", "danger");
+        }
+      }
+
+      // Render padres
+      function renderPadres() {
+        const tbody = document.getElementById("tablaPadres");
+
+        if (padres.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <i class="fas fa-inbox me-2"></i>No hay padres registrados
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = padres
+          .map(
+            (padre) => `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="fas fa-users me-2 text-success"></i>
+                ${padre.nombre}
+              </div>
+            </td>
+            <td>${padre.correo}</td>
+            <td>
+              ${
+                padre.hijos && padre.hijos.length > 0
+                  ? `<span class="badge bg-info">${padre.hijos.length} hijo${
+                      padre.hijos.length > 1 ? "s" : ""
+                    }</span>`
+                  : '<span class="text-muted">Sin hijos registrados</span>'
+              }
+            </td>
+            <td>
+              <span class="badge bg-${
+                padre.estado === "activo" ? "success" : "danger"
+              }">
+                ${padre.estado === "activo" ? "Activo" : "Inactivo"}
+              </span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-warning" onclick="toggleEstadoUsuario('${
+                  padre._id
+                }', '${padre.estado}')" title="${
+              padre.estado === "activo" ? "Desactivar" : "Activar"
+            }">
+                  <i class="fas fa-${
+                    padre.estado === "activo" ? "pause" : "play"
+                  }"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarUsuario('${
+                  padre._id
+                }', '${padre.nombre}')" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `
+          )
+          .join("");
+      }
+
+      // Cargar todos los usuarios
+      async function cargarUsuarios() {
+        try {
+          const params = centroEducativoId
+            ? `?centroEducativo=${centroEducativoId}`
+            : "";
+          const response = await authenticatedGet(`/api/usuarios${params}`);
+
+          if (response && response.data) {
+            usuarios = response.data.docs || response.data;
+            renderUsuarios();
+          }
+        } catch (error) {
+          console.error("Error cargando usuarios:", error);
+          mostrarAlerta("Error al cargar usuarios", "danger");
+        }
+      }
+
+      // Render usuarios
+      function renderUsuarios() {
+        const tbody = document.getElementById("tablaUsuarios");
+        const filtroRol = document.getElementById("filtroRol").value;
+
+        let usuariosFiltrados = usuarios;
+        if (filtroRol) {
+          usuariosFiltrados = usuarios.filter((u) => u.rol === filtroRol);
+        }
+
+        if (usuariosFiltrados.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="text-center py-4">
+                <i class="fas fa-inbox me-2"></i>No hay usuarios ${
+                  filtroRol ? "con el rol " + filtroRol : "registrados"
+                }
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = usuariosFiltrados
+          .map(
+            (usuario) => `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <i class="fas fa-${getIconoRol(
+                  usuario.rol
+                )} me-2 text-${getColorRol(usuario.rol)}"></i>
+                ${usuario.nombre}
+              </div>
+            </td>
+            <td>${usuario.correo}</td>
+            <td>
+              <span class="badge bg-${getColorRol(usuario.rol)}">
+                ${usuario.rol.charAt(0).toUpperCase() + usuario.rol.slice(1)}
+              </span>
+            </td>
+            <td>
+              <span class="badge bg-${
+                usuario.estado === "activo" ? "success" : "danger"
+              }">
+                ${usuario.estado === "activo" ? "Activo" : "Inactivo"}
+              </span>
+            </td>
+            <td>
+              ${
+                usuario.createdAt
+                  ? new Date(usuario.createdAt).toLocaleDateString()
+                  : "N/A"
+              }
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-warning" onclick="toggleEstadoUsuario('${
+                  usuario._id
+                }', '${usuario.estado}')" title="${
+              usuario.estado === "activo" ? "Desactivar" : "Activar"
+            }">
+                  <i class="fas fa-${
+                    usuario.estado === "activo" ? "pause" : "play"
+                  }"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="confirmarEliminarUsuario('${
+                  usuario._id
+                }', '${usuario.nombre}')" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `
+          )
+          .join("");
+      }
+
+      // Cargar materiales
+      async function cargarMateriales() {
+        try {
+          const response = await authenticatedGet("/api/materiales");
+
+          if (response && response.data) {
+            materiales = response.data.docs || response.data;
+            renderMateriales();
+          }
+        } catch (error) {
+          console.error("Error cargando materiales:", error);
+          mostrarAlerta("Error al cargar materiales", "danger");
+        }
+      }
+
+      // Render materiales
+      function renderMateriales() {
+        const container = document.getElementById("materialesContainer");
+
+        if (materiales.length === 0) {
+          container.innerHTML = `
+            <div class="col-12 text-center py-4">
+              <i class="fas fa-inbox me-2"></i>No hay materiales disponibles
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = materiales
+          .map(
+            (material) => `
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="material_${
+                    material._id
+                  }" 
+                         ${material.disponibleParaDocentes ? "checked" : ""}>
+                  <label class="form-check-label" for="material_${
+                    material._id
+                  }">
+                    <strong>${material.nombre}</strong>
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">
+                  Categoría: ${material.categoria?.nombre || "Sin categoría"}
+                </small>
+                ${
+                  material.descripcion
+                    ? `<p class="card-text mt-2 small">${material.descripcion}</p>`
+                    : ""
+                }
+              </div>
+            </div>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      // Funciones auxiliares
+      function getIconoRol(rol) {
+        const iconos = {
+          docente: "chalkboard-teacher",
+          padre: "users",
+          alumno: "user-graduate",
+          administrador: "user-shield",
+        };
+        return iconos[rol] || "user";
+      }
+
+      function getColorRol(rol) {
+        const colores = {
+          docente: "primary",
+          padre: "success",
+          alumno: "warning",
+          administrador: "danger",
+        };
+        return colores[rol] || "secondary";
+      }
+
+      // Funciones globales para eventos
+      window.toggleEstadoUsuario = async function (id, estadoActual) {
+        try {
+          const nuevoEstado = estadoActual === "activo" ? "inactivo" : "activo";
+          await authenticatedPut(`/api/usuarios/${id}`, {
+            estado: nuevoEstado,
+          });
+
+          mostrarAlerta(
+            `Usuario ${
+              nuevoEstado === "activo" ? "activado" : "desactivado"
+            } correctamente`,
+            "success"
+          );
+
+          // Recargar datos
+          await cargarEstadisticas();
+          await cargarDocentes();
+          await cargarPadres();
+          await cargarUsuarios();
+        } catch (error) {
+          console.error("Error cambiando estado:", error);
+          mostrarAlerta("Error al cambiar el estado del usuario", "danger");
+        }
+      };
+
+      window.confirmarEliminarUsuario = function (id, nombre) {
+        usuarioEliminando = { id, nombre };
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalConfirmarEliminacion")
+        );
+        modal.show();
+      };
+
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Configurar fecha actual
+        document.getElementById("fechaActual").textContent =
+          new Date().toLocaleDateString();
+
+        // Inicializar datos
+        await inicializarUsuario();
+        await cargarEstadisticas();
+        await cargarDocentes();
+        await cargarPadres();
+        await cargarUsuarios();
+        await cargarMateriales();
+      });
+
+      // Form agregar docente
+      document
+        .getElementById("formAgregarDocente")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          try {
+            const data = {
+              nombre: document.getElementById("docenteNombre").value,
+              correo: document.getElementById("docenteCorreo").value,
+              contraseña: document.getElementById("docentePassword").value,
+              rol: "docente",
+              centroEducativo: centroEducativoId,
+            };
+
+            await authenticatedPost("/api/auth/register", data);
+            mostrarAlerta("Docente creado correctamente", "success");
+
+            // Limpiar formulario y cerrar modal
+            this.reset();
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("modalAgregarDocente")
+            );
+            modal.hide();
+
+            // Recargar datos
+            await cargarEstadisticas();
+            await cargarDocentes();
+            await cargarUsuarios();
+          } catch (error) {
+            console.error("Error creando docente:", error);
+            mostrarAlerta(error.message || "Error al crear docente", "danger");
+          }
+        });
+
+      // Form agregar padre
+      document
+        .getElementById("formAgregarPadre")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          try {
+            const hijos = document
+              .getElementById("padreHijos")
+              .value.split(",")
+              .map((h) => h.trim())
+              .filter((h) => h);
+
+            const data = {
+              nombre: document.getElementById("padreNombre").value,
+              correo: document.getElementById("padreCorreo").value,
+              contraseña: document.getElementById("padrePassword").value,
+              rol: "padre",
+              centroEducativo: centroEducativoId,
+              hijos: hijos,
+            };
+
+            await authenticatedPost("/api/auth/register", data);
+            mostrarAlerta("Padre de familia creado correctamente", "success");
+
+            // Limpiar formulario y cerrar modal
+            this.reset();
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("modalAgregarPadre")
+            );
+            modal.hide();
+
+            // Recargar datos
+            await cargarEstadisticas();
+            await cargarPadres();
+            await cargarUsuarios();
+          } catch (error) {
+            console.error("Error creando padre:", error);
+            mostrarAlerta(
+              error.message || "Error al crear padre de familia",
+              "danger"
+            );
+          }
+        });
+
+      // Form materiales
+      document
+        .getElementById("formMateriales")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          try {
+            const updates = [];
+
+            materiales.forEach((material) => {
+              const checkbox = document.getElementById(
+                `material_${material._id}`
+              );
+              if (checkbox) {
+                updates.push({
+                  id: material._id,
+                  disponibleParaDocentes: checkbox.checked,
+                });
+              }
+            });
+
+            // Actualizar cada material
+            for (const update of updates) {
+              await authenticatedPut(`/api/materiales/${update.id}`, {
+                disponibleParaDocentes: update.disponibleParaDocentes,
+              });
+            }
+
+            mostrarAlerta(
+              "Configuración de materiales guardada correctamente",
+              "success"
+            );
+          } catch (error) {
+            console.error("Error guardando materiales:", error);
+            mostrarAlerta(
+              "Error al guardar configuración de materiales",
+              "danger"
+            );
+          }
+        });
+
+      // Filtro de usuarios
+      document
+        .getElementById("filtroRol")
+        .addEventListener("change", renderUsuarios);
+
+      // Confirmar eliminación
+      document
+        .getElementById("confirmarEliminar")
+        .addEventListener("click", async function () {
+          if (!usuarioEliminando) return;
+
+          try {
+            await authenticatedDelete(`/api/usuarios/${usuarioEliminando.id}`);
+            mostrarAlerta(
+              `Usuario ${usuarioEliminando.nombre} eliminado correctamente`,
+              "success"
+            );
+
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("modalConfirmarEliminacion")
+            );
+            modal.hide();
+
+            // Recargar datos
+            await cargarEstadisticas();
+            await cargarDocentes();
+            await cargarPadres();
+            await cargarUsuarios();
+
+            usuarioEliminando = null;
+          } catch (error) {
+            console.error("Error eliminando usuario:", error);
+            mostrarAlerta("Error al eliminar usuario", "danger");
+          }
+        });
+
+      // Logout
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", logoutUsuario);
+    </script>
+  </body>
+</html>

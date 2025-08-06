@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Padre de Familia - MEP Costa Rica</title>
+    
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Temas Accesibles -->
+    <link rel="stylesheet" href="css/temas-accesibles.css">
+    
+    <style>
+      .dashboard-header {
+        background: linear-gradient(135deg, #002b7f 0%, #004494 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+      }
+
+      .stats-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .nav-tabs .nav-link {
+        border: none;
+        border-radius: 10px 10px 0 0;
+        margin-right: 5px;
+        font-weight: 600;
+      }
+
+      .nav-tabs .nav-link.active {
+        background-color: var(--cr-azul);
+        color: white;
+      }
+
+      .table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-cr-primary {
+        background: linear-gradient(135deg, var(--cr-azul) 0%, #004494 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cr-primary:hover {
+        background: linear-gradient(135deg, #004494 0%, var(--cr-azul) 100%);
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .btn-cr-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cr-success:hover {
+        background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, var(--cr-azul) 0%, #004494 100%);
+        color: white;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .alert-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1060;
+        width: 300px;
+      }
+
+      .hijo-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 1.5rem;
+      }
+
+      .hijo-card:hover {
+        transform: translateY(-3px);
+      }
+
+      .lista-item {
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .lista-item:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .material-item {
+        padding: 0.5rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        border-left: 4px solid #28a745;
+      }
+
+      .material-item.comprado {
+        background: #d4edda;
+        text-decoration: line-through;
+        opacity: 0.7;
+      }
+
+      @media (max-width: 768px) {
+        .table-container {
+          padding: 1rem;
+        }
+        .alert-container {
+          width: calc(100% - 40px);
+          right: 20px;
+          left: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Alertas Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <!-- Header Dashboard -->
+    <div class="dashboard-header">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h1 class="display-6 fw-bold mb-2">
+              <i class="fas fa-users me-3"></i>Panel de Padre de Familia
+            </h1>
+            <p class="mb-0 opacity-75">
+              <i class="fas fa-school me-2"></i>
+              <span id="centroEducativo">Centro Educativo</span>
+            </p>
+          </div>
+          <div class="col-md-6 text-end">
+            <div class="d-flex align-items-center justify-content-end">
+              <div class="me-4">
+                <div class="fw-bold" id="nombreUsuario">Padre de Familia</div>
+                <small class="opacity-75">
+                  <i class="fas fa-calendar me-1"></i>
+                  <span id="fechaActual"></span>
+                </small>
+              </div>
+              <button id="logoutBtn" class="btn btn-outline-light">
+                <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container-fluid">
+      <!-- Estadísticas Rápidas -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-child fa-2x text-primary mb-2"></i>
+              <h5 class="card-title">Mis Hijos</h5>
+              <h3 class="text-primary" id="totalHijos">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-list-alt fa-2x text-success mb-2"></i>
+              <h5 class="card-title">Listas Activas</h5>
+              <h3 class="text-success" id="totalListas">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-shopping-cart fa-2x text-warning mb-2"></i>
+              <h5 class="card-title">Materiales</h5>
+              <h3 class="text-warning" id="totalMateriales">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-check-circle fa-2x text-info mb-2"></i>
+              <h5 class="card-title">Completado</h5>
+              <h3 class="text-info" id="progresoCompras">0%</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegación por Pestañas -->
+      <ul class="nav nav-tabs mb-4" id="padreTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="mis-hijos-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#mis-hijos"
+            type="button"
+            role="tab"
+            aria-controls="mis-hijos"
+            aria-selected="true"
+          >
+            <i class="fas fa-child me-2"></i>Mis Hijos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="listas-utiles-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#listas-utiles"
+            type="button"
+            role="tab"
+            aria-controls="listas-utiles"
+            aria-selected="false"
+          >
+            <i class="fas fa-list-alt me-2"></i>Listas de Útiles
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="progreso-compras-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#progreso-compras"
+            type="button"
+            role="tab"
+            aria-controls="progreso-compras"
+            aria-selected="false"
+          >
+            <i class="fas fa-shopping-cart me-2"></i>Progreso de Compras
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="notificaciones-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#notificaciones"
+            type="button"
+            role="tab"
+            aria-controls="notificaciones"
+            aria-selected="false"
+          >
+            <i class="fas fa-bell me-2"></i>Notificaciones
+          </button>
+        </li>
+      </ul>
+
+      <!-- Contenido de las Pestañas -->
+      <div class="tab-content" id="padreTabsContent">
+        <!-- MIS HIJOS -->
+        <div class="tab-pane fade show active" id="mis-hijos" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0">
+                <i class="fas fa-child me-2"></i>Información de Mis Hijos
+              </h4>
+              <button
+                class="btn btn-cr-success"
+                data-bs-toggle="modal"
+                data-bs-target="#modalAgregarHijo"
+              >
+                <i class="fas fa-plus me-2"></i>Agregar Hijo
+              </button>
+            </div>
+            
+            <div id="hijosContainer">
+              <div class="text-center py-4">
+                <i class="fas fa-spinner fa-spin me-2"></i>Cargando información de hijos...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LISTAS DE ÚTILES -->
+        <div class="tab-pane fade" id="listas-utiles" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-list-alt me-2"></i>Listas de Útiles por Hijo
+            </h4>
+            
+            <div id="listasContainer">
+              <div class="text-center py-4">
+                <i class="fas fa-spinner fa-spin me-2"></i>Cargando listas de útiles...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROGRESO DE COMPRAS -->
+        <div class="tab-pane fade" id="progreso-compras" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-shopping-cart me-2"></i>Progreso de Compras
+            </h4>
+            
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>Información:</strong> Marca los materiales que ya has comprado para llevar un control de tu progreso.
+            </div>
+
+            <div id="progresoContainer">
+              <div class="text-center py-4">
+                <i class="fas fa-spinner fa-spin me-2"></i>Cargando progreso de compras...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICACIONES -->
+        <div class="tab-pane fade" id="notificaciones" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-bell me-2"></i>Notificaciones y Actualizaciones
+            </h4>
+            
+            <div id="notificacionesContainer">
+              <div class="text-center py-4">
+                <i class="fas fa-bell fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay notificaciones nuevas</h5>
+                <p class="text-muted">Te notificaremos cuando haya nuevas listas de útiles o actualizaciones importantes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Agregar Hijo -->
+    <div class="modal fade" id="modalAgregarHijo" tabindex="-1" aria-labelledby="modalAgregarHijoLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalAgregarHijoLabel">
+              <i class="fas fa-child me-2"></i>Agregar Hijo
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formAgregarHijo">
+              <div class="mb-3">
+                <label for="nombreHijo" class="form-label">
+                  <i class="fas fa-user me-2"></i>Nombre Completo
+                </label>
+                <input type="text" class="form-control" id="nombreHijo" required placeholder="Ej: Ana María Rodríguez"/>
+              </div>
+              <div class="mb-3">
+                <label for="nivelHijo" class="form-label">
+                  <i class="fas fa-layer-group me-2"></i>Nivel Educativo
+                </label>
+                <select id="nivelHijo" class="form-select" required>
+                  <option value="">Seleccione el nivel</option>
+                  <option value="Inicial">Inicial</option>
+                  <option value="Primaria">Primaria</option>
+                  <option value="Secundaria">Secundaria</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="gradoHijo" class="form-label">
+                  <i class="fas fa-graduation-cap me-2"></i>Grado o Año (Opcional)
+                </label>
+                <input type="text" class="form-control" id="gradoHijo" placeholder="Ej: Primer Grado, Séptimo Año"/>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" form="formAgregarHijo" class="btn btn-cr-primary">
+              <i class="fas fa-save me-2"></i>Agregar Hijo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Ver Detalles Lista -->
+    <div class="modal fade" id="modalDetalleLista" tabindex="-1" aria-labelledby="modalDetalleListaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalDetalleListaLabel">
+              <i class="fas fa-list-alt me-2"></i>Detalles de la Lista
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <div id="detalleListaContent">
+              <!-- Contenido dinámico -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-cr-primary" onclick="imprimirLista()">
+              <i class="fas fa-print me-2"></i>Imprimir Lista
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script type="module">
+      // Importar funciones de autenticación
+      import {
+        authenticatedGet,
+        authenticatedPost,
+        authenticatedPut,
+        authenticatedDelete,
+        logoutUsuario,
+        isAuthenticated,
+      } from "./auth.js";
+
+      // Verificar autenticación
+      if (!isAuthenticated()) {
+        window.location.href = "login.html";
+      }
+
+      // Variables globales
+      let hijos = [];
+      let listas = [];
+      let materialesComprados = [];
+      let usuarioActual = null;
+
+      // Función global para logout
+      window.logoutUsuario = logoutUsuario;
+
+      // Función para mostrar alertas
+      function mostrarAlerta(mensaje, tipo = "success") {
+        const alertContainer = document.getElementById("alertContainer");
+        const alertId = "alert-" + Date.now();
+
+        const alertHTML = `
+          <div id="${alertId}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${tipo === "success" ? "check-circle" : "exclamation-triangle"} me-2"></i>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        `;
+
+        alertContainer.insertAdjacentHTML("beforeend", alertHTML);
+
+        // Auto-remove después de 5 segundos
+        setTimeout(() => {
+          const alert = document.getElementById(alertId);
+          if (alert) {
+            alert.remove();
+          }
+        }, 5000);
+      }
+
+      // Inicializar datos del usuario
+      async function inicializarUsuario() {
+        try {
+          const perfil = await authenticatedGet("/api/auth/perfil");
+          if (perfil && perfil.usuario) {
+            usuarioActual = perfil.usuario;
+            const { nombre, centroEducativo, hijos: hijosData } = perfil.usuario;
+            
+            document.getElementById("nombreUsuario").textContent = nombre || "Padre de Familia";
+            
+            if (centroEducativo) {
+              const centroNombre = centroEducativo.nombre || "Centro Educativo";
+              document.getElementById("centroEducativo").textContent = centroNombre;
+            }
+
+            // Actualizar información de hijos
+            if (hijosData && hijosData.length > 0) {
+              hijos = hijosData.map(hijo => ({
+                nombre: hijo,
+                nivel: "Por definir", // Esto se puede mejorar en el futuro
+                grado: ""
+              }));
+            }
+          }
+        } catch (error) {
+          console.error("Error obteniendo perfil:", error);
+          mostrarAlerta("Error al cargar información del usuario", "danger");
+        }
+      }
+
+      // Cargar listas de útiles
+      async function cargarListas() {
+        try {
+          const response = await authenticatedGet("/api/listas");
+          if (response && response.data) {
+            listas = response.data.docs || response.data;
+            renderListas();
+            actualizarEstadisticas();
+          }
+        } catch (error) {
+          console.error("Error cargando listas:", error);
+          mostrarAlerta("Error al cargar listas", "danger");
+        }
+      }
+
+      // Actualizar estadísticas
+      function actualizarEstadisticas() {
+        document.getElementById("totalHijos").textContent = hijos.length;
+        document.getElementById("totalListas").textContent = listas.length;
+        
+        // Contar total de materiales únicos
+        const totalMateriales = listas.reduce((total, lista) => {
+          return total + (lista.materiales ? lista.materiales.length : 0);
+        }, 0);
+        document.getElementById("totalMateriales").textContent = totalMateriales;
+
+        // Calcular progreso de compras (simulado por ahora)
+        const progreso = totalMateriales > 0 ? Math.round((materialesComprados.length / totalMateriales) * 100) : 0;
+        document.getElementById("progresoCompras").textContent = `${progreso}%`;
+      }
+
+      // Render hijos
+      function renderHijos() {
+        const container = document.getElementById("hijosContainer");
+        
+        if (hijos.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-5">
+              <i class="fas fa-child fa-3x text-muted mb-3"></i>
+              <h5 class="text-muted">No tienes hijos registrados</h5>
+              <p class="text-muted">Agrega la información de tus hijos para poder ver sus listas de útiles</p>
+              <button class="btn btn-cr-primary" data-bs-toggle="modal" data-bs-target="#modalAgregarHijo">
+                <i class="fas fa-plus me-2"></i>Agregar Primer Hijo
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = hijos.map((hijo, index) => `
+          <div class="hijo-card card">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h5 class="card-title mb-2">
+                    <i class="fas fa-child me-2 text-primary"></i>
+                    ${hijo.nombre}
+                  </h5>
+                  <div class="mb-2">
+                    <span class="badge bg-info me-2">
+                      <i class="fas fa-layer-group me-1"></i>
+                      ${hijo.nivel}
+                    </span>
+                    ${hijo.grado ? `
+                      <span class="badge bg-success">
+                        <i class="fas fa-graduation-cap me-1"></i>
+                        ${hijo.grado}
+                      </span>
+                    ` : ''}
+                  </div>
+                  <small class="text-muted">
+                    <i class="fas fa-list-alt me-1"></i>
+                    Listas disponibles: ${listas.filter(l => l.nivel?.nombre === hijo.nivel).length}
+                  </small>
+                </div>
+                <div class="col-md-4 text-end">
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-outline-primary btn-sm" onclick="verListasHijo('${hijo.nombre}')" title="Ver listas">
+                      <i class="fas fa-list-alt"></i>
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="editarHijo(${index})" title="Editar">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarHijo(${index})" title="Eliminar">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Render listas
+      function renderListas() {
+        const container = document.getElementById("listasContainer");
+        
+        if (listas.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-5">
+              <i class="fas fa-list-alt fa-3x text-muted mb-3"></i>
+              <h5 class="text-muted">No hay listas disponibles</h5>
+              <p class="text-muted">Los docentes aún no han creado listas de útiles para este período</p>
+            </div>
+          `;
+          return;
+        }
+
+        // Agrupar listas por hijo (simulado por nivel)
+        const listasPorNivel = {};
+        listas.forEach(lista => {
+          const nivel = lista.nivel?.nombre || 'Sin nivel';
+          if (!listasPorNivel[nivel]) {
+            listasPorNivel[nivel] = [];
+          }
+          listasPorNivel[nivel].push(lista);
+        });
+
+        container.innerHTML = Object.keys(listasPorNivel).map(nivel => `
+          <div class="mb-4">
+            <h5 class="border-bottom pb-2">
+              <i class="fas fa-layer-group me-2 text-primary"></i>
+              Listas para ${nivel}
+            </h5>
+            ${listasPorNivel[nivel].map(lista => `
+              <div class="lista-item">
+                <div class="row align-items-center">
+                  <div class="col-md-8">
+                    <h6 class="mb-1">
+                      <i class="fas fa-list-alt me-2 text-success"></i>
+                      ${lista.nombre}
+                    </h6>
+                    <small class="text-muted">
+                      <i class="fas fa-user me-1"></i>
+                      Docente: ${lista.docente?.nombre || 'No especificado'} |
+                      <i class="fas fa-boxes me-1"></i>
+                      ${lista.materiales?.length || 0} materiales |
+                      <i class="fas fa-calendar me-1"></i>
+                      ${new Date(lista.createdAt).toLocaleDateString()}
+                    </small>
+                    ${lista.observaciones ? `
+                      <p class="mt-2 mb-0 small text-muted">
+                        <i class="fas fa-comment me-1"></i>
+                        ${lista.observaciones}
+                      </p>
+                    ` : ''}
+                  </div>
+                  <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-primary btn-sm me-2" onclick="verDetalleLista('${lista._id}')">
+                      <i class="fas fa-eye me-1"></i>Ver Detalles
+                    </button>
+                    <button class="btn btn-outline-success btn-sm" onclick="marcarProgreso('${lista._id}')">
+                      <i class="fas fa-shopping-cart me-1"></i>Compras
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('');
+      }
+
+      // Render progreso de compras
+      function renderProgresoCompras() {
+        const container = document.getElementById("progresoContainer");
+        
+        if (listas.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-5">
+              <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+              <h5 class="text-muted">No hay listas para hacer seguimiento</h5>
+              <p class="text-muted">Cuando haya listas de útiles disponibles, podrás hacer seguimiento de tus compras aquí</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = listas.map(lista => `
+          <div class="card mb-3">
+            <div class="card-header">
+              <h6 class="mb-0">
+                <i class="fas fa-list-alt me-2"></i>
+                ${lista.nombre} - ${lista.nivel?.nombre || 'Sin nivel'}
+              </h6>
+            </div>
+            <div class="card-body">
+              ${lista.materiales && lista.materiales.length > 0 ? 
+                lista.materiales.map(material => `
+                  <div class="material-item ${materialesComprados.includes(material._id) ? 'comprado' : ''}">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" 
+                             id="material_${material._id}" 
+                             ${materialesComprados.includes(material._id) ? 'checked' : ''}
+                             onchange="toggleMaterialComprado('${material._id}')">
+                      <label class="form-check-label" for="material_${material._id}">
+                        <strong>${material.nombre}</strong>
+                        ${material.categoria ? `<small class="text-muted ms-2">(${material.categoria.nombre})</small>` : ''}
+                      </label>
+                    </div>
+                  </div>
+                `).join('') :
+                '<p class="text-muted">No hay materiales en esta lista</p>'
+              }
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Funciones globales para eventos
+      window.verListasHijo = function(nombreHijo) {
+        // Cambiar a la pestaña de listas
+        document.getElementById('listas-utiles-tab').click();
+        mostrarAlerta(`Mostrando listas para ${nombreHijo}`, "info");
+      };
+
+      window.editarHijo = function(index) {
+        // Implementar edición de hijo
+        mostrarAlerta("Función de edición en desarrollo", "info");
+      };
+
+      window.eliminarHijo = function(index) {
+        if (confirm(`¿Está seguro que desea eliminar la información de ${hijos[index].nombre}?`)) {
+          hijos.splice(index, 1);
+          renderHijos();
+          actualizarEstadisticas();
+          mostrarAlerta("Información del hijo eliminada", "success");
+        }
+      };
+
+      window.verDetalleLista = function(listaId) {
+        const lista = listas.find(l => l._id === listaId);
+        if (!lista) return;
+
+        const content = document.getElementById("detalleListaContent");
+        content.innerHTML = `
+          <div class="mb-3">
+            <h6><i class="fas fa-list-alt me-2"></i>${lista.nombre}</h6>
+            <p class="text-muted">Nivel: ${lista.nivel?.nombre || 'No especificado'}</p>
+            ${lista.observaciones ? `<p><strong>Observaciones:</strong> ${lista.observaciones}</p>` : ''}
+          </div>
+          <h6>Materiales necesarios:</h6>
+          <div class="row">
+            ${lista.materiales && lista.materiales.length > 0 ? 
+              lista.materiales.map(material => `
+                <div class="col-md-6 mb-2">
+                  <div class="card">
+                    <div class="card-body p-2">
+                      <div class="d-flex align-items-center">
+                        <i class="fas fa-box me-2 text-primary"></i>
+                        <div>
+                          <strong>${material.nombre}</strong>
+                          ${material.categoria ? `<br><small class="text-muted">${material.categoria.nombre}</small>` : ''}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `).join('') :
+              '<p class="text-muted">No hay materiales especificados</p>'
+            }
+          </div>
+        `;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalDetalleLista'));
+        modal.show();
+      };
+
+      window.marcarProgreso = function(listaId) {
+        // Cambiar a la pestaña de progreso
+        document.getElementById('progreso-compras-tab').click();
+        mostrarAlerta("Puedes marcar los materiales que ya compraste", "info");
+      };
+
+      window.toggleMaterialComprado = function(materialId) {
+        const index = materialesComprados.indexOf(materialId);
+        if (index > -1) {
+          materialesComprados.splice(index, 1);
+        } else {
+          materialesComprados.push(materialId);
+        }
+        
+        // Actualizar estadísticas y render
+        actualizarEstadisticas();
+        renderProgresoCompras();
+      };
+
+      window.imprimirLista = function() {
+        window.print();
+      };
+
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Configurar fecha actual
+        document.getElementById("fechaActual").textContent = new Date().toLocaleDateString();
+
+        // Inicializar datos
+        await inicializarUsuario();
+        await cargarListas();
+        renderHijos();
+        renderProgresoCompras();
+        actualizarEstadisticas();
+      });
+
+      // Form agregar hijo
+      document.getElementById("formAgregarHijo").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        try {
+          const nuevoHijo = {
+            nombre: document.getElementById("nombreHijo").value,
+            nivel: document.getElementById("nivelHijo").value,
+            grado: document.getElementById("gradoHijo").value
+          };
+
+          // Agregar al array local
+          hijos.push(nuevoHijo);
+
+          // Actualizar en el servidor (agregar el nombre a la lista de hijos del usuario)
+          const hijosNombres = [...usuarioActual.hijos, nuevoHijo.nombre];
+          await authenticatedPut(`/api/usuarios/${usuarioActual._id}`, {
+            hijos: hijosNombres
+          });
+
+          mostrarAlerta("Hijo agregado correctamente", "success");
+
+          // Limpiar formulario y cerrar modal
+          this.reset();
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarHijo'));
+          modal.hide();
+
+          // Actualizar render
+          renderHijos();
+          actualizarEstadisticas();
+        } catch (error) {
+          console.error("Error agregando hijo:", error);
+          mostrarAlerta(error.message || "Error al agregar hijo", "danger");
+        }
+      });
+
+      // Tab changes para cargar contenido dinámico
+      document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function (e) {
+          const target = e.target.getAttribute('data-bs-target');
+          if (target === '#progreso-compras') {
+            renderProgresoCompras();
+          }
+        });
+      });
+
+      // Logout
+      document.getElementById("logoutBtn").addEventListener("click", logoutUsuario);
+    </script>
+  </body>
+</html>

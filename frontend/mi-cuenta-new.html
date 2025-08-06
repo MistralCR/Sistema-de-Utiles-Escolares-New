@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi Cuenta - Sistema de Útiles Escolares</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/mi-cuenta-new.css" />
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="dashboard.html">
+          <i class="fas fa-graduation-cap"></i> Sistema de Útiles
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          title="Abrir menú de navegación"
+          aria-label="Abrir menú de navegación"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="dashboard.html">
+                <i class="fas fa-home"></i> Inicio
+              </a>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <button
+                class="nav-link dropdown-toggle btn btn-link text-white"
+                id="navbarDropdown"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); this.click(); }"
+              >
+                <i class="fas fa-user"></i>
+                <span id="nombreUsuarioNav">Usuario</span>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <h6 class="dropdown-header">
+                    Rol: <span id="rolUsuarioNav">-</span>
+                  </h6>
+                </li>
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                  <a class="dropdown-item active" href="mi-cuenta.html">
+                    <i class="fas fa-user-circle"></i> Mi cuenta
+                  </a>
+                </li>
+                <li>
+                  <button class="dropdown-item" onclick="cerrarSesion()">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                  </button>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container mt-4">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <h4><i class="fas fa-user"></i> Mi Cuenta</h4>
+            </div>
+            <div class="card-body">
+              <!-- Spinner de carga -->
+              <div id="loadingSpinner" class="text-center">
+                <output class="spinner-border" aria-live="polite">
+                  <span class="visually-hidden">Cargando...</span>
+                </output>
+                <p class="mt-2">Cargando información del usuario...</p>
+              </div>
+
+              <!-- Formulario principal -->
+              <form id="miCuentaForm">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="nombre" class="form-label"
+                        >Nombre completo</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nombre"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="correo" class="form-label"
+                        >Correo electrónico</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="correo"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="rol" class="form-label"
+                        >Rol en el sistema</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="rol"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="centroEducativo" class="form-label"
+                        >Centro educativo</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="centroEducativo"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Campo de contraseña (solo visible en modo edición) -->
+                <div class="row" id="passwordSection">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="password" class="form-label"
+                        >Nueva contraseña</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        placeholder="Dejar vacío para no cambiar"
+                      />
+                      <div class="form-text">Mínimo 6 caracteres</div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="passwordConfirm" class="form-label"
+                        >Confirmar contraseña</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="passwordConfirm"
+                        placeholder="Confirmar nueva contraseña"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <span class="form-label fw-bold"
+                        >Último inicio de sesión</span
+                      >
+                      <p class="form-control-plaintext" id="ultimoLogin">-</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="d-flex justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    onclick="volverAtras()"
+                  >
+                    <i class="fas fa-arrow-left"></i> Volver
+                  </button>
+
+                  <div id="botonesAccion">
+                    <!-- Modo lectura -->
+                    <div id="botonesLectura">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        onclick="habilitarEdicion()"
+                      >
+                        <i class="fas fa-edit"></i> Editar
+                      </button>
+                    </div>
+
+                    <!-- Modo edición -->
+                    <div id="botonesEdicion">
+                      <button
+                        type="button"
+                        class="btn btn-secondary me-2"
+                        onclick="cancelarEdicion()"
+                      >
+                        <i class="fas fa-times"></i> Cancelar
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-success"
+                        onclick="guardarCambios()"
+                      >
+                        <i class="fas fa-save"></i> Guardar cambios
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast para notificaciones -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+      <div id="notificacionToast" class="toast" role="alert">
+        <div class="toast-header">
+          <i id="toastIcon" class="fas fa-info-circle text-primary me-2"></i>
+          <strong class="me-auto">Sistema</strong>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="toast"
+            title="Cerrar notificación"
+            aria-label="Cerrar notificación"
+          ></button>
+        </div>
+        <div class="toast-body" id="notificacionMensaje">
+          <!-- Mensaje de notificación -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+      import {
+        authenticatedGet,
+        authenticatedPut,
+        logoutUsuario,
+        isAuthenticated,
+      } from "./auth.js";
+
+      // Variables globales para el estado de la página
+      let modoEdicion = false;
+      let datosOriginales = {};
+      let usuarioId = null;
+
+      // Verificar autenticación al cargar la página
+      if (!isAuthenticated()) {
+        window.location.href = "login.html";
+      }
+
+      // Función para mostrar notificaciones
+      function mostrarNotificacion(mensaje, tipo = "info") {
+        const toast = document.getElementById("notificacionToast");
+        const mensajeElement = document.getElementById("notificacionMensaje");
+        const iconElement = document.getElementById("toastIcon");
+
+        mensajeElement.textContent = mensaje;
+
+        // Cambiar icono y color según el tipo
+        const tipos = {
+          info: { icon: "fa-info-circle", class: "text-primary" },
+          success: { icon: "fa-check-circle", class: "text-success" },
+          warning: { icon: "fa-exclamation-triangle", class: "text-warning" },
+          error: { icon: "fa-exclamation-circle", class: "text-danger" },
+        };
+
+        const tipoConfig = tipos[tipo] || tipos["info"];
+        iconElement.className = `fas ${tipoConfig.icon} ${tipoConfig.class} me-2`;
+
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+      }
+
+      // Función para cargar los datos del usuario
+      async function cargarDatosUsuario() {
+        try {
+          const result = await authenticatedGet("/api/auth/mi-cuenta");
+
+          if (result && result.data) {
+            const perfil = result.data;
+
+            // Guardar datos originales
+            datosOriginales = { ...perfil };
+            usuarioId = perfil._id;
+
+            // Llenar formulario
+            document.getElementById("nombre").value = perfil.nombre || "";
+            document.getElementById("correo").value = perfil.correo || "";
+            document.getElementById("rol").value =
+              getRolAmigable(perfil.rol) || "";
+            document.getElementById("centroEducativo").value =
+              perfil.centroEducativo || "";
+
+            // Mostrar fecha de último login
+            if (perfil.fechaUltimoLogin) {
+              const fecha = new Date(perfil.fechaUltimoLogin);
+              document.getElementById("ultimoLogin").textContent =
+                fecha.toLocaleString("es-CR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+            }
+
+            // Actualizar navbar
+            document.getElementById("nombreUsuarioNav").textContent =
+              perfil.nombre;
+            document.getElementById("rolUsuarioNav").textContent =
+              getRolAmigable(perfil.rol);
+
+            // Mostrar formulario y ocultar spinner
+            document.getElementById("loadingSpinner").style.display = "none";
+            document.getElementById("miCuentaForm").style.display = "block";
+          } else {
+            throw new Error("No se pudieron cargar los datos del usuario");
+          }
+        } catch (error) {
+          console.error("Error al cargar datos:", error);
+          mostrarNotificacion(
+            "Error al cargar la información del usuario",
+            "error"
+          );
+
+          // Ocultar spinner en caso de error
+          document.getElementById("loadingSpinner").style.display = "none";
+        }
+      }
+
+      // Función para obtener el nombre amigable del rol
+      function getRolAmigable(rol) {
+        const rolesAmigables = {
+          administrador: "Administrador",
+          coordinador: "Coordinador",
+          docente: "Docente",
+          padre: "Padre de Familia",
+          alumno: "Alumno",
+        };
+        return rolesAmigables[rol] || rol;
+      }
+
+      // Función para habilitar edición
+      window.habilitarEdicion = function () {
+        modoEdicion = true;
+
+        // Habilitar campos editables
+        document.getElementById("nombre").readOnly = false;
+        document.getElementById("centroEducativo").readOnly = false;
+
+        // Mostrar sección de contraseña
+        document.getElementById("passwordSection").style.display = "block";
+
+        // Cambiar botones
+        document.getElementById("botonesLectura").style.display = "none";
+        document.getElementById("botonesEdicion").style.display = "block";
+
+        // Agregar clases para indicar que son editables
+        document.getElementById("nombre").classList.add("border-primary");
+        document
+          .getElementById("centroEducativo")
+          .classList.add("border-primary");
+      };
+
+      // Función para cancelar edición
+      window.cancelarEdicion = function () {
+        modoEdicion = false;
+
+        // Restaurar valores originales
+        document.getElementById("nombre").value = datosOriginales.nombre || "";
+        document.getElementById("centroEducativo").value =
+          datosOriginales.centroEducativo || "";
+        document.getElementById("password").value = "";
+        document.getElementById("passwordConfirm").value = "";
+
+        // Deshabilitar campos
+        document.getElementById("nombre").readOnly = true;
+        document.getElementById("centroEducativo").readOnly = true;
+
+        // Ocultar sección de contraseña
+        document.getElementById("passwordSection").style.display = "none";
+
+        // Cambiar botones
+        document.getElementById("botonesLectura").style.display = "block";
+        document.getElementById("botonesEdicion").style.display = "none";
+
+        // Remover clases de edición
+        document.getElementById("nombre").classList.remove("border-primary");
+        document
+          .getElementById("centroEducativo")
+          .classList.remove("border-primary");
+      };
+
+      // Función para validar formulario
+      function validarFormulario() {
+        const nombre = document.getElementById("nombre").value.trim();
+        const password = document.getElementById("password").value;
+        const passwordConfirm =
+          document.getElementById("passwordConfirm").value;
+
+        // Validar nombre
+        if (!nombre) {
+          mostrarNotificacion("El nombre es obligatorio", "warning");
+          document.getElementById("nombre").focus();
+          return false;
+        }
+
+        if (nombre.length < 2) {
+          mostrarNotificacion(
+            "El nombre debe tener al menos 2 caracteres",
+            "warning"
+          );
+          document.getElementById("nombre").focus();
+          return false;
+        }
+
+        // Validar contraseña si se proporcionó
+        if (password && password.length < 6) {
+          mostrarNotificacion(
+            "La contraseña debe tener al menos 6 caracteres",
+            "warning"
+          );
+          document.getElementById("password").focus();
+          return false;
+        }
+
+        // Validar confirmación de contraseña
+        if (password !== passwordConfirm) {
+          mostrarNotificacion("Las contraseñas no coinciden", "warning");
+          document.getElementById("passwordConfirm").focus();
+          return false;
+        }
+
+        return true;
+      }
+
+      // Función para guardar cambios
+      window.guardarCambios = async function () {
+        if (!validarFormulario()) {
+          return;
+        }
+
+        try {
+          const datos = {
+            nombre: document.getElementById("nombre").value.trim(),
+            centroEducativo: document
+              .getElementById("centroEducativo")
+              .value.trim(),
+          };
+
+          // Solo incluir contraseña si se proporcionó
+          const password = document.getElementById("password").value;
+          if (password) {
+            datos.password = password;
+          }
+
+          // Enviar PUT request
+          const result = await authenticatedPut(
+            `/api/usuarios/${usuarioId}`,
+            datos
+          );
+
+          if (result && result.data) {
+            // Actualizar datos originales con los nuevos datos
+            datosOriginales = { ...datosOriginales, ...result.data.usuario };
+
+            // Actualizar localStorage si cambió el nombre
+            if (datos.nombre) {
+              localStorage.setItem("nombre", datos.nombre);
+            }
+
+            // Actualizar navbar
+            document.getElementById("nombreUsuarioNav").textContent =
+              datos.nombre;
+
+            // Volver a modo lectura
+            cancelarEdicion();
+
+            // Mostrar mensaje de éxito
+            mostrarNotificacion(
+              "Información actualizada correctamente",
+              "success"
+            );
+          } else {
+            throw new Error("No se recibió respuesta válida del servidor");
+          }
+        } catch (error) {
+          console.error("Error al guardar cambios:", error);
+          mostrarNotificacion(
+            "Error al guardar los cambios. Inténtalo nuevamente.",
+            "error"
+          );
+        }
+      };
+
+      // Función para volver atrás
+      window.volverAtras = function () {
+        if (modoEdicion) {
+          if (confirm("¿Estás seguro? Se perderán los cambios no guardados.")) {
+            history.back();
+          }
+        } else {
+          history.back();
+        }
+      };
+
+      // Función para cerrar sesión
+      window.cerrarSesion = function () {
+        if (confirm("¿Estás seguro de que deseas cerrar la sesión?")) {
+          logoutUsuario();
+        }
+      };
+
+      // Cargar datos al inicializar la página
+      document.addEventListener("DOMContentLoaded", function () {
+        cargarDatosUsuario();
+      });
+    </script>
+  </body>
+</html>

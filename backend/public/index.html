@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Útiles Escolares - MEP Costa Rica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* 🇨🇷 USANDO TU TEMA COSTA RICA ORIGINAL */
+        :root {
+            --cr-azul-oscuro: #002b7f;
+            --cr-rojo-intenso: #ce1126;
+            --cr-blanco: #ffffff;
+            --cr-azul-primario: #1e4a8c;
+            --cr-azul-secundario: #3366a0;
+            --cr-azul-claro: #4a7bb7;
+            --cr-azul-muy-claro: #e3f2fd;
+            --cr-rojo-primario: #d32f2f;
+            --cr-rojo-claro: #ef5350;
+            --cr-gris-oscuro: #2c3e50;
+            --cr-gris-claro: #f8f9fa;
+            --cr-gris-medio: #6c757d;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Navbar igual a tu tema original */
+        .navbar-landing {
+            background: var(--cr-blanco);
+            box-shadow: 0 2px 4px rgba(0, 43, 127, 0.1);
+            padding: 0.75rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--cr-azul-primario) !important;
+            font-size: 1.25rem;
+        }
+
+        .logo-mep {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--cr-azul-primario), var(--cr-azul-oscuro));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .logo-mep i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* Hero section de bienvenida */
+        .welcome-hero {
+            background: linear-gradient(135deg, var(--cr-azul-primario) 0%, var(--cr-azul-claro) 100%);
+            color: var(--cr-blanco);
+            padding: 100px 0;
+            text-align: center;
+            margin-bottom: 0;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .btn-costa-rica {
+            background: var(--cr-rojo-primario);
+            border: none;
+            color: var(--cr-blanco);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            text-decoration: none;
+            margin: 10px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-costa-rica:hover {
+            background: var(--cr-rojo-claro);
+            transform: translateY(-2px);
+            color: var(--cr-blanco);
+        }
+
+        /* Sección de información */
+        .info-section {
+            padding: 80px 0;
+            background: var(--cr-blanco);
+        }
+
+        .feature-card {
+            background: var(--cr-blanco);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            border: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--cr-azul-primario);
+            margin-bottom: 20px;
+        }
+
+        /* Footer Costa Rica */
+        .footer-costa-rica {
+            background: var(--cr-azul-oscuro);
+            color: var(--cr-blanco);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        /* API Status */
+        .api-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--cr-azul-primario);
+            color: var(--cr-blanco);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .api-status.offline {
+            background: var(--cr-rojo-primario);
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2rem; }
+            .welcome-hero { padding: 60px 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- API Status -->
+    <div id="apiStatus" class="api-status">
+        <i class="fas fa-circle me-1"></i>
+        <span>Conectando...</span>
+    </div>
+
+    <!-- Navbar igual a tu diseño -->
+    <nav class="navbar navbar-expand-lg navbar-landing">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <div class="logo-mep">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                Sistema de Útiles Escolares
+            </a>
+            <div class="navbar-nav ms-auto d-flex flex-row">
+                <a class="nav-link me-3" href="/frontend/login.html">
+                    <i class="fas fa-sign-in-alt me-1"></i>Ingresar
+                </a>
+                <a class="nav-link me-3" href="/frontend/soporte.html">
+                    <i class="fas fa-question-circle me-1"></i>Ayuda
+                </a>
+                <a class="nav-link" href="/frontend/politica.html">
+                    <i class="fas fa-shield-alt me-1"></i>Privacidad
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero de Bienvenida -->
+    <section class="welcome-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>¡Bienvenido!</h1>
+                <p>
+                    🇨🇷 Sistema de Gestión de Útiles Escolares<br>
+                    Ministerio de Educación Pública - Costa Rica
+                </p>
+                <a href="/frontend/login.html" class="btn-costa-rica">
+                    <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                </a>
+                <a href="/frontend/panel-coordinador-completo.html" class="btn-costa-rica">
+                    <i class="fas fa-cog me-2"></i>Panel Coordinador
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Información del Sistema -->
+    <section class="info-section">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="h3 mb-3" style="color: var(--cr-azul-primario);">
+                        🇨🇷 Sistema Nacional de Útiles Escolares
+                    </h2>
+                    <p class="lead text-muted">
+                        Plataforma oficial del MEP para la gestión de útiles escolares
+                    </p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-users-cog feature-icon"></i>
+                        <h4 style="color: var(--cr-azul-primario);">Gestión de Usuarios</h4>
+                        <p class="text-muted">
+                            Control de coordinadores, administradores, docentes y padres de familia con validación MEP.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-school feature-icon"></i>
+                        <h4 style="color: var(--cr-azul-primario);">Centros Educativos</h4>
+                        <p class="text-muted">
+                            Registro y gestión de instituciones educativas con códigos MEP oficiales.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-clipboard-list feature-icon"></i>
+                        <h4 style="color: var(--cr-azul-primario);">Listas de Útiles</h4>
+                        <p class="text-muted">
+                            Gestión estandarizada según normativas del MEP Costa Rica.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-costa-rica">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-md-start text-center mb-3 mb-md-0">
+                    <h5 class="fw-bold mb-2">🇨🇷 Sistema de Útiles Escolares</h5>
+                    <p class="mb-0 opacity-90">Ministerio de Educación Pública - Costa Rica</p>
+                </div>
+                <div class="col-md-6 text-md-end text-center">
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:info@mep.go.cr" class="text-white text-decoration-none">info@mep.go.cr</a>
+                    </p>
+                    <p class="mb-0 opacity-90">© 2025 MEP Costa Rica. Pura Vida! 🇨🇷</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Verificar estado de la API
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                
+                const statusElement = document.getElementById('apiStatus');
+                if (data.success) {
+                    statusElement.innerHTML = '<i class="fas fa-circle me-1"></i><span>🇨🇷 API Online</span>';
+                    statusElement.className = 'api-status';
+                } else {
+                    throw new Error('API no disponible');
+                }
+            } catch (error) {
+                const statusElement = document.getElementById('apiStatus');
+                statusElement.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i><span>API Offline</span>';
+                statusElement.className = 'api-status offline';
+            }
+        }
+
+        // Animaciones de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAPIStatus();
+            setInterval(checkAPIStatus, 30000);
+            
+            // Animación suave para las cards
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
+<body>
+    <!-- API Status -->
+    <div id="apiStatus" class="api-status">
+        <i class="fas fa-circle me-2"></i>
+        <span>Conectando...</span>
+    </div>
+
+    <!-- Navbar Costa Rica -->
+    <nav class="navbar navbar-costa-rica navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <div class="logo-costa-rica">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                Sistema de Útiles Escolares
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section Costa Rica -->
+    <section class="hero-costa-rica">
+        <div class="container">
+            <div class="hero-content">
+                <div class="escudo-costa-rica">
+                    <i class="fas fa-school"></i>
+                </div>
+                <h1 class="hero-title">Sistema de Útiles Escolares</h1>
+                <h2 class="hero-subtitle">🇨🇷 Ministerio de Educación Pública - Costa Rica</h2>
+                <p class="hero-description">
+                    Plataforma integral para la gestión y administración de útiles escolares en los centros educativos del país. 
+                    Facilitando la educación con los colores patrios de nuestra hermosa Costa Rica.
+                </p>
+                <div class="d-flex justify-content-center flex-wrap">
+                    <a href="/frontend/login.html" class="btn-costa-rica">
+                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                    </a>
+                    <a href="#accesos" class="btn-costa-rica-outline">
+                        <i class="fas fa-users me-2"></i>Ver Accesos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Funcionalidades -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-6 fw-bold text-primary mb-3">🇨🇷 Funcionalidades del Sistema Nacional</h2>
+                    <p class="lead text-muted">Herramientas diseñadas con los estándares del MEP Costa Rica</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card-costa-rica">
+                        <div class="card-header-costa-rica">
+                            <i class="fas fa-users-cog card-icon-costa-rica"></i>
+                            <h4 class="mb-0">Gestión de Usuarios</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted mb-3">
+                                Control total de coordinadores, administradores, docentes, padres y estudiantes con validación MEP.
+                            </p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Validación @mep.go.cr</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Roles específicos por centro</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Auditoría completa</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card-costa-rica">
+                        <div class="card-header-costa-rica">
+                            <i class="fas fa-school card-icon-costa-rica"></i>
+                            <h4 class="mb-0">Centros Educativos</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted mb-3">
+                                Registro y gestión de todas las instituciones educativas del territorio nacional.
+                            </p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Códigos MEP oficiales</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Cobertura nacional</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Geolocalización por provincia</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6">
+                    <div class="card-costa-rica">
+                        <div class="card-header-costa-rica">
+                            <i class="fas fa-clipboard-list card-icon-costa-rica"></i>
+                            <h4 class="mb-0">Listas de Útiles</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <p class="text-muted mb-3">
+                                Gestión estandarizada de útiles escolares según normativas del MEP.
+                            </p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Por nivel educativo</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Actualización centralizada</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Normativas MEP</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Accesos Rápidos -->
+    <section id="accesos" class="acceso-rapido">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 class="display-6 fw-bold mb-3">🎯 Accesos por Rol</h2>
+                    <p class="lead text-muted">Ingresa según tu función en el sistema educativo nacional</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="acceso-card">
+                        <i class="fas fa-user-tie acceso-icon coordinador"></i>
+                        <h5 class="fw-bold mb-3">Coordinador</h5>
+                        <p class="text-muted mb-4">Administración central del sistema</p>
+                        <a href="/frontend/panel-coordinador-completo.html" class="btn btn-primary">
+                            <i class="fas fa-cog me-2"></i>Panel Completo
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="acceso-card">
+                        <i class="fas fa-user-shield acceso-icon administrador"></i>
+                        <h5 class="fw-bold mb-3">Administrador</h5>
+                        <p class="text-muted mb-4">Gestión de centro educativo</p>
+                        <a href="/frontend/login.html" class="btn btn-danger">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="acceso-card">
+                        <i class="fas fa-chalkboard-teacher acceso-icon docente"></i>
+                        <h5 class="fw-bold mb-3">Docente</h5>
+                        <p class="text-muted mb-4">Gestión de listas y materiales</p>
+                        <a href="/frontend/login.html" class="btn btn-info">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="acceso-card">
+                        <i class="fas fa-users acceso-icon padre"></i>
+                        <h5 class="fw-bold mb-3">Padre de Familia</h5>
+                        <p class="text-muted mb-4">Consulta de útiles escolares</p>
+                        <a href="/frontend/login.html" class="btn btn-warning">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Costa Rica -->
+    <footer class="footer-costa-rica">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12 text-center">
+                    <div class="bandera-costa-rica">
+                        <div class="franja azul"></div>
+                        <div class="franja blanco"></div>
+                        <div class="franja rojo"></div>
+                        <div class="franja blanco"></div>
+                        <div class="franja azul"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 text-md-start text-center mb-3 mb-md-0">
+                    <h5 class="fw-bold mb-2">🇨🇷 Sistema de Útiles Escolares</h5>
+                    <p class="mb-0 opacity-90">Ministerio de Educación Pública - Costa Rica</p>
+                </div>
+                <div class="col-md-6 text-md-end text-center">
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:info@mep.go.cr" class="text-white text-decoration-none">info@mep.go.cr</a>
+                    </p>
+                    <p class="mb-0 opacity-90">© 2025 MEP Costa Rica. Pura Vida! 🇨🇷</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Verificar estado de la API
+        async function checkAPIStatus() {
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                
+                const statusElement = document.getElementById('apiStatus');
+                if (data.success) {
+                    statusElement.innerHTML = '<i class="fas fa-circle me-2"></i><span>🇨🇷 API Conectada</span>';
+                    statusElement.className = 'api-status conectado';
+                } else {
+                    throw new Error('API no disponible');
+                }
+            } catch (error) {
+                const statusElement = document.getElementById('apiStatus');
+                statusElement.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i><span>API Desconectada</span>';
+                statusElement.className = 'api-status';
+            }
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animación de carga
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar API
+            checkAPIStatus();
+            setInterval(checkAPIStatus, 30000);
+
+            // Animación de las cards
+            const cards = document.querySelectorAll('.card-costa-rica, .acceso-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

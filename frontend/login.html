@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sistema de Útiles Escolares - MEP Costa Rica</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Tema Costa Rica -->
+    <link rel="stylesheet" href="css/costa-rica-theme.css" />
+    <!-- Sistema de Temas Accesibles -->
+    <link rel="stylesheet" href="css/temas-accesibles.css" />
+
+    <style>
+      /* ===== ESTILOS LANDING PAGE ===== */
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      /* Navbar estilo Google */
+      .navbar-landing {
+        background: var(--cr-blanco);
+        box-shadow: 0 2px 4px rgba(0, 43, 127, 0.1);
+        padding: 0.75rem 0;
+      }
+
+      .navbar-brand {
+        font-weight: 600;
+        color: var(--cr-azul-primario) !important;
+        font-size: 1.25rem;
+      }
+
+      .logo-mep {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(
+          135deg,
+          var(--cr-azul-primario),
+          var(--cr-azul-oscuro)
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+      }
+
+      .logo-mep i {
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      /* Área principal */
+      .main-content {
+        padding: 3rem 0;
+      }
+
+      .system-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        color: var(--cr-azul-primario);
+        margin-bottom: 1rem;
+      }
+
+      .system-subtitle {
+        font-size: 1.1rem;
+        color: var(--cr-gris-medio);
+        margin-bottom: 3rem;
+      }
+
+      /* Cards de noticias */
+      .news-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+        margin-bottom: 1.5rem;
+      }
+
+      .news-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      .news-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(
+          135deg,
+          var(--cr-azul-claro),
+          var(--cr-azul-primario)
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+
+      .news-icon i {
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      .news-category {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .news-date {
+        font-size: 0.85rem;
+        color: var(--cr-gris-medio);
+      }
+
+      /* Formulario de login estilo Google */
+      .login-section {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        position: sticky;
+        top: 2rem;
+      }
+
+      .login-title {
+        font-size: 1.5rem;
+        font-weight: 400;
+        color: var(--cr-azul-primario);
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      .form-control-landing {
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control-landing:focus {
+        border-color: var(--cr-azul-primario);
+        box-shadow: 0 0 0 0.2rem rgba(30, 74, 140, 0.15);
+      }
+
+      .btn-login {
+        background: linear-gradient(
+          135deg,
+          var(--cr-azul-primario),
+          var(--cr-azul-oscuro)
+        );
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .btn-login:hover {
+        background: linear-gradient(
+          135deg,
+          var(--cr-azul-oscuro),
+          var(--cr-azul-primario)
+        );
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 43, 127, 0.3);
+        color: white;
+      }
+
+      .btn-login:disabled {
+        opacity: 0.6;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Loading state */
+      .loading-news {
+        text-align: center;
+        padding: 2rem;
+        color: var(--cr-gris-medio);
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .system-title {
+          font-size: 2rem;
+        }
+
+        .main-content {
+          padding: 1.5rem 0;
+        }
+
+        .login-section {
+          margin-top: 2rem;
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar estilo Google -->
+    <nav class="navbar navbar-expand-lg navbar-landing">
+      <div class="container">
+        <!-- Logo y título -->
+        <a class="navbar-brand d-flex align-items-center" href="#">
+          <div class="logo-mep">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          Sistema de Útiles Escolares
+        </a>
+
+        <!-- Menú de navegación -->
+        <div class="navbar-nav ms-auto d-flex flex-row">
+          <a class="nav-link me-3" href="#inicio">
+            <i class="fas fa-home me-1"></i>Inicio
+          </a>
+          <a class="nav-link me-3" href="soporte.html" target="_blank">
+            <i class="fas fa-question-circle me-1"></i>Ayuda
+          </a>
+          <a class="nav-link" href="politica.html" target="_blank">
+            <i class="fas fa-shield-alt me-1"></i>Privacidad
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container-fluid main-content">
+      <div class="container">
+        <div class="row">
+          <!-- Columna izquierda: Información y noticias -->
+          <div class="col-lg-8">
+            <!-- Título del sistema -->
+            <div class="text-center text-lg-start mb-5">
+              <h1 class="system-title">
+                Sistema de Gestión de Útiles Escolares
+              </h1>
+              <p class="system-subtitle">
+                <i class="fas fa-flag me-2"></i>
+                Ministerio de Educación Pública - Costa Rica
+              </p>
+            </div>
+
+            <!-- Sección de noticias -->
+            <div class="mb-4">
+              <h3 class="h4 mb-4 text-primary">
+                <i class="fas fa-newspaper me-2"></i>
+                Noticias y Novedades
+              </h3>
+
+              <!-- Loading state -->
+              <div id="loadingNews" class="loading-news">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Cargando noticias...</span>
+                </div>
+                <p class="mt-2">Cargando últimas noticias...</p>
+              </div>
+
+              <!-- Error state -->
+              <div id="errorNews" class="alert alert-warning d-none">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>No se pudieron cargar las noticias</strong><br />
+                Por favor, intenta recargar la página o contacta al soporte
+                técnico.
+              </div>
+
+              <!-- Container de noticias -->
+              <div id="newsContainer" class="row"></div>
+            </div>
+          </div>
+
+          <!-- Columna derecha: Formulario de login -->
+          <div class="col-lg-4">
+            <div class="login-section">
+              <h2 class="login-title">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                Iniciar Sesión
+              </h2>
+
+              <!-- Mensaje de error -->
+              <div id="errorMsg" class="alert alert-danger d-none">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span id="errorText"></span>
+              </div>
+
+              <!-- Formulario -->
+              <form id="loginForm">
+                <div class="mb-3">
+                  <label for="correo" class="form-label">
+                    <i class="fas fa-envelope me-1"></i>
+                    Correo electrónico
+                  </label>
+                  <input
+                    type="email"
+                    class="form-control form-control-landing"
+                    id="correo"
+                    required
+                    placeholder="tu@email.com"
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <label for="contraseña" class="form-label">
+                    <i class="fas fa-lock me-1"></i>
+                    Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    class="form-control form-control-landing"
+                    id="contraseña"
+                    required
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <div class="d-grid mb-3">
+                  <button type="submit" class="btn btn-login">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Iniciar Sesión
+                  </button>
+                </div>
+              </form>
+
+              <!-- Enlaces adicionales -->
+              <div class="text-center">
+                <a
+                  href="recuperar.html"
+                  class="text-decoration-none text-muted me-3"
+                >
+                  <i class="fas fa-key me-1"></i>
+                  ¿Olvidaste tu contraseña?
+                </a>
+                <br /><br />
+                <button
+                  type="button"
+                  class="btn btn-outline-primary"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalRegistroPadre"
+                >
+                  <i class="fas fa-user-plus me-2"></i>
+                  Registrarse como Padre
+                </button>
+              </div>
+
+              <!-- Información de usuarios de prueba -->
+              <div class="mt-4 p-3 bg-light rounded">
+                <h6 class="text-muted mb-2">
+                  <i class="fas fa-users me-1"></i>
+                  Usuarios de prueba:
+                </h6>
+                <small class="d-block text-muted mb-1">
+                  <strong>Coordinador:</strong> coord@mep.go.cr / 123456
+                </small>
+                <small class="d-block text-muted mb-1">
+                  <strong>Admin:</strong> admin@mep.go.cr / 123456
+                </small>
+                <small class="d-block text-muted">
+                  <strong>Docente:</strong> docente@mep.go.cr / 123456
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white py-4 mt-5 border-top">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <p class="mb-0 text-muted">
+              <i class="fas fa-shield-alt me-2"></i>
+              © 2025 Ministerio de Educación Pública - Costa Rica
+            </p>
+            <small class="text-muted">
+              <i class="fas fa-keyboard me-1"></i>
+              Atajos: Alt+T (temas), Alt+D (oscuro), Alt+L (claro), Alt+H (alto
+              contraste)
+            </small>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <p class="mb-0 text-muted">
+              <i class="fas fa-heart me-1 text-danger"></i>
+              Construido con orgullo costarricense
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Modal de Registro de Padre -->
+    <div
+      class="modal fade"
+      id="modalRegistroPadre"
+      tabindex="-1"
+      aria-labelledby="modalRegistroPadreLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="modalRegistroPadreLabel">
+              <i class="fas fa-user-plus me-2"></i>
+              Registro de Padre de Familia
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formRegistroPadre">
+              <!-- Datos del Padre -->
+              <div class="card mb-4">
+                <div class="card-header bg-light">
+                  <h6 class="mb-0">
+                    <i class="fas fa-user me-2"></i>
+                    Datos del Padre de Familia
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="nombrePadre" class="form-label"
+                        >Nombre Completo *</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nombrePadre"
+                        required
+                        placeholder="Ej: Juan Pérez Morales"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="cedulaPadre" class="form-label"
+                        >Cédula *</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="cedulaPadre"
+                        required
+                        placeholder="Ej: 1-2345-6789"
+                        pattern="[0-9\-]+"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="telefonoPadre" class="form-label"
+                        >Teléfono *</label
+                      >
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="telefonoPadre"
+                        required
+                        placeholder="Ej: 8888-8888"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="correoPadre" class="form-label"
+                        >Correo Electrónico *</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="correoPadre"
+                        required
+                        placeholder="Ej: padre@email.com"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="contraseñaPadre" class="form-label"
+                        >Contraseña *</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="contraseñaPadre"
+                        required
+                        placeholder="Mínimo 6 caracteres"
+                        minlength="6"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="confirmarContraseña" class="form-label"
+                        >Confirmar Contraseña *</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="confirmarContraseña"
+                        required
+                        placeholder="Repetir contraseña"
+                      />
+                    </div>
+                    <div class="col-12 mb-3">
+                      <label for="direccionPadre" class="form-label"
+                        >Dirección</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="direccionPadre"
+                        rows="2"
+                        placeholder="Dirección completa (opcional)"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Datos de los Estudiantes -->
+              <div class="card mb-4">
+                <div
+                  class="card-header bg-light d-flex justify-content-between align-items-center"
+                >
+                  <h6 class="mb-0">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    Datos de los Estudiantes
+                  </h6>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    id="btnAgregarEstudiante"
+                  >
+                    <i class="fas fa-plus me-1"></i>
+                    Agregar Estudiante
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div id="contenedorEstudiantes">
+                    <!-- Primer estudiante por defecto -->
+                    <div
+                      class="estudiante-item border rounded p-3 mb-3"
+                      data-index="0"
+                    >
+                      <div
+                        class="d-flex justify-content-between align-items-center mb-3"
+                      >
+                        <h6 class="mb-0">
+                          <i class="fas fa-child me-2"></i>
+                          Estudiante #1
+                        </h6>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger d-none eliminar-estudiante"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Nombre Completo *</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="nombreEstudiante"
+                            required
+                            placeholder="Ej: María Pérez González"
+                          />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label"
+                            >Cédula del Estudiante *</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="cedulaEstudiante"
+                            required
+                            placeholder="Ej: 1-2345-6789"
+                            pattern="[0-9\-]+"
+                          />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label class="form-label">Nivel *</label>
+                          <select
+                            class="form-select"
+                            name="nivelEstudiante"
+                            required
+                          >
+                            <option value="">Seleccionar nivel</option>
+                            <option value="Preescolar">Preescolar</option>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Secundaria">Secundaria</option>
+                          </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label class="form-label">Grado *</label>
+                          <select
+                            class="form-select"
+                            name="gradoEstudiante"
+                            required
+                          >
+                            <option value="">Seleccionar grado</option>
+                            <option value="Kinder">Kinder</option>
+                            <option value="Preparatoria">Preparatoria</option>
+                            <option value="1°">1°</option>
+                            <option value="2°">2°</option>
+                            <option value="3°">3°</option>
+                            <option value="4°">4°</option>
+                            <option value="5°">5°</option>
+                            <option value="6°">6°</option>
+                            <option value="7°">7°</option>
+                            <option value="8°">8°</option>
+                            <option value="9°">9°</option>
+                            <option value="10°">10°</option>
+                            <option value="11°">11°</option>
+                          </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label class="form-label">Fecha de Nacimiento</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            name="fechaNacimientoEstudiante"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Puedes agregar hasta 15 estudiantes. Al menos uno es
+                    requerido.
+                  </small>
+                </div>
+              </div>
+
+              <!-- Mensaje de error/éxito -->
+              <div id="mensajeRegistro" class="alert d-none"></div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              <i class="fas fa-times me-2"></i>
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="formRegistroPadre"
+              class="btn btn-primary"
+            >
+              <i class="fas fa-user-plus me-2"></i>
+              Registrar Padre de Familia
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Gestor de Temas Accesibles -->
+    <script src="js/gestor-temas.js"></script>
+
+    <script type="module">
+      import { loginUsuario } from "./auth.js";
+
+      // ===== CARGA DE NOTICIAS =====
+      async function cargarNoticias() {
+        const loadingElement = document.getElementById("loadingNews");
+        const errorElement = document.getElementById("errorNews");
+        const newsContainer = document.getElementById("newsContainer");
+
+        try {
+          const response = await fetch("noticias.json");
+          if (!response.ok) {
+            throw new Error("No se pudieron cargar las noticias");
+          }
+
+          const noticias = await response.json();
+
+          // Ocultar loading
+          loadingElement.classList.add("d-none");
+
+          // Renderizar noticias
+          newsContainer.innerHTML = noticias
+            .map(
+              (noticia) => `
+            <div class="col-md-6 col-lg-4 mb-3">
+              <div class="card news-card h-100">
+                <div class="card-body">
+                  <div class="news-icon">
+                    <i class="${noticia.icono}"></i>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-primary news-category">${
+                      noticia.categoria
+                    }</span>
+                    <span class="news-date">
+                      <i class="fas fa-calendar-alt me-1"></i>
+                      ${formatearFecha(noticia.fecha)}
+                    </span>
+                  </div>
+                  <h6 class="card-title">${noticia.titulo}</h6>
+                  <p class="card-text text-muted">${noticia.resumen}</p>
+                </div>
+              </div>
+            </div>
+          `
+            )
+            .join("");
+        } catch (error) {
+          console.error("Error cargando noticias:", error);
+          loadingElement.classList.add("d-none");
+          errorElement.classList.remove("d-none");
+
+          // Mostrar algunas noticias por defecto
+          newsContainer.innerHTML = `
+            <div class="col-12">
+              <div class="card news-card">
+                <div class="card-body text-center">
+                  <div class="news-icon mx-auto">
+                    <i class="fas fa-info-circle"></i>
+                  </div>
+                  <h6 class="card-title">Sistema Actualizado</h6>
+                  <p class="card-text text-muted">
+                    El sistema de útiles escolares está funcionando correctamente. 
+                    Inicia sesión para acceder a todas las funcionalidades.
+                  </p>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Formatear fecha
+      function formatearFecha(fechaString) {
+        const fecha = new Date(fechaString);
+        return fecha.toLocaleDateString("es-CR", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      // ===== MANEJO DEL LOGIN =====
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const correo = document.getElementById("correo").value;
+          const contraseña = document.getElementById("contraseña").value;
+          const errorMsg = document.getElementById("errorMsg");
+          const errorText = document.getElementById("errorText");
+          const submitButton = e.target.querySelector('button[type="submit"]');
+
+          // Limpiar mensajes anteriores
+          errorMsg.classList.add("d-none");
+
+          // Mostrar estado de carga
+          submitButton.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-2"></i>Iniciando...';
+          submitButton.disabled = true;
+
+          try {
+            await loginUsuario(correo, contraseña);
+            // La redirección se maneja automáticamente en loginUsuario
+            submitButton.innerHTML =
+              '<i class="fas fa-check me-2"></i>¡Bienvenido!';
+          } catch (err) {
+            errorText.textContent =
+              err.message ||
+              "Error al iniciar sesión. Verifica tus credenciales.";
+            errorMsg.classList.remove("d-none");
+
+            // Restaurar botón
+            submitButton.innerHTML =
+              '<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión';
+            submitButton.disabled = false;
+          }
+        });
+
+      // ===== SMOOTH SCROLLING PARA NAVEGACIÓN =====
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      // ===== INICIALIZACIÓN =====
+      document.addEventListener("DOMContentLoaded", function () {
+        cargarNoticias();
+
+        // Añadir clase de carga completa para animaciones
+        setTimeout(() => {
+          document.body.classList.add("loaded");
+        }, 100);
+      });
+    </script>
+
+    <!-- Script para el registro de padres -->
+    <script type="module">
+      import { authenticatedPost } from "./auth.js";
+
+      let contadorEstudiantes = 1;
+      const maxEstudiantes = 15;
+
+      // Agregar nuevo estudiante
+      document
+        .getElementById("btnAgregarEstudiante")
+        .addEventListener("click", function () {
+          if (contadorEstudiantes >= maxEstudiantes) {
+            alert(`Máximo ${maxEstudiantes} estudiantes permitidos`);
+            return;
+          }
+
+          contadorEstudiantes++;
+          const contenedor = document.getElementById("contenedorEstudiantes");
+
+          const nuevoEstudiante = document.createElement("div");
+          nuevoEstudiante.className = "estudiante-item border rounded p-3 mb-3";
+          nuevoEstudiante.setAttribute("data-index", contadorEstudiantes - 1);
+
+          nuevoEstudiante.innerHTML = `
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">
+              <i class="fas fa-child me-2"></i>
+              Estudiante #${contadorEstudiantes}
+            </h6>
+            <button type="button" class="btn btn-sm btn-outline-danger eliminar-estudiante">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Nombre Completo *</label>
+              <input type="text" class="form-control" name="nombreEstudiante" required placeholder="Ej: María Pérez González">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Cédula del Estudiante *</label>
+              <input type="text" class="form-control" name="cedulaEstudiante" required placeholder="Ej: 1-2345-6789" pattern="[0-9\\-]+">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Nivel *</label>
+              <select class="form-select" name="nivelEstudiante" required>
+                <option value="">Seleccionar nivel</option>
+                <option value="Preescolar">Preescolar</option>
+                <option value="Primaria">Primaria</option>
+                <option value="Secundaria">Secundaria</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Grado *</label>
+              <select class="form-select" name="gradoEstudiante" required>
+                <option value="">Seleccionar grado</option>
+                <option value="Kinder">Kinder</option>
+                <option value="Preparatoria">Preparatoria</option>
+                <option value="1°">1°</option>
+                <option value="2°">2°</option>
+                <option value="3°">3°</option>
+                <option value="4°">4°</option>
+                <option value="5°">5°</option>
+                <option value="6°">6°</option>
+                <option value="7°">7°</option>
+                <option value="8°">8°</option>
+                <option value="9°">9°</option>
+                <option value="10°">10°</option>
+                <option value="11°">11°</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Fecha de Nacimiento</label>
+              <input type="date" class="form-control" name="fechaNacimientoEstudiante">
+            </div>
+          </div>
+        `;
+
+          contenedor.appendChild(nuevoEstudiante);
+
+          // Agregar event listener para eliminar
+          nuevoEstudiante
+            .querySelector(".eliminar-estudiante")
+            .addEventListener("click", function () {
+              eliminarEstudiante(nuevoEstudiante);
+            });
+
+          // Actualizar botón si se alcanzó el máximo
+          if (contadorEstudiantes >= maxEstudiantes) {
+            document.getElementById("btnAgregarEstudiante").disabled = true;
+          }
+        });
+
+      // Eliminar estudiante
+      function eliminarEstudiante(elemento) {
+        elemento.remove();
+        contadorEstudiantes--;
+
+        // Renumerar estudiantes
+        const estudiantes = document.querySelectorAll(".estudiante-item");
+        estudiantes.forEach((est, index) => {
+          const titulo = est.querySelector("h6");
+          titulo.innerHTML = `<i class="fas fa-child me-2"></i>Estudiante #${
+            index + 1
+          }`;
+          est.setAttribute("data-index", index);
+        });
+
+        // Habilitar botón de agregar si estaba deshabilitado
+        document.getElementById("btnAgregarEstudiante").disabled = false;
+      }
+
+      // Validar contraseñas coinciden
+      document
+        .getElementById("confirmarContraseña")
+        .addEventListener("blur", function () {
+          const contraseña = document.getElementById("contraseñaPadre").value;
+          const confirmar = this.value;
+
+          if (contraseña && confirmar && contraseña !== confirmar) {
+            this.setCustomValidity("Las contraseñas no coinciden");
+            this.classList.add("is-invalid");
+          } else {
+            this.setCustomValidity("");
+            this.classList.remove("is-invalid");
+          }
+        });
+
+      // Manejo del formulario de registro
+      document
+        .getElementById("formRegistroPadre")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const mensajeDiv = document.getElementById("mensajeRegistro");
+          const submitBtn = document.querySelector(
+            'button[form="formRegistroPadre"]'
+          );
+
+          // Validar contraseñas
+          const contraseña = document.getElementById("contraseñaPadre").value;
+          const confirmar = document.getElementById(
+            "confirmarContraseña"
+          ).value;
+
+          if (contraseña !== confirmar) {
+            mostrarMensaje("Las contraseñas no coinciden", "danger");
+            return;
+          }
+
+          // Recopilar datos del padre
+          const datosRegistro = {
+            nombre: document.getElementById("nombrePadre").value,
+            cedula: document.getElementById("cedulaPadre").value,
+            telefono: document.getElementById("telefonoPadre").value,
+            correo: document.getElementById("correoPadre").value,
+            contraseña: contraseña,
+            direccion: document.getElementById("direccionPadre").value,
+            rol: "padre",
+            estudiantes: [],
+          };
+
+          // Recopilar datos de estudiantes
+          const estudiantesItems =
+            document.querySelectorAll(".estudiante-item");
+
+          if (estudiantesItems.length === 0) {
+            mostrarMensaje("Debe agregar al menos un estudiante", "danger");
+            return;
+          }
+
+          for (let item of estudiantesItems) {
+            const nombre = item.querySelector(
+              'input[name="nombreEstudiante"]'
+            ).value;
+            const cedula = item.querySelector(
+              'input[name="cedulaEstudiante"]'
+            ).value;
+            const nivel = item.querySelector(
+              'select[name="nivelEstudiante"]'
+            ).value;
+            const grado = item.querySelector(
+              'select[name="gradoEstudiante"]'
+            ).value;
+            const fechaNacimiento = item.querySelector(
+              'input[name="fechaNacimientoEstudiante"]'
+            ).value;
+
+            if (!nombre || !cedula || !nivel || !grado) {
+              mostrarMensaje(
+                "Complete todos los campos obligatorios de los estudiantes",
+                "danger"
+              );
+              return;
+            }
+
+            datosRegistro.estudiantes.push({
+              nombre,
+              cedula,
+              nivel,
+              grado,
+              fechaNacimiento,
+            });
+          }
+
+          // Mostrar loading
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin me-2"></i>Registrando...';
+          submitBtn.disabled = true;
+
+          try {
+            const response = await fetch(
+              "http://localhost:4000/api/auth/registro-padre",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(datosRegistro),
+              }
+            );
+
+            const result = await response.json();
+
+            if (response.ok) {
+              mostrarMensaje(
+                "¡Registro exitoso! Ya puedes iniciar sesión.",
+                "success"
+              );
+
+              // Limpiar formulario después de 2 segundos
+              setTimeout(() => {
+                this.reset();
+                const modal = bootstrap.Modal.getInstance(
+                  document.getElementById("modalRegistroPadre")
+                );
+                modal.hide();
+
+                // Prellenar el email en el login
+                document.getElementById("correo").value = datosRegistro.correo;
+              }, 2000);
+            } else {
+              mostrarMensaje(
+                result.message || "Error en el registro",
+                "danger"
+              );
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            mostrarMensaje("Error de conexión. Intenta nuevamente.", "danger");
+          }
+
+          // Restaurar botón
+          submitBtn.innerHTML =
+            '<i class="fas fa-user-plus me-2"></i>Registrar Padre de Familia';
+          submitBtn.disabled = false;
+        });
+
+      function mostrarMensaje(mensaje, tipo) {
+        const mensajeDiv = document.getElementById("mensajeRegistro");
+        mensajeDiv.className = `alert alert-${tipo}`;
+        mensajeDiv.innerHTML = `
+          <i class="fas fa-${
+            tipo === "success" ? "check-circle" : "exclamation-triangle"
+          } me-2"></i>
+          ${mensaje}
+        `;
+        mensajeDiv.classList.remove("d-none");
+
+        // Scroll hacia el mensaje
+        mensajeDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      // Limpiar mensaje cuando se abre el modal
+      document
+        .getElementById("modalRegistroPadre")
+        .addEventListener("shown.bs.modal", function () {
+          document.getElementById("mensajeRegistro").classList.add("d-none");
+        });
+    </script>
+
+    <script src="notificaciones.js"></script>
+  </body>
+</html>

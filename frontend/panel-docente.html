@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Docente - MEP Costa Rica</title>
+    
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Temas Accesibles -->
+    <link rel="stylesheet" href="css/temas-accesibles.css">
+    
+    <style>
+      .dashboard-header {
+        background: linear-gradient(135deg, #002b7f 0%, #004494 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+      }
+
+      .stats-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .nav-tabs .nav-link {
+        border: none;
+        border-radius: 10px 10px 0 0;
+        margin-right: 5px;
+        font-weight: 600;
+      }
+
+      .nav-tabs .nav-link.active {
+        background-color: var(--cr-azul);
+        color: white;
+      }
+
+      .table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-cr-primary {
+        background: linear-gradient(135deg, var(--cr-azul) 0%, #004494 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cr-primary:hover {
+        background: linear-gradient(135deg, #004494 0%, var(--cr-azul) 100%);
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .btn-cr-success {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cr-success:hover {
+        background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+        transform: translateY(-2px);
+        color: white;
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, var(--cr-azul) 0%, #004494 100%);
+        color: white;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .alert-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1060;
+        width: 300px;
+      }
+
+      .lista-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        margin-bottom: 1.5rem;
+      }
+
+      .lista-card:hover {
+        transform: translateY(-3px);
+      }
+
+      @media (max-width: 768px) {
+        .table-container {
+          padding: 1rem;
+        }
+        .alert-container {
+          width: calc(100% - 40px);
+          right: 20px;
+          left: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Alertas Container -->
+    <div id="alertContainer" class="alert-container"></div>
+
+    <!-- Header Dashboard -->
+    <div class="dashboard-header">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h1 class="display-6 fw-bold mb-2">
+              <i class="fas fa-chalkboard-teacher me-3"></i>Panel de Docente
+            </h1>
+            <p class="mb-0 opacity-75">
+              <i class="fas fa-school me-2"></i>
+              <span id="centroEducativo">Centro Educativo</span>
+            </p>
+          </div>
+          <div class="col-md-6 text-end">
+            <div class="d-flex align-items-center justify-content-end">
+              <div class="me-4">
+                <div class="fw-bold" id="nombreUsuario">Docente</div>
+                <small class="opacity-75">
+                  <i class="fas fa-calendar me-1"></i>
+                  <span id="fechaActual"></span>
+                </small>
+              </div>
+              <button id="logoutBtn" class="btn btn-outline-light">
+                <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container-fluid">
+      <!-- Estadísticas Rápidas -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-list-alt fa-2x text-primary mb-2"></i>
+              <h5 class="card-title">Mis Listas</h5>
+              <h3 class="text-primary" id="totalListas">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-boxes fa-2x text-success mb-2"></i>
+              <h5 class="card-title">Materiales</h5>
+              <h3 class="text-success" id="totalMateriales">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-layer-group fa-2x text-warning mb-2"></i>
+              <h5 class="card-title">Niveles</h5>
+              <h3 class="text-warning" id="totalNiveles">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-clock fa-2x text-info mb-2"></i>
+              <h5 class="card-title">Última Lista</h5>
+              <h3 class="text-info" id="ultimaLista">--</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegación por Pestañas -->
+      <ul class="nav nav-tabs mb-4" id="docenteTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="mis-listas-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#mis-listas"
+            type="button"
+            role="tab"
+            aria-controls="mis-listas"
+            aria-selected="true"
+          >
+            <i class="fas fa-list-alt me-2"></i>Mis Listas de Útiles
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="crear-lista-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#crear-lista"
+            type="button"
+            role="tab"
+            aria-controls="crear-lista"
+            aria-selected="false"
+          >
+            <i class="fas fa-plus-circle me-2"></i>Crear Nueva Lista
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="materiales-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#materiales"
+            type="button"
+            role="tab"
+            aria-controls="materiales"
+            aria-selected="false"
+          >
+            <i class="fas fa-boxes me-2"></i>Materiales Disponibles
+          </button>
+        </li>
+      </ul>
+
+      <!-- Contenido de las Pestañas -->
+      <div class="tab-content" id="docenteTabsContent">
+        <!-- MIS LISTAS -->
+        <div class="tab-pane fade show active" id="mis-listas" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0">
+                <i class="fas fa-list-alt me-2"></i>Mis Listas de Útiles Escolares
+              </h4>
+              <button
+                class="btn btn-cr-success"
+                onclick="cambiarTab('crear-lista-tab')"
+              >
+                <i class="fas fa-plus me-2"></i>Nueva Lista
+              </button>
+            </div>
+            
+            <div id="listasContainer">
+              <div class="text-center py-4">
+                <i class="fas fa-spinner fa-spin me-2"></i>Cargando listas...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CREAR LISTA -->
+        <div class="tab-pane fade" id="crear-lista" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-plus-circle me-2"></i>Crear Nueva Lista de Útiles
+            </h4>
+            
+            <form id="formCrearLista">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="nombreLista" class="form-label">
+                      <i class="fas fa-tag me-2"></i>Nombre de la Lista
+                    </label>
+                    <input type="text" class="form-control" id="nombreLista" required 
+                           placeholder="Ej: Lista Primer Grado 2025"/>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="nivelLista" class="form-label">
+                      <i class="fas fa-layer-group me-2"></i>Nivel Educativo
+                    </label>
+                    <select id="nivelLista" class="form-select" required>
+                      <option value="">Seleccione un nivel</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label">
+                  <i class="fas fa-boxes me-2"></i>Seleccionar Materiales
+                </label>
+                <div id="materialesListaContainer" class="row">
+                  <div class="col-12 text-center py-4">
+                    <i class="fas fa-spinner fa-spin me-2"></i>Cargando materiales...
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="observacionesLista" class="form-label">
+                  <i class="fas fa-comment me-2"></i>Observaciones (Opcional)
+                </label>
+                <textarea class="form-control" id="observacionesLista" rows="3" 
+                          placeholder="Notas adicionales sobre la lista..."></textarea>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-cr-primary">
+                  <i class="fas fa-save me-2"></i>Crear Lista
+                </button>
+                <button type="reset" class="btn btn-secondary">
+                  <i class="fas fa-undo me-2"></i>Limpiar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- MATERIALES DISPONIBLES -->
+        <div class="tab-pane fade" id="materiales" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-boxes me-2"></i>Materiales Disponibles
+            </h4>
+            
+            <div class="alert alert-info">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>Información:</strong> Estos son los materiales que puedes incluir en tus listas de útiles.
+            </div>
+
+            <div class="row" id="materialesDisponiblesContainer">
+              <div class="col-12 text-center py-4">
+                <i class="fas fa-spinner fa-spin me-2"></i>Cargando materiales...
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Editar Lista -->
+    <div class="modal fade" id="modalEditarLista" tabindex="-1" aria-labelledby="modalEditarListaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEditarListaLabel">
+              <i class="fas fa-edit me-2"></i>Editar Lista de Útiles
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formEditarLista">
+              <input type="hidden" id="editarListaId">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editarNombreLista" class="form-label">
+                      <i class="fas fa-tag me-2"></i>Nombre de la Lista
+                    </label>
+                    <input type="text" class="form-control" id="editarNombreLista" required/>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="editarNivelLista" class="form-label">
+                      <i class="fas fa-layer-group me-2"></i>Nivel Educativo
+                    </label>
+                    <select id="editarNivelLista" class="form-select" required>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label">
+                  <i class="fas fa-boxes me-2"></i>Materiales
+                </label>
+                <div id="editarMaterialesContainer" class="row">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="editarObservacionesLista" class="form-label">
+                  <i class="fas fa-comment me-2"></i>Observaciones
+                </label>
+                <textarea class="form-control" id="editarObservacionesLista" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" form="formEditarLista" class="btn btn-cr-primary">
+              <i class="fas fa-save me-2"></i>Guardar Cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Confirmar Eliminación -->
+    <div class="modal fade" id="modalConfirmarEliminacion" tabindex="-1" aria-labelledby="modalConfirmarEliminacionLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title" id="modalConfirmarEliminacionLabel">
+              <i class="fas fa-exclamation-triangle me-2"></i>Confirmar Eliminación
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3">¿Está seguro que desea eliminar esta lista de útiles?</p>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Atención:</strong> Esta acción no se puede deshacer.
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger" id="confirmarEliminar">
+              <i class="fas fa-trash me-2"></i>Eliminar Lista
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script type="module">
+      // Importar funciones de autenticación
+      import {
+        authenticatedGet,
+        authenticatedPost,
+        authenticatedPut,
+        authenticatedDelete,
+        logoutUsuario,
+        isAuthenticated,
+      } from "./auth.js";
+
+      // Verificar autenticación
+      if (!isAuthenticated()) {
+        window.location.href = "login.html";
+      }
+
+      // Variables globales
+      let misListas = [];
+      let materiales = [];
+      let niveles = [];
+      let listaEliminando = null;
+      let usuarioActual = null;
+
+      // Función global para logout
+      window.logoutUsuario = logoutUsuario;
+
+      // Función para mostrar alertas
+      function mostrarAlerta(mensaje, tipo = "success") {
+        const alertContainer = document.getElementById("alertContainer");
+        const alertId = "alert-" + Date.now();
+
+        const alertHTML = `
+          <div id="${alertId}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${tipo === "success" ? "check-circle" : "exclamation-triangle"} me-2"></i>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        `;
+
+        alertContainer.insertAdjacentHTML("beforeend", alertHTML);
+
+        // Auto-remove después de 5 segundos
+        setTimeout(() => {
+          const alert = document.getElementById(alertId);
+          if (alert) {
+            alert.remove();
+          }
+        }, 5000);
+      }
+
+      // Función para cambiar tab
+      window.cambiarTab = function(tabId) {
+        const tab = document.getElementById(tabId);
+        if (tab) {
+          tab.click();
+        }
+      };
+
+      // Inicializar datos del usuario
+      async function inicializarUsuario() {
+        try {
+          const perfil = await authenticatedGet("/api/auth/perfil");
+          if (perfil && perfil.usuario) {
+            usuarioActual = perfil.usuario;
+            const { nombre, centroEducativo } = perfil.usuario;
+            
+            document.getElementById("nombreUsuario").textContent = nombre || "Docente";
+            
+            if (centroEducativo) {
+              const centroNombre = centroEducativo.nombre || "Centro Educativo";
+              document.getElementById("centroEducativo").textContent = centroNombre;
+            }
+          }
+        } catch (error) {
+          console.error("Error obteniendo perfil:", error);
+          mostrarAlerta("Error al cargar información del usuario", "danger");
+        }
+      }
+
+      // Cargar materiales
+      async function cargarMateriales() {
+        try {
+          const response = await authenticatedGet("/api/materiales");
+          if (response && response.data) {
+            materiales = response.data.docs || response.data;
+            document.getElementById("totalMateriales").textContent = materiales.length;
+            renderMaterialesCrearLista();
+            renderMaterialesDisponibles();
+          }
+        } catch (error) {
+          console.error("Error cargando materiales:", error);
+          mostrarAlerta("Error al cargar materiales", "danger");
+        }
+      }
+
+      // Cargar niveles
+      async function cargarNiveles() {
+        try {
+          const response = await authenticatedGet("/api/niveles");
+          if (response && response.data) {
+            niveles = response.data.docs || response.data;
+            document.getElementById("totalNiveles").textContent = niveles.length;
+            renderNivelesSelect();
+          }
+        } catch (error) {
+          console.error("Error cargando niveles:", error);
+          // Si no hay niveles, usar algunos predefinidos
+          niveles = [
+            { _id: "inicial", nombre: "Inicial" },
+            { _id: "primaria", nombre: "Primaria" },
+            { _id: "secundaria", nombre: "Secundaria" }
+          ];
+          renderNivelesSelect();
+        }
+      }
+
+      // Cargar mis listas
+      async function cargarMisListas() {
+        try {
+          const response = await authenticatedGet("/api/listas");
+          if (response && response.data) {
+            misListas = response.data.docs || response.data;
+            document.getElementById("totalListas").textContent = misListas.length;
+            
+            // Actualizar estadística de última lista
+            if (misListas.length > 0) {
+              const ultimaLista = misListas.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+              const fecha = new Date(ultimaLista.createdAt).toLocaleDateString();
+              document.getElementById("ultimaLista").textContent = fecha;
+            }
+            
+            renderMisListas();
+          }
+        } catch (error) {
+          console.error("Error cargando listas:", error);
+          mostrarAlerta("Error al cargar listas", "danger");
+        }
+      }
+
+      // Render materiales para crear lista
+      function renderMaterialesCrearLista() {
+        const container = document.getElementById("materialesListaContainer");
+        
+        if (materiales.length === 0) {
+          container.innerHTML = `
+            <div class="col-12 text-center py-4">
+              <i class="fas fa-inbox me-2"></i>No hay materiales disponibles
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = materiales.map(material => `
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="material_${material._id}" 
+                         name="materiales" value="${material._id}">
+                  <label class="form-check-label" for="material_${material._id}">
+                    <strong>${material.nombre}</strong>
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">
+                  ${material.categoria?.nombre || 'Sin categoría'}
+                </small>
+                ${material.descripcion ? `<p class="card-text mt-2 small">${material.descripcion}</p>` : ''}
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Render materiales disponibles
+      function renderMaterialesDisponibles() {
+        const container = document.getElementById("materialesDisponiblesContainer");
+        
+        if (materiales.length === 0) {
+          container.innerHTML = `
+            <div class="col-12 text-center py-4">
+              <i class="fas fa-inbox me-2"></i>No hay materiales disponibles
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = materiales.map(material => `
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card material-card h-100">
+              <div class="card-body">
+                <h6 class="card-title">
+                  <i class="fas fa-box me-2 text-primary"></i>
+                  ${material.nombre}
+                </h6>
+                <p class="card-text">
+                  <small class="text-muted">
+                    <i class="fas fa-tag me-1"></i>
+                    ${material.categoria?.nombre || 'Sin categoría'}
+                  </small>
+                </p>
+                ${material.descripcion ? `<p class="card-text small">${material.descripcion}</p>` : ''}
+                <div class="mt-auto">
+                  <span class="badge bg-${material.disponibleParaDocentes ? 'success' : 'secondary'}">
+                    ${material.disponibleParaDocentes ? 'Disponible' : 'No disponible'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Render niveles en select
+      function renderNivelesSelect() {
+        const selects = [
+          document.getElementById("nivelLista"),
+          document.getElementById("editarNivelLista")
+        ];
+
+        const optionsHTML = niveles.map(nivel => 
+          `<option value="${nivel._id}">${nivel.nombre}</option>`
+        ).join("");
+
+        selects.forEach(select => {
+          if (select) {
+            const defaultOption = select.innerHTML.includes("Seleccione") ? 
+              select.querySelector('option[value=""]').outerHTML : 
+              '<option value="">Seleccione un nivel</option>';
+            select.innerHTML = defaultOption + optionsHTML;
+          }
+        });
+      }
+
+      // Render mis listas
+      function renderMisListas() {
+        const container = document.getElementById("listasContainer");
+        
+        if (misListas.length === 0) {
+          container.innerHTML = `
+            <div class="text-center py-5">
+              <i class="fas fa-list-alt fa-3x text-muted mb-3"></i>
+              <h5 class="text-muted">No has creado listas aún</h5>
+              <p class="text-muted">Comienza creando tu primera lista de útiles escolares</p>
+              <button class="btn btn-cr-primary" onclick="cambiarTab('crear-lista-tab')">
+                <i class="fas fa-plus me-2"></i>Crear Primera Lista
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = misListas.map(lista => `
+          <div class="lista-card card">
+            <div class="card-body">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <h5 class="card-title mb-2">
+                    <i class="fas fa-list-alt me-2 text-primary"></i>
+                    ${lista.nombre}
+                  </h5>
+                  <div class="mb-2">
+                    <span class="badge bg-info me-2">
+                      <i class="fas fa-layer-group me-1"></i>
+                      ${lista.nivel?.nombre || 'Sin nivel'}
+                    </span>
+                    <span class="badge bg-success">
+                      <i class="fas fa-boxes me-1"></i>
+                      ${lista.materiales?.length || 0} materiales
+                    </span>
+                  </div>
+                  <small class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>
+                    Creada: ${new Date(lista.createdAt).toLocaleDateString()}
+                  </small>
+                  ${lista.observaciones ? `
+                    <p class="card-text mt-2 small">
+                      <i class="fas fa-comment me-1"></i>
+                      ${lista.observaciones}
+                    </p>
+                  ` : ''}
+                </div>
+                <div class="col-md-4 text-end">
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-outline-primary btn-sm" onclick="verLista('${lista._id}')" title="Ver detalles">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-outline-warning btn-sm" onclick="editarLista('${lista._id}')" title="Editar">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm" onclick="confirmarEliminarLista('${lista._id}', '${lista.nombre}')" title="Eliminar">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Funciones globales para eventos
+      window.verLista = function(id) {
+        const lista = misListas.find(l => l._id === id);
+        if (!lista) return;
+        
+        // Aquí puedes implementar la vista detallada de la lista
+        mostrarAlerta(`Vista detallada de: ${lista.nombre}`, "info");
+      };
+
+      window.editarLista = async function(id) {
+        const lista = misListas.find(l => l._id === id);
+        if (!lista) return;
+
+        // Llenar formulario de edición
+        document.getElementById("editarListaId").value = lista._id;
+        document.getElementById("editarNombreLista").value = lista.nombre;
+        document.getElementById("editarNivelLista").value = lista.nivel?._id || '';
+        document.getElementById("editarObservacionesLista").value = lista.observaciones || '';
+
+        // Renderizar materiales con los seleccionados
+        const container = document.getElementById("editarMaterialesContainer");
+        container.innerHTML = materiales.map(material => `
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="editar_material_${material._id}" 
+                         name="editarMateriales" value="${material._id}"
+                         ${lista.materiales?.some(m => m._id === material._id) ? 'checked' : ''}>
+                  <label class="form-check-label" for="editar_material_${material._id}">
+                    <strong>${material.nombre}</strong>
+                  </label>
+                </div>
+                <small class="text-muted d-block mt-1">
+                  ${material.categoria?.nombre || 'Sin categoría'}
+                </small>
+              </div>
+            </div>
+          </div>
+        `).join("");
+
+        // Mostrar modal
+        const modal = new bootstrap.Modal(document.getElementById('modalEditarLista'));
+        modal.show();
+      };
+
+      window.confirmarEliminarLista = function(id, nombre) {
+        listaEliminando = { id, nombre };
+        const modal = new bootstrap.Modal(document.getElementById('modalConfirmarEliminacion'));
+        modal.show();
+      };
+
+      // Event listeners
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Configurar fecha actual
+        document.getElementById("fechaActual").textContent = new Date().toLocaleDateString();
+
+        // Inicializar datos
+        await inicializarUsuario();
+        await cargarMateriales();
+        await cargarNiveles();
+        await cargarMisListas();
+      });
+
+      // Form crear lista
+      document.getElementById("formCrearLista").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        try {
+          const materialesSeleccionados = Array.from(
+            document.querySelectorAll('input[name="materiales"]:checked')
+          ).map(input => input.value);
+
+          if (materialesSeleccionados.length === 0) {
+            mostrarAlerta("Debe seleccionar al menos un material", "warning");
+            return;
+          }
+
+          const data = {
+            nombre: document.getElementById("nombreLista").value,
+            nivel: document.getElementById("nivelLista").value,
+            materiales: materialesSeleccionados,
+            observaciones: document.getElementById("observacionesLista").value,
+            docente: usuarioActual._id
+          };
+
+          await authenticatedPost("/api/listas", data);
+          mostrarAlerta("Lista creada correctamente", "success");
+
+          // Limpiar formulario y cambiar a tab de listas
+          this.reset();
+          await cargarMisListas();
+          cambiarTab('mis-listas-tab');
+        } catch (error) {
+          console.error("Error creando lista:", error);
+          mostrarAlerta(error.message || "Error al crear lista", "danger");
+        }
+      });
+
+      // Form editar lista
+      document.getElementById("formEditarLista").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        try {
+          const listaId = document.getElementById("editarListaId").value;
+          const materialesSeleccionados = Array.from(
+            document.querySelectorAll('input[name="editarMateriales"]:checked')
+          ).map(input => input.value);
+
+          if (materialesSeleccionados.length === 0) {
+            mostrarAlerta("Debe seleccionar al menos un material", "warning");
+            return;
+          }
+
+          const data = {
+            nombre: document.getElementById("editarNombreLista").value,
+            nivel: document.getElementById("editarNivelLista").value,
+            materiales: materialesSeleccionados,
+            observaciones: document.getElementById("editarObservacionesLista").value
+          };
+
+          await authenticatedPut(`/api/listas/${listaId}`, data);
+          mostrarAlerta("Lista actualizada correctamente", "success");
+
+          // Cerrar modal y recargar listas
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarLista'));
+          modal.hide();
+          await cargarMisListas();
+        } catch (error) {
+          console.error("Error actualizando lista:", error);
+          mostrarAlerta(error.message || "Error al actualizar lista", "danger");
+        }
+      });
+
+      // Confirmar eliminación
+      document.getElementById("confirmarEliminar").addEventListener("click", async function() {
+        if (!listaEliminando) return;
+
+        try {
+          await authenticatedDelete(`/api/listas/${listaEliminando.id}`);
+          mostrarAlerta(`Lista "${listaEliminando.nombre}" eliminada correctamente`, "success");
+
+          // Cerrar modal y recargar listas
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarEliminacion'));
+          modal.hide();
+          await cargarMisListas();
+
+          listaEliminando = null;
+        } catch (error) {
+          console.error("Error eliminando lista:", error);
+          mostrarAlerta("Error al eliminar lista", "danger");
+        }
+      });
+
+      // Logout
+      document.getElementById("logoutBtn").addEventListener("click", logoutUsuario);
+    </script>
+  </body>
+</html>

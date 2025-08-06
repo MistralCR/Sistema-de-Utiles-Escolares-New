@@ -1,0 +1,39 @@
+{
+  "name": "sistema-utiles-escolares",
+  "version": "1.0.0",
+  "description": "Sistema de Gestión de Útiles Escolares - Proyecto Universitario",
+  "main": "backend/server.js",
+  "scripts": {
+    "dev": "cd backend && node server.js",
+    "dev:watch": "cd backend && nodemon server.js",
+    "start": "cd backend && node server.js",
+    "test": "cross-env NODE_ENV=test dotenv -e .env.test -- jest --runInBand",
+    "frontend": "cd frontend && python3 -m http.server 3000 || cd frontend && python -m http.server 3000",
+    "dev:all": "concurrently \"npm run dev:watch\" \"npm run frontend\"",
+    "setup": "npm install && npm install -g http-server nodemon concurrently",
+    "backend": "cd backend && npm start",
+    "serve": "cd frontend && python -m http.server 3000 || cd frontend && python3 -m http.server 3000"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "exceljs": "^4.4.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.17.0",
+    "mongoose-paginate-v2": "^1.9.1",
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^7.0.5",
+    "pdfkit": "^0.17.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^10.0.0",
+    "dotenv-cli": "^10.0.0",
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.0",
+    "supertest": "^7.1.4"
+  }
+}

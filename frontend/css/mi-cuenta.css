@@ -1,0 +1,66 @@
+/* Estilos para mi-cuenta.html */
+.hidden {
+  display: none !important;
+}
+
+.form-readonly {
+  background-color: #f8f9fa;
+}
+
+.form-editable {
+  border-color: #0d6efd !important;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.loading-container {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.toast-container {
+  z-index: 1055;
+}
+
+.card-header h4 {
+  margin-bottom: 0;
+}
+
+/* Mejoras para el formulario */
+.form-section {
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Estados de botones */
+.btn-group-actions {
+  gap: 0.5rem;
+}
+
+.btn-group-actions .btn {
+  min-width: 120px;
+}
+
+/* Responsive mejoras */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .btn-group-actions {
+    flex-direction: column;
+  }
+
+  .btn-group-actions .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}

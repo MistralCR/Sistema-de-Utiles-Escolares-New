@@ -1,0 +1,2334 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Coordinador - MEP Costa Rica</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Temas Accesibles -->
+    <link rel="stylesheet" href="css/temas-accesibles.css" />
+
+    <style>
+      .dashboard-header {
+        background: linear-gradient(135deg, #002b7f 0%, #004494 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+      }
+
+      .stats-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .nav-tabs .nav-link {
+        border: none;
+        border-radius: 10px 10px 0 0;
+        margin-right: 5px;
+        font-weight: 600;
+      }
+
+      .nav-tabs .nav-link.active {
+        background-color: var(--cr-azul);
+        color: white;
+      }
+
+      .table-container {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-cr-primary {
+        background: var(--cr-azul);
+        border-color: var(--cr-azul);
+        color: white;
+      }
+
+      .btn-cr-primary:hover {
+        background: var(--cr-azul-oscuro);
+        border-color: var(--cr-azul-oscuro);
+      }
+
+      .action-buttons .btn {
+        margin: 0 2px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+      }
+
+      .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      .alert-container {
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="mb-2">
+              <i class="fas fa-user-cog me-3"></i>Panel de Coordinación
+            </h1>
+            <p class="mb-0 opacity-75">
+              <i class="fas fa-flag me-2"></i>Ministerio de Educación Pública -
+              Costa Rica
+            </p>
+          </div>
+          <div class="col-md-4 text-end">
+            <div class="d-flex justify-content-end align-items-center gap-3">
+              <!-- Selector de Tema -->
+              <div class="tema-selector">
+                <label for="selectorTema" class="visually-hidden"
+                  >Seleccionar tema de accesibilidad</label
+                >
+                <select
+                  id="selectorTema"
+                  class="form-select form-select-sm"
+                  title="Seleccionar tema"
+                >
+                  <option value="claro">🌞 Tema Claro</option>
+                  <option value="oscuro">🌙 Tema Oscuro</option>
+                  <option value="alto-contraste">🎯 Alto Contraste</option>
+                  <option value="bajo-contraste">👁️ Bajo Contraste</option>
+                </select>
+              </div>
+              <button onclick="logoutUsuario()" class="btn btn-outline-light">
+                <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container-fluid">
+      <!-- Estadísticas Rápidas -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-box fa-2x text-primary mb-2"></i>
+              <h5 class="card-title">Materiales</h5>
+              <h3 class="text-primary" id="totalMateriales">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-tags fa-2x text-success mb-2"></i>
+              <h5 class="card-title">Categorías</h5>
+              <h3 class="text-success" id="totalCategorias">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-list fa-2x text-warning mb-2"></i>
+              <h5 class="card-title">Listas Activas</h5>
+              <h3 class="text-warning" id="totalListas">0</h3>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card stats-card text-center p-3">
+            <div class="card-body">
+              <i class="fas fa-headset fa-2x text-info mb-2"></i>
+              <h5 class="card-title">Tickets Soporte</h5>
+              <h3 class="text-info" id="totalTickets">0</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegación por Pestañas -->
+      <ul class="nav nav-tabs mb-4" id="coordinatorTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="config-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#config"
+            type="button"
+            role="tab"
+            aria-controls="config"
+            aria-selected="true"
+          >
+            <i class="fas fa-cogs me-2"></i>Configuración Global
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="materiales-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#materiales"
+            type="button"
+            role="tab"
+            aria-controls="materiales"
+            aria-selected="false"
+          >
+            <i class="fas fa-box me-2"></i>Gestión de Materiales
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="categorias-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#categorias"
+            type="button"
+            role="tab"
+            aria-controls="categorias"
+            aria-selected="false"
+          >
+            <i class="fas fa-tags me-2"></i>Categorías
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="reportes-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#reportes"
+            type="button"
+            role="tab"
+            aria-controls="reportes"
+            aria-selected="false"
+          >
+            <i class="fas fa-chart-bar me-2"></i>Reportes
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="soporte-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#soporte"
+            type="button"
+            role="tab"
+            aria-controls="soporte"
+            aria-selected="false"
+          >
+            <i class="fas fa-headset me-2"></i>Soporte
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="centros-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#centros"
+            type="button"
+            role="tab"
+            aria-controls="centros"
+            aria-selected="false"
+          >
+            <i class="fas fa-school me-2"></i>Centros Educativos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="usuarios-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#usuarios"
+            type="button"
+            role="tab"
+            aria-controls="usuarios"
+            aria-selected="false"
+          >
+            <i class="fas fa-users me-2"></i>Gestión de Usuarios
+          </button>
+        </li>
+      </ul>
+
+      <!-- Contenido de las Pestañas -->
+      <div class="tab-content" id="coordinatorTabsContent">
+        <!-- CONFIGURACIÓN GLOBAL -->
+        <div class="tab-pane fade show active" id="config" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-cogs me-2"></i>Configuración Global del Sistema
+            </h4>
+
+            <div id="mensajeGlobalInfo" class="alert alert-info d-none">
+              <i class="fas fa-info-circle me-2"></i>
+              <strong>Mensaje actual:</strong> <span></span>
+            </div>
+
+            <form id="configForm">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="nombreSistema" class="form-label">
+                      <i class="fas fa-tag me-2"></i>Nombre del Sistema
+                    </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nombreSistema"
+                      placeholder="Ej: Sistema de Útiles Escolares MEP"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="logoURL" class="form-label">
+                      <i class="fas fa-image me-2"></i>URL del Logo
+                    </label>
+                    <input
+                      type="url"
+                      class="form-control"
+                      id="logoURL"
+                      placeholder="https://ejemplo.com/logo.png"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="mensajeGlobal" class="form-label">
+                  <i class="fas fa-bullhorn me-2"></i>Mensaje Global
+                </label>
+                <textarea
+                  class="form-control"
+                  id="mensajeGlobal"
+                  rows="3"
+                  placeholder="Mensaje que verán todos los usuarios..."
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-cr-primary">
+                <i class="fas fa-save me-2"></i>Guardar Configuración
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- GESTIÓN DE MATERIALES -->
+        <div class="tab-pane fade" id="materiales" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4><i class="fas fa-box me-2"></i>Gestión de Materiales</h4>
+              <button
+                class="btn btn-cr-primary"
+                onclick="mostrarModalMaterial()"
+              >
+                <i class="fas fa-plus me-2"></i>Nuevo Material
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaMateriales">
+                  <tr>
+                    <td colspan="5" class="text-center">
+                      <i class="fas fa-spinner fa-spin"></i> Cargando
+                      materiales...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- GESTIÓN DE CATEGORÍAS -->
+        <div class="tab-pane fade" id="categorias" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4><i class="fas fa-tags me-2"></i>Gestión de Categorías</h4>
+              <button
+                class="btn btn-cr-primary"
+                onclick="mostrarModalCategoria()"
+              >
+                <i class="fas fa-plus me-2"></i>Nueva Categoría
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Materiales</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaCategorias">
+                  <tr>
+                    <td colspan="4" class="text-center">
+                      <i class="fas fa-spinner fa-spin"></i> Cargando
+                      categorías...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- REPORTES -->
+        <div class="tab-pane fade" id="reportes" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-chart-bar me-2"></i>Centro de Reportes
+            </h4>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                  <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                    <h5>Reporte General</h5>
+                    <p class="text-muted">Estadísticas generales del sistema</p>
+                    <button
+                      class="btn btn-outline-primary"
+                      onclick="generarReporte('general')"
+                    >
+                      <i class="fas fa-download me-2"></i>Generar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                  <div class="card-body text-center">
+                    <i class="fas fa-box fa-3x text-success mb-3"></i>
+                    <h5>Reporte de Materiales</h5>
+                    <p class="text-muted">Inventario y uso de materiales</p>
+                    <button
+                      class="btn btn-outline-success"
+                      onclick="generarReporte('materiales')"
+                    >
+                      <i class="fas fa-download me-2"></i>Generar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                  <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-warning mb-3"></i>
+                    <h5>Reporte de Usuarios</h5>
+                    <p class="text-muted">Actividad de usuarios del sistema</p>
+                    <button
+                      class="btn btn-outline-warning"
+                      onclick="generarReporte('usuarios')"
+                    >
+                      <i class="fas fa-download me-2"></i>Generar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SOPORTE -->
+        <div class="tab-pane fade" id="soporte" role="tabpanel">
+          <div class="table-container">
+            <h4 class="mb-4">
+              <i class="fas fa-headset me-2"></i>Centro de Soporte
+            </h4>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Ticket</th>
+                    <th>Usuario</th>
+                    <th>Asunto</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaSoporte">
+                  <tr>
+                    <td colspan="6" class="text-center">
+                      <i class="fas fa-spinner fa-spin"></i> Cargando tickets...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTROS EDUCATIVOS -->
+        <div class="tab-pane fade" id="centros" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4><i class="fas fa-school me-2"></i>Centros Educativos</h4>
+              <button class="btn btn-cr-primary" onclick="mostrarModalCentro()">
+                <i class="fas fa-plus me-2"></i>Nuevo Centro
+              </button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label for="filtroProvincia" class="form-label visually-hidden"
+                  >Filtrar por provincia</label
+                >
+                <select
+                  class="form-select"
+                  id="filtroProvincia"
+                  title="Filtrar por provincia"
+                >
+                  <option value="">Todas las provincias</option>
+                  <option value="San José">San José</option>
+                  <option value="Alajuela">Alajuela</option>
+                  <option value="Cartago">Cartago</option>
+                  <option value="Heredia">Heredia</option>
+                  <option value="Guanacaste">Guanacaste</option>
+                  <option value="Puntarenas">Puntarenas</option>
+                  <option value="Limón">Limón</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="filtroUbicacion" class="form-label visually-hidden"
+                  >Filtrar por ubicación</label
+                >
+                <select
+                  class="form-select"
+                  id="filtroUbicacion"
+                  title="Filtrar por ubicación"
+                >
+                  <option value="">Todas las ubicaciones</option>
+                  <option value="urbano">Urbano</option>
+                  <option value="rural">Rural</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="filtroTipo" class="form-label visually-hidden"
+                  >Filtrar por tipo</label
+                >
+                <select
+                  class="form-select"
+                  id="filtroTipo"
+                  title="Filtrar por tipo de institución"
+                >
+                  <option value="">Todos los tipos</option>
+                  <option value="multidocente">Multidocente</option>
+                  <option value="unidocente">Unidocente</option>
+                  <option value="especial">Educación Especial</option>
+                  <option value="privado">Privado</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="buscarCentro" class="form-label visually-hidden"
+                  >Buscar centro</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="buscarCentro"
+                  placeholder="Buscar centro..."
+                  title="Buscar centro educativo"
+                />
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Código MEP</th>
+                    <th>Ubicación</th>
+                    <th>Tipo</th>
+                    <th>Usuarios</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaCentros">
+                  <tr>
+                    <td colspan="6" class="text-center">
+                      <i class="fas fa-spinner fa-spin"></i> Cargando centros...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- GESTIÓN DE USUARIOS -->
+        <div class="tab-pane fade" id="usuarios" role="tabpanel">
+          <div class="table-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4><i class="fas fa-users me-2"></i>Gestión de Usuarios</h4>
+              <button
+                class="btn btn-cr-primary"
+                onclick="mostrarModalUsuario()"
+              >
+                <i class="fas fa-user-plus me-2"></i>Nuevo Usuario
+              </button>
+            </div>
+
+            <!-- Filtros -->
+            <div class="row mb-3">
+              <div class="col-md-3">
+                <label for="filtroRolUsuario" class="form-label visually-hidden"
+                  >Filtrar por rol</label
+                >
+                <select
+                  class="form-select"
+                  id="filtroRolUsuario"
+                  title="Filtrar por rol de usuario"
+                >
+                  <option value="">Todos los roles</option>
+                  <option value="administrador">Administrador</option>
+                  <option value="docente">Docente</option>
+                  <!-- Nota: Coordinadores solo pueden gestionar administradores y docentes -->
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label
+                  for="filtroEstadoUsuario"
+                  class="form-label visually-hidden"
+                  >Filtrar por estado</label
+                >
+                <select
+                  class="form-select"
+                  id="filtroEstadoUsuario"
+                  title="Filtrar por estado de usuario"
+                >
+                  <option value="">Todos los estados</option>
+                  <option value="activo">Activo</option>
+                  <option value="inactivo">Inactivo</option>
+                  <option value="suspendido">Suspendido</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label
+                  for="filtroCentroUsuario"
+                  class="form-label visually-hidden"
+                  >Filtrar por centro</label
+                >
+                <select
+                  class="form-select"
+                  id="filtroCentroUsuario"
+                  title="Filtrar por centro educativo"
+                >
+                  <option value="">Todos los centros</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="buscarUsuario" class="form-label visually-hidden"
+                  >Buscar usuario</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="buscarUsuario"
+                  placeholder="Buscar usuario..."
+                  title="Buscar usuario por nombre o correo"
+                />
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Centro</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaUsuarios">
+                  <tr>
+                    <td colspan="6" class="text-center">
+                      <i class="fas fa-spinner fa-spin"></i> Cargando
+                      usuarios...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Material -->
+    <div class="modal fade" id="modalMaterial" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-box me-2"></i>Gestionar Material
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar modal"
+              title="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formMaterial">
+              <input type="hidden" id="materialId" />
+              <div class="mb-3">
+                <label for="materialNombre" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="materialNombre"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="materialCategoria" class="form-label"
+                  >Categoría</label
+                >
+                <select class="form-select" id="materialCategoria" required>
+                  <option value="">Seleccionar categoría...</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="materialDescripcion" class="form-label"
+                  >Descripción</label
+                >
+                <textarea
+                  class="form-control"
+                  id="materialDescripcion"
+                  rows="3"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-cr-primary"
+              onclick="guardarMaterial()"
+            >
+              <i class="fas fa-save me-2"></i>Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Categoría -->
+    <div class="modal fade" id="modalCategoria" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-tags me-2"></i>Gestionar Categoría
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar modal"
+              title="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formCategoria">
+              <input type="hidden" id="categoriaId" />
+              <div class="mb-3">
+                <label for="categoriaNombre" class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="categoriaNombre"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="categoriaDescripcion" class="form-label"
+                  >Descripción</label
+                >
+                <textarea
+                  class="form-control"
+                  id="categoriaDescripcion"
+                  rows="3"
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-cr-primary"
+              onclick="guardarCategoria()"
+            >
+              <i class="fas fa-save me-2"></i>Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Centro Educativo -->
+    <div class="modal fade" id="modalCentro" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-school me-2"></i>Gestionar Centro Educativo
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formCentro">
+              <input type="hidden" id="centroId" />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="centroNombre" class="form-label"
+                      >Nombre del Centro
+                      <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="centroNombre"
+                      required
+                      placeholder="Ej: Escuela República de Chile"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="centroCodigoMEP" class="form-label"
+                      >Código MEP <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="centroCodigoMEP"
+                      required
+                      placeholder="Ej: 12345"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="centroProvincia" class="form-label"
+                      >Provincia <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="centroProvincia" required>
+                      <option value="">Seleccionar provincia</option>
+                      <option value="San José">San José</option>
+                      <option value="Alajuela">Alajuela</option>
+                      <option value="Cartago">Cartago</option>
+                      <option value="Heredia">Heredia</option>
+                      <option value="Guanacaste">Guanacaste</option>
+                      <option value="Puntarenas">Puntarenas</option>
+                      <option value="Limón">Limón</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="centroCanton" class="form-label"
+                      >Cantón <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="centroCanton"
+                      required
+                      placeholder="Ej: Central"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label for="centroDistrito" class="form-label"
+                      >Distrito <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="centroDistrito"
+                      required
+                      placeholder="Ej: Carmen"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="centroUbicacion" class="form-label"
+                      >Ubicación <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="centroUbicacion" required>
+                      <option value="">Seleccionar ubicación</option>
+                      <option value="urbano">Urbano</option>
+                      <option value="rural">Rural</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="centroTipo" class="form-label"
+                      >Tipo de Institución
+                      <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="centroTipo" required>
+                      <option value="">Seleccionar tipo</option>
+                      <option value="multidocente">Multidocente</option>
+                      <option value="unidocente">Unidocente</option>
+                      <option value="especial">Educación Especial</option>
+                      <option value="privado">Privado</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="centroResponsable" class="form-label"
+                  >Responsable <span class="text-danger">*</span></label
+                >
+                <input
+                  type="email"
+                  class="form-control"
+                  id="centroResponsable"
+                  required
+                  placeholder="email@mep.cr"
+                />
+                <div class="form-text">
+                  Debe ser un correo válido del MEP (@mep.cr)
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="centroDescripcion" class="form-label"
+                  >Descripción</label
+                >
+                <textarea
+                  class="form-control"
+                  id="centroDescripcion"
+                  rows="3"
+                  placeholder="Información adicional del centro educativo..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-cr-primary"
+              onclick="guardarCentro()"
+            >
+              <i class="fas fa-save me-2"></i>Guardar Centro
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Usuario -->
+    <div class="modal fade" id="modalUsuario" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-user-plus me-2"></i>Gestionar Usuario
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formUsuario">
+              <input type="hidden" id="usuarioId" />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="usuarioNombre" class="form-label"
+                      >Nombre <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="usuarioNombre"
+                      required
+                      placeholder="Ej: María José González"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="usuarioEmail" class="form-label"
+                      >Correo Electrónico
+                      <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="usuarioEmail"
+                      required
+                      placeholder="usuario@mep.go.cr"
+                    />
+                    <div class="form-text">
+                      Solo correos del MEP (@mep.go.cr) son válidos
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="usuarioRol" class="form-label"
+                      >Rol <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="usuarioRol" required>
+                      <option value="">Seleccionar rol</option>
+                      <option value="administrador">Administrador</option>
+                      <option value="docente">Docente</option>
+                      <option value="padre">Padre de familia</option>
+                      <option value="alumno">Alumno</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="usuarioCentro" class="form-label"
+                      >Centro Educativo
+                      <span class="text-danger">*</span></label
+                    >
+                    <select class="form-select" id="usuarioCentro" required>
+                      <option value="">Seleccionar centro</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="usuarioPassword" class="form-label"
+                      >Contraseña <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="usuarioPassword"
+                      required
+                      placeholder="Mínimo 6 caracteres"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="usuarioEstado" class="form-label">Estado</label>
+                    <select class="form-select" id="usuarioEstado">
+                      <option value="activo">Activo</option>
+                      <option value="inactivo">Inactivo</option>
+                      <option value="suspendido">Suspendido</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="btn btn-cr-primary"
+              onclick="guardarUsuario()"
+            >
+              <i class="fas fa-save me-2"></i>Guardar Usuario
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertas -->
+    <div id="alertContainer" class="position-fixed alert-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/gestor-temas.js"></script>
+    <script type="module">
+      import {
+        authenticatedGet,
+        authenticatedPost,
+        authenticatedPut,
+        authenticatedDelete,
+        logoutUsuario,
+        isAuthenticated,
+      } from "./auth.js";
+
+      // Verificar autenticación
+      if (!isAuthenticated()) {
+        window.location.href = "login.html";
+      }
+
+      // Variables globales
+      let materiales = [];
+      let categorias = [];
+      let tickets = [];
+      let centros = [];
+      let usuarios = [];
+
+      // Función global para logout
+      window.logoutUsuario = logoutUsuario;
+
+      // Función para mostrar alertas
+      function mostrarAlerta(mensaje, tipo = "success") {
+        const alertContainer = document.getElementById("alertContainer");
+        const alertId = "alert-" + Date.now();
+
+        const alertHTML = `
+                <div id="${alertId}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${
+                      tipo === "success"
+                        ? "check-circle"
+                        : "exclamation-triangle"
+                    } me-2"></i>
+                    ${mensaje}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+        alertContainer.insertAdjacentHTML("beforeend", alertHTML);
+
+        // Auto-remove después de 5 segundos
+        setTimeout(() => {
+          const alert = document.getElementById(alertId);
+          if (alert) {
+            alert.remove();
+          }
+        }, 5000);
+      }
+
+      // Cargar datos iniciales
+      async function cargarDatos() {
+        try {
+          // Primero cargar los datos
+          await Promise.all([
+            cargarConfiguracion(),
+            cargarMateriales(),
+            cargarCategorias(),
+            cargarTicketsSoporte(),
+            cargarCentros(),
+            cargarUsuarios(),
+          ]);
+
+          // Después actualizar estadísticas usando los datos cargados
+          await cargarEstadisticas();
+
+          // Renderizar tablas que dependen de múltiples datos después de que todo esté cargado
+          renderizarTablaCategorias();
+        } catch (error) {
+          console.error("Error cargando datos:", error);
+          mostrarAlerta("Error cargando datos del sistema", "danger");
+        }
+      }
+
+      // Cargar estadísticas
+      async function cargarEstadisticas() {
+        try {
+          console.log("📊 Actualizando estadísticas con datos cargados...");
+          console.log("📚 Materiales disponibles:", materiales.length);
+          console.log("📂 Categorías disponibles:", categorias.length);
+
+          // Usar los datos ya cargados en las variables globales
+          const totalMateriales = materiales.length;
+          const totalCategorias = categorias.length;
+
+          // Calcular estadísticas adicionales
+          const totalListas = Math.ceil(materiales.length / 20); // Listas de ~20 materiales cada una
+          const totalTickets = tickets.length || 0; // Usar tickets reales si están disponibles
+
+          console.log("📊 Estadísticas calculadas:");
+          console.log("   - Materiales:", totalMateriales);
+          console.log("   - Categorías:", totalCategorias);
+          console.log("   - Listas estimadas:", totalListas);
+          console.log("   - Tickets:", totalTickets);
+
+          // Actualizar el DOM
+          document.getElementById("totalMateriales").textContent =
+            totalMateriales;
+          document.getElementById("totalCategorias").textContent =
+            totalCategorias;
+          document.getElementById("totalListas").textContent = totalListas;
+          document.getElementById("totalTickets").textContent = totalTickets;
+
+          console.log("✅ Estadísticas actualizadas en las tarjetas");
+        } catch (error) {
+          console.error("Error actualizando estadísticas:", error);
+          // Valores por defecto en caso de error
+          document.getElementById("totalMateriales").textContent = "0";
+          document.getElementById("totalCategorias").textContent = "0";
+          document.getElementById("totalListas").textContent = "0";
+          document.getElementById("totalTickets").textContent = "0";
+        }
+      }
+
+      // Cargar configuración
+      async function cargarConfiguracion() {
+        try {
+          const result = await authenticatedGet("/api/configuracion");
+          if (result?.data) {
+            const { nombreSistema, mensajeGlobal, logoURL } = result.data;
+
+            document.getElementById("nombreSistema").value =
+              nombreSistema || "";
+            document.getElementById("mensajeGlobal").value =
+              mensajeGlobal || "";
+            document.getElementById("logoURL").value = logoURL || "";
+
+            // Mostrar mensaje global si existe
+            if (mensajeGlobal) {
+              const info = document.getElementById("mensajeGlobalInfo");
+              info.querySelector("span").textContent = mensajeGlobal;
+              info.classList.remove("d-none");
+            }
+          }
+        } catch (error) {
+          console.error("Error cargando configuración:", error);
+        }
+      }
+
+      // Cargar materiales
+      async function cargarMateriales() {
+        try {
+          const result = await authenticatedGet("/api/materiales");
+          console.log("📚 Resultado materiales:", result);
+          console.log("📚 result.data:", result?.data);
+
+          // Verificar si tiene la estructura estandarizada {success: true, data: {docs: [...], totalDocs: X}}
+          if (result?.data?.docs && Array.isArray(result.data.docs)) {
+            materiales = result.data.docs;
+          } else if (result?.data && Array.isArray(result.data)) {
+            materiales = result.data;
+          } else {
+            materiales = [];
+            console.warn("Estructura de materiales no reconocida:", result);
+          }
+
+          console.log(
+            "📚 Materiales finales:",
+            materiales.length,
+            "materiales cargados"
+          );
+          renderizarTablaMateriales();
+        } catch (error) {
+          console.error("Error cargando materiales:", error);
+          materiales = [];
+          document.getElementById("tablaMateriales").innerHTML = `
+                    <tr><td colspan="5" class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando materiales
+                    </td></tr>
+                `;
+        }
+      }
+
+      // Cargar categorías
+      async function cargarCategorias() {
+        try {
+          const result = await authenticatedGet("/api/categorias");
+          console.log("📂 Resultado categorías:", result);
+          console.log("📂 result.data:", result?.data);
+
+          // Verificar si tiene la estructura estandarizada {success: true, data: [...]}
+          if (result?.data && Array.isArray(result.data)) {
+            categorias = result.data;
+          } else {
+            categorias = [];
+            console.warn("Estructura de categorías no reconocida:", result);
+          }
+
+          console.log(
+            "📂 Categorías finales:",
+            categorias.length,
+            "categorías cargadas"
+          );
+          actualizarSelectCategorias();
+        } catch (error) {
+          console.error("Error cargando categorías:", error);
+          categorias = [];
+          document.getElementById("tablaCategorias").innerHTML = `
+                    <tr><td colspan="4" class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando categorías
+                    </td></tr>
+                `;
+        }
+      }
+
+      // Cargar tickets de soporte
+      async function cargarTicketsSoporte() {
+        try {
+          const result = await authenticatedGet("/api/soporte");
+          console.log("🎫 Resultado tickets:", result);
+
+          // Verificar estructura de datos
+          if (result?.data?.data && Array.isArray(result.data.data)) {
+            tickets = result.data.data;
+          } else if (result?.data && Array.isArray(result.data)) {
+            tickets = result.data;
+          } else {
+            tickets = [];
+            console.warn("Estructura de tickets no reconocida:", result);
+          }
+
+          console.log("🎫 Tickets finales:", tickets);
+          renderizarTablaSoporte();
+        } catch (error) {
+          console.error("Error cargando tickets:", error);
+          tickets = [];
+          document.getElementById("tablaSoporte").innerHTML = `
+                    <tr><td colspan="6" class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando tickets
+                    </td></tr>
+                `;
+        }
+      }
+
+      // Renderizar tabla de materiales
+      function renderizarTablaMateriales() {
+        const tbody = document.getElementById("tablaMateriales");
+
+        if (materiales.length === 0) {
+          tbody.innerHTML = `
+                    <tr><td colspan="5" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-box-open"></i>
+                            <p>No hay materiales registrados</p>
+                        </div>
+                    </td></tr>
+                `;
+          return;
+        }
+
+        tbody.innerHTML = materiales
+          .map(
+            (material) => `
+                <tr>
+                    <td><strong>${material.nombre}</strong></td>
+                    <td><span class="badge bg-secondary">${
+                      material.categoria?.nombre || "Sin categoría"
+                    }</span></td>
+                    <td>${material.descripcion || "-"}</td>
+                    <td><span class="badge bg-success">Activo</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarMaterial('${
+                          material._id
+                        }')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarMaterial('${
+                          material._id
+                        }')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+          )
+          .join("");
+      }
+
+      // Renderizar tabla de categorías
+      function renderizarTablaCategorias() {
+        const tbody = document.getElementById("tablaCategorias");
+
+        if (categorias.length === 0) {
+          tbody.innerHTML = `
+                    <tr><td colspan="4" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-tags"></i>
+                            <p>No hay categorías registradas</p>
+                        </div>
+                    </td></tr>
+                `;
+          return;
+        }
+
+        tbody.innerHTML = categorias
+          .map((categoria) => {
+            // Calcular número de materiales por categoría
+            const materialesEnCategoria = materiales.filter(
+              (material) =>
+                material.categoria && material.categoria._id === categoria._id
+            ).length;
+
+            return `
+                <tr>
+                    <td><strong>${categoria.nombre}</strong></td>
+                    <td>${categoria.descripcion || "-"}</td>
+                    <td><span class="badge bg-info">${materialesEnCategoria} materiales</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarCategoria('${
+                          categoria._id
+                        }')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria('${
+                          categoria._id
+                        }')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+              `;
+          })
+          .join("");
+      }
+
+      // Renderizar tabla de soporte
+      function renderizarTablaSoporte() {
+        const tbody = document.getElementById("tablaSoporte");
+
+        if (tickets.length === 0) {
+          tbody.innerHTML = `
+                    <tr><td colspan="6" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-headset"></i>
+                            <p>No hay tickets de soporte</p>
+                        </div>
+                    </td></tr>
+                `;
+          return;
+        }
+
+        tbody.innerHTML = tickets
+          .map(
+            (ticket) => `
+                <tr>
+                    <td><strong>#${ticket._id?.slice(-6) || "N/A"}</strong></td>
+                    <td>${ticket.usuario?.nombre || "Usuario"}</td>
+                    <td>${ticket.asunto || "-"}</td>
+                    <td><span class="badge bg-warning">Pendiente</span></td>
+                    <td>${
+                      new Date(ticket.fecha).toLocaleDateString() || "-"
+                    }</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="responderTicket('${
+                          ticket._id
+                        }')">
+                            <i class="fas fa-reply"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+          )
+          .join("");
+      }
+
+      // Actualizar select de categorías
+      function actualizarSelectCategorias() {
+        const select = document.getElementById("materialCategoria");
+        select.innerHTML = '<option value="">Seleccionar categoría...</option>';
+
+        categorias.forEach((categoria) => {
+          select.innerHTML += `<option value="${categoria._id}">${categoria.nombre}</option>`;
+        });
+      }
+
+      // Funciones de modales
+      window.mostrarModalMaterial = function (id = null) {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalMaterial")
+        );
+
+        if (id) {
+          const material = materiales.find((m) => m._id === id);
+          if (material) {
+            document.getElementById("materialId").value = material._id;
+            document.getElementById("materialNombre").value = material.nombre;
+            document.getElementById("materialCategoria").value =
+              material.categoria?._id || "";
+            document.getElementById("materialDescripcion").value =
+              material.descripcion || "";
+          }
+        } else {
+          document.getElementById("formMaterial").reset();
+          document.getElementById("materialId").value = "";
+        }
+
+        modal.show();
+      };
+
+      window.mostrarModalCategoria = function (id = null) {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalCategoria")
+        );
+
+        if (id) {
+          const categoria = categorias.find((c) => c._id === id);
+          if (categoria) {
+            document.getElementById("categoriaId").value = categoria._id;
+            document.getElementById("categoriaNombre").value = categoria.nombre;
+            document.getElementById("categoriaDescripcion").value =
+              categoria.descripcion || "";
+          }
+        } else {
+          document.getElementById("formCategoria").reset();
+          document.getElementById("categoriaId").value = "";
+        }
+
+        modal.show();
+      };
+
+      // Funciones de gestión
+      window.guardarMaterial = async function () {
+        try {
+          const id = document.getElementById("materialId").value;
+          const data = {
+            nombre: document.getElementById("materialNombre").value,
+            categoria: document.getElementById("materialCategoria").value,
+            descripcion: document.getElementById("materialDescripcion").value,
+          };
+
+          if (id) {
+            await authenticatedPut(`/api/materiales/${id}`, data);
+            mostrarAlerta("Material actualizado correctamente");
+          } else {
+            await authenticatedPost("/api/materiales", data);
+            mostrarAlerta("Material creado correctamente");
+          }
+
+          bootstrap.Modal.getInstance(
+            document.getElementById("modalMaterial")
+          ).hide();
+          await cargarMateriales();
+          await cargarEstadisticas();
+          renderizarTablaCategorias(); // Actualizar conteo de materiales por categoría
+        } catch (error) {
+          console.error("Error guardando material:", error);
+          mostrarAlerta("Error guardando material", "danger");
+        }
+      };
+
+      window.guardarCategoria = async function () {
+        try {
+          const id = document.getElementById("categoriaId").value;
+          const data = {
+            nombre: document.getElementById("categoriaNombre").value,
+            descripcion: document.getElementById("categoriaDescripcion").value,
+          };
+
+          if (id) {
+            await authenticatedPut(`/api/categorias/${id}`, data);
+            mostrarAlerta("Categoría actualizada correctamente");
+          } else {
+            await authenticatedPost("/api/categorias", data);
+            mostrarAlerta("Categoría creada correctamente");
+          }
+
+          bootstrap.Modal.getInstance(
+            document.getElementById("modalCategoria")
+          ).hide();
+          await cargarCategorias();
+          await cargarEstadisticas();
+          renderizarTablaCategorias(); // Actualizar tabla de categorías
+        } catch (error) {
+          console.error("Error guardando categoría:", error);
+          mostrarAlerta("Error guardando categoría", "danger");
+        }
+      };
+
+      window.editarMaterial = function (id) {
+        mostrarModalMaterial(id);
+      };
+
+      window.editarCategoria = function (id) {
+        mostrarModalCategoria(id);
+      };
+
+      window.eliminarMaterial = async function (id) {
+        if (confirm("¿Está seguro de eliminar este material?")) {
+          try {
+            await authenticatedDelete(`/api/materiales/${id}`);
+            mostrarAlerta("Material eliminado correctamente");
+            await cargarMateriales();
+            await cargarEstadisticas();
+            renderizarTablaCategorias(); // Actualizar conteo de materiales por categoría
+          } catch (error) {
+            console.error("Error eliminando material:", error);
+            mostrarAlerta("Error eliminando material", "danger");
+          }
+        }
+      };
+
+      window.eliminarCategoria = async function (id) {
+        if (confirm("¿Está seguro de eliminar esta categoría?")) {
+          try {
+            await authenticatedDelete(`/api/categorias/${id}`);
+            mostrarAlerta("Categoría eliminada correctamente");
+            await cargarCategorias();
+            await cargarEstadisticas();
+            renderizarTablaCategorias(); // Actualizar tabla de categorías
+          } catch (error) {
+            console.error("Error eliminando categoría:", error);
+            mostrarAlerta("Error eliminando categoría", "danger");
+          }
+        }
+      };
+
+      window.generarReporte = function (tipo) {
+        mostrarAlerta(`Generando reporte de ${tipo}...`, "info");
+        // Aquí implementarías la lógica de generación de reportes
+      };
+
+      window.responderTicket = function (id) {
+        mostrarAlerta("Función de respuesta en desarrollo", "info");
+        // Aquí implementarías la lógica de respuesta a tickets
+      };
+
+      // Cargar centros educativos
+      async function cargarCentros() {
+        try {
+          console.log("🔍 Iniciando carga de centros...");
+          const result = await authenticatedGet("/api/centros");
+          console.log("📡 Resultado completo:", result);
+          console.log("📦 result.data:", result?.data);
+          console.log("� result.data.docs:", result?.data?.docs);
+
+          // La API devuelve: {success: true, data: {docs: [...], ...}}
+          if (result?.data?.docs && Array.isArray(result.data.docs)) {
+            centros = result.data.docs;
+          } else if (result?.data && Array.isArray(result.data)) {
+            centros = result.data;
+          } else {
+            centros = [];
+            console.warn("Estructura de centros no reconocida:", result);
+          }
+
+          console.log(
+            "✅ Centros asignados:",
+            centros.length,
+            "centros cargados"
+          );
+          console.log(
+            "🏛️  Primer centro:",
+            centros[0]?.nombre || "No disponible"
+          );
+
+          renderizarTablaCentros();
+          actualizarSelectCentros();
+        } catch (error) {
+          console.error("❌ Error cargando centros:", error);
+          centros = [];
+          document.getElementById("tablaCentros").innerHTML = `
+                    <tr><td colspan="6" class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando centros
+                    </td></tr>
+                `;
+        }
+      }
+
+      // Cargar usuarios
+      async function cargarUsuarios() {
+        try {
+          console.log("👥 Iniciando carga de usuarios...");
+          const result = await authenticatedGet("/api/usuarios");
+          console.log("📡 Resultado usuarios:", result);
+
+          // La API devuelve: {success: true, data: {docs: [...], ...}}
+          if (result?.data?.docs && Array.isArray(result.data.docs)) {
+            usuarios = result.data.docs;
+          } else if (result?.data && Array.isArray(result.data)) {
+            usuarios = result.data;
+          } else {
+            usuarios = [];
+            console.warn("Estructura de usuarios no reconocida:", result);
+          }
+
+          console.log("✅ Usuarios cargados:", usuarios.length, "usuarios");
+          renderizarTablaUsuarios();
+        } catch (error) {
+          console.error("Error cargando usuarios:", error);
+          usuarios = [];
+          document.getElementById("tablaUsuarios").innerHTML = `
+                    <tr><td colspan="6" class="text-center text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando usuarios
+                    </td></tr>
+                `;
+        }
+      }
+
+      // Renderizar tabla de centros
+      function renderizarTablaCentros() {
+        console.log("🎨 Renderizando tabla de centros...");
+        const tbody = document.getElementById("tablaCentros");
+        console.log("📝 tbody element:", tbody);
+        console.log("📊 centros variable:", centros);
+        console.log("🔢 centros.length:", centros.length);
+
+        if (centros.length === 0) {
+          console.log("⚠️  No hay centros, mostrando mensaje vacío");
+          tbody.innerHTML = `
+                    <tr><td colspan="6" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-school"></i>
+                            <p>No hay centros educativos registrados</p>
+                        </div>
+                    </td></tr>
+                `;
+          return;
+        }
+
+        tbody.innerHTML = centros
+          .map(
+            (centro) => `
+                <tr>
+                    <td><strong>${centro.nombre}</strong></td>
+                    <td><span class="badge bg-primary">${
+                      centro.codigoMEP
+                    }</span></td>
+                    <td>${centro.provincia}, ${
+              centro.canton
+            }<br><small class="text-muted">${centro.distrito}</small></td>
+                    <td><span class="badge bg-${
+                      centro.etiquetas?.ubicacion === "urbano"
+                        ? "success"
+                        : "warning"
+                    }">${
+              centro.etiquetas?.ubicacion || "N/A"
+            }</span><br><span class="badge bg-secondary">${
+              centro.etiquetas?.tipoInstitucion || "N/A"
+            }</span></td>
+                    <td><span class="badge bg-info">${
+                      centro.usuariosAsociados || 0
+                    } usuarios</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarCentro('${
+                          centro._id
+                        }')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCentro('${
+                          centro._id
+                        }')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+          )
+          .join("");
+      }
+
+      // Renderizar tabla de usuarios
+      function renderizarTablaUsuarios() {
+        const tbody = document.getElementById("tablaUsuarios");
+
+        if (usuarios.length === 0) {
+          tbody.innerHTML = `
+                    <tr><td colspan="6" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-users"></i>
+                            <p>No hay usuarios registrados</p>
+                        </div>
+                    </td></tr>
+                `;
+          return;
+        }
+
+        tbody.innerHTML = usuarios
+          .map(
+            (usuario) => `
+                <tr>
+                    <td><strong>${usuario.nombre}</strong></td>
+                    <td>${usuario.email}</td>
+                    <td><span class="badge bg-primary">${
+                      usuario.rol
+                    }</span></td>
+                    <td>${usuario.centroEducativo?.nombre || "Sin centro"}</td>
+                    <td><span class="badge bg-${
+                      usuario.estado === "activo"
+                        ? "success"
+                        : usuario.estado === "inactivo"
+                        ? "warning"
+                        : "danger"
+                    }">${usuario.estado}</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario('${
+                          usuario._id
+                        }')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario('${
+                          usuario._id
+                        }')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+          )
+          .join("");
+      }
+
+      // Actualizar select de centros
+      function actualizarSelectCentros() {
+        const selects = ["usuarioCentro", "filtroCentroUsuario"];
+
+        selects.forEach((selectId) => {
+          const select = document.getElementById(selectId);
+          if (select) {
+            const isFilter = selectId.includes("filtro");
+            select.innerHTML = isFilter
+              ? '<option value="">Todos los centros</option>'
+              : '<option value="">Seleccionar centro</option>';
+
+            centros.forEach((centro) => {
+              select.innerHTML += `<option value="${centro._id}">${centro.nombre}</option>`;
+            });
+          }
+        });
+      }
+
+      // Funciones de modales para centros
+      window.mostrarModalCentro = function (id = null) {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalCentro")
+        );
+
+        if (id) {
+          const centro = centros.find((c) => c._id === id);
+          if (centro) {
+            document.getElementById("centroId").value = centro._id;
+            document.getElementById("centroNombre").value = centro.nombre;
+            document.getElementById("centroCodigoMEP").value = centro.codigoMEP;
+            document.getElementById("centroProvincia").value = centro.provincia;
+            document.getElementById("centroCanton").value = centro.canton;
+            document.getElementById("centroDistrito").value = centro.distrito;
+            document.getElementById("centroUbicacion").value =
+              centro.etiquetas?.ubicacion || "";
+            document.getElementById("centroTipo").value =
+              centro.etiquetas?.tipoInstitucion || "";
+            document.getElementById("centroResponsable").value =
+              centro.responsable?.email || "";
+            document.getElementById("centroDescripcion").value =
+              centro.descripcion || "";
+          }
+        } else {
+          document.getElementById("formCentro").reset();
+          document.getElementById("centroId").value = "";
+        }
+
+        modal.show();
+      };
+
+      // 🔒 Configurar roles permitidos según el rol del usuario actual
+      function configurarRolesPermitidos() {
+        const selectRol = document.getElementById("usuarioRol");
+        const userRole = localStorage.getItem("userRole") || "coordinador"; // Asumir coordinador por defecto
+
+        // Limpiar opciones existentes
+        selectRol.innerHTML = '<option value="">Seleccionar rol</option>';
+
+        if (userRole === "coordinador") {
+          // 🔒 RESTRICCIÓN: Coordinadores solo pueden crear administradores y docentes
+          selectRol.innerHTML +=
+            '<option value="administrador">Administrador</option>';
+          selectRol.innerHTML += '<option value="docente">Docente</option>';
+
+          // Agregar mensaje informativo
+          const helpText = selectRol.parentNode.querySelector(".form-text");
+          if (helpText) {
+            helpText.textContent =
+              "Como coordinador, solo puedes crear administradores y docentes.";
+            helpText.className = "form-text text-warning";
+          } else {
+            const newHelpText = document.createElement("div");
+            newHelpText.className = "form-text text-warning";
+            newHelpText.innerHTML =
+              '<i class="fas fa-exclamation-triangle me-1"></i>Como coordinador, solo puedes crear administradores y docentes.';
+            selectRol.parentNode.appendChild(newHelpText);
+          }
+        } else {
+          // Para otros roles (admin), mostrar todas las opciones
+          selectRol.innerHTML +=
+            '<option value="administrador">Administrador</option>';
+          selectRol.innerHTML += '<option value="docente">Docente</option>';
+          selectRol.innerHTML +=
+            '<option value="padre">Padre de familia</option>';
+          selectRol.innerHTML += '<option value="alumno">Alumno</option>';
+        }
+      }
+
+      // Funciones de modales para usuarios
+      window.mostrarModalUsuario = function (id = null) {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalUsuario")
+        );
+
+        // 🔒 Configurar roles permitidos para coordinador
+        configurarRolesPermitidos();
+
+        if (id) {
+          const usuario = usuarios.find((u) => u._id === id);
+          if (usuario) {
+            document.getElementById("usuarioId").value = usuario._id;
+            document.getElementById("usuarioNombre").value = usuario.nombre;
+            document.getElementById("usuarioEmail").value = usuario.email;
+            document.getElementById("usuarioRol").value = usuario.rol;
+            document.getElementById("usuarioCentro").value =
+              usuario.centroEducativo?._id || "";
+            document.getElementById("usuarioEstado").value = usuario.estado;
+            // No cargar la contraseña por seguridad
+            document
+              .getElementById("usuarioPassword")
+              .removeAttribute("required");
+          }
+        } else {
+          document.getElementById("formUsuario").reset();
+          document.getElementById("usuarioId").value = "";
+          document
+            .getElementById("usuarioPassword")
+            .setAttribute("required", "");
+          document.getElementById("usuarioEstado").value = "activo";
+        }
+
+        modal.show();
+      };
+
+      // Funciones de gestión para centros
+      window.guardarCentro = async function () {
+        try {
+          const id = document.getElementById("centroId").value;
+
+          // Obtener el email del responsable para extraer el nombre
+          const emailResponsable =
+            document.getElementById("centroResponsable").value;
+          const nombreResponsable = emailResponsable
+            .split("@")[0]
+            .replace(/\./g, " ");
+
+          const data = {
+            nombre: document.getElementById("centroNombre").value,
+            codigoMEP: document.getElementById("centroCodigoMEP").value,
+            provincia: document.getElementById("centroProvincia").value,
+            canton: document.getElementById("centroCanton").value,
+            distrito: document.getElementById("centroDistrito").value,
+            responsable: {
+              nombre: nombreResponsable,
+              email: emailResponsable,
+              telefono: "", // Campo opcional
+            },
+            etiquetas: {
+              ubicacion: document.getElementById("centroUbicacion").value,
+              tipoInstitucion: document.getElementById("centroTipo").value,
+            },
+            descripcion: document.getElementById("centroDescripcion").value,
+          };
+
+          if (id) {
+            await authenticatedPut(`/api/centros/${id}`, data);
+            mostrarAlerta("Centro educativo actualizado correctamente");
+          } else {
+            await authenticatedPost("/api/centros", data);
+            mostrarAlerta("Centro educativo creado correctamente");
+          }
+
+          bootstrap.Modal.getInstance(
+            document.getElementById("modalCentro")
+          ).hide();
+          await cargarCentros();
+        } catch (error) {
+          console.error("Error guardando centro:", error);
+          mostrarAlerta("Error guardando centro educativo", "danger");
+        }
+      };
+
+      // Funciones de gestión para usuarios
+      window.guardarUsuario = async function () {
+        try {
+          const id = document.getElementById("usuarioId").value;
+          const data = {
+            nombre: document.getElementById("usuarioNombre").value,
+            email: document.getElementById("usuarioEmail").value,
+            rol: document.getElementById("usuarioRol").value,
+            centroEducativo: document.getElementById("usuarioCentro").value,
+            estado: document.getElementById("usuarioEstado").value,
+          };
+
+          // Solo incluir contraseña si no está editando o si se proporcionó
+          const password = document.getElementById("usuarioPassword").value;
+          if (!id || password) {
+            data.password = password;
+          }
+
+          if (id) {
+            await authenticatedPut(`/api/usuarios/${id}`, data);
+            mostrarAlerta("Usuario actualizado correctamente");
+          } else {
+            await authenticatedPost("/api/usuarios", data);
+            mostrarAlerta("Usuario creado correctamente");
+          }
+
+          bootstrap.Modal.getInstance(
+            document.getElementById("modalUsuario")
+          ).hide();
+          await cargarUsuarios();
+        } catch (error) {
+          console.error("Error guardando usuario:", error);
+          mostrarAlerta("Error guardando usuario", "danger");
+        }
+      };
+
+      window.editarCentro = function (id) {
+        mostrarModalCentro(id);
+      };
+
+      window.editarUsuario = function (id) {
+        mostrarModalUsuario(id);
+      };
+
+      window.eliminarCentro = async function (id) {
+        if (confirm("¿Está seguro de eliminar este centro educativo?")) {
+          try {
+            await authenticatedDelete(`/api/centros/${id}`);
+            mostrarAlerta("Centro educativo eliminado correctamente");
+            await cargarCentros();
+          } catch (error) {
+            console.error("Error eliminando centro:", error);
+            mostrarAlerta("Error eliminando centro educativo", "danger");
+          }
+        }
+      };
+
+      window.eliminarUsuario = async function (id) {
+        if (confirm("¿Está seguro de eliminar este usuario?")) {
+          try {
+            await authenticatedDelete(`/api/usuarios/${id}`);
+            mostrarAlerta("Usuario eliminado correctamente");
+            await cargarUsuarios();
+          } catch (error) {
+            console.error("Error eliminando usuario:", error);
+            mostrarAlerta("Error eliminando usuario", "danger");
+          }
+        }
+      };
+
+      // Event listeners para filtros
+      document.addEventListener("DOMContentLoaded", function () {
+        // Filtros para centros
+        const filtrosCentros = [
+          "filtroProvincia",
+          "filtroUbicacion",
+          "filtroTipo",
+          "buscarCentro",
+        ];
+        filtrosCentros.forEach((filtroId) => {
+          const elemento = document.getElementById(filtroId);
+          if (elemento) {
+            elemento.addEventListener("change", filtrarCentros);
+            elemento.addEventListener("input", filtrarCentros);
+          }
+        });
+
+        // Filtros para usuarios
+        const filtrosUsuarios = [
+          "filtroRolUsuario",
+          "filtroEstadoUsuario",
+          "filtroCentroUsuario",
+          "buscarUsuario",
+        ];
+        filtrosUsuarios.forEach((filtroId) => {
+          const elemento = document.getElementById(filtroId);
+          if (elemento) {
+            elemento.addEventListener("change", filtrarUsuarios);
+            elemento.addEventListener("input", filtrarUsuarios);
+          }
+        });
+      });
+
+      // Función para filtrar centros
+      function filtrarCentros() {
+        const provincia = document
+          .getElementById("filtroProvincia")
+          .value.toLowerCase();
+        const ubicacion = document
+          .getElementById("filtroUbicacion")
+          .value.toLowerCase();
+        const tipo = document.getElementById("filtroTipo").value.toLowerCase();
+        const busqueda = document
+          .getElementById("buscarCentro")
+          .value.toLowerCase();
+
+        const centrosFiltrados = centros.filter((centro) => {
+          const coincideProvincia =
+            !provincia || centro.provincia.toLowerCase().includes(provincia);
+          const coincideUbicacion =
+            !ubicacion || centro.ubicacion.toLowerCase().includes(ubicacion);
+          const coincideTipo =
+            !tipo || centro.tipo.toLowerCase().includes(tipo);
+          const coincideBusqueda =
+            !busqueda ||
+            centro.nombre.toLowerCase().includes(busqueda) ||
+            centro.codigoMEP.toString().includes(busqueda);
+
+          return (
+            coincideProvincia &&
+            coincideUbicacion &&
+            coincideTipo &&
+            coincideBusqueda
+          );
+        });
+
+        renderizarTablaCentrosFiltrados(centrosFiltrados);
+      }
+
+      // Función para filtrar usuarios
+      function filtrarUsuarios() {
+        const rol = document
+          .getElementById("filtroRolUsuario")
+          .value.toLowerCase();
+        const estado = document
+          .getElementById("filtroEstadoUsuario")
+          .value.toLowerCase();
+        const centro = document.getElementById("filtroCentroUsuario").value;
+        const busqueda = document
+          .getElementById("buscarUsuario")
+          .value.toLowerCase();
+
+        const usuariosFiltrados = usuarios.filter((usuario) => {
+          const coincideRol = !rol || usuario.rol.toLowerCase().includes(rol);
+          const coincideEstado =
+            !estado || usuario.estado.toLowerCase().includes(estado);
+          const coincideCentro =
+            !centro || usuario.centroEducativo?._id === centro;
+          const coincideBusqueda =
+            !busqueda ||
+            usuario.nombre.toLowerCase().includes(busqueda) ||
+            usuario.email.toLowerCase().includes(busqueda);
+
+          return (
+            coincideRol && coincideEstado && coincideCentro && coincideBusqueda
+          );
+        });
+
+        renderizarTablaUsuariosFiltrados(usuariosFiltrados);
+      }
+
+      // Renderizar tabla de centros filtrados
+      function renderizarTablaCentrosFiltrados(centrosFiltrados) {
+        const tbody = document.getElementById("tablaCentros");
+
+        if (centrosFiltrados.length === 0) {
+          tbody.innerHTML = `
+                    <tr><td colspan="6" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <p>No se encontraron centros con los filtros aplicados</p>
+                        </div>
+                    </td></tr>
+                `;
+          return;
+        }
+
+        tbody.innerHTML = centrosFiltrados
+          .map(
+            (centro) => `
+                <tr>
+                    <td><strong>${centro.nombre}</strong></td>
+                    <td><span class="badge bg-primary">${
+                      centro.codigoMEP
+                    }</span></td>
+                    <td>${centro.provincia}, ${
+              centro.canton
+            }<br><small class="text-muted">${centro.distrito}</small></td>
+                    <td><span class="badge bg-${
+                      centro.ubicacion === "urbano" ? "success" : "warning"
+                    }">${
+              centro.ubicacion
+            }</span><br><span class="badge bg-secondary">${
+              centro.tipo
+            }</span></td>
+                    <td><span class="badge bg-info">${
+                      centro.usuarios || 0
+                    } usuarios</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarCentro('${
+                          centro._id
+                        }')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCentro('${
+                          centro._id
+                        }')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+          )
+          .join("");
+      }
+
+      // Renderizar tabla de usuarios filtrados
+      function renderizarTablaUsuariosFiltrados(usuariosFiltrados) {
+        const tbody = document.getElementById("tablaUsuarios");
+
+        if (usuariosFiltrados.length === 0) {
+          tbody.innerHTML = `
+                    <tr><td colspan="6" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <p>No se encontraron usuarios con los filtros aplicados</p>
+                        </div>
+                    </td></tr>
+                `;
+          return;
+        }
+
+        tbody.innerHTML = usuariosFiltrados
+          .map(
+            (usuario) => `
+                <tr>
+                    <td><strong>${usuario.nombre}</strong></td>
+                    <td>${usuario.email}</td>
+                    <td><span class="badge bg-primary">${
+                      usuario.rol
+                    }</span></td>
+                    <td>${usuario.centroEducativo?.nombre || "Sin centro"}</td>
+                    <td><span class="badge bg-${
+                      usuario.estado === "activo"
+                        ? "success"
+                        : usuario.estado === "inactivo"
+                        ? "warning"
+                        : "danger"
+                    }">${usuario.estado}</span></td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario('${
+                          usuario._id
+                        }')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario('${
+                          usuario._id
+                        }')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `
+          )
+          .join("");
+      }
+
+      // Event listener para configuración
+      document
+        .getElementById("configForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          try {
+            const data = {
+              nombreSistema: document.getElementById("nombreSistema").value,
+              mensajeGlobal: document.getElementById("mensajeGlobal").value,
+              logoURL: document.getElementById("logoURL").value,
+            };
+
+            await authenticatedPut("/api/configuracion", data);
+            mostrarAlerta("Configuración guardada correctamente");
+
+            // Actualizar mensaje global
+            const mensajeInfo = document.getElementById("mensajeGlobalInfo");
+            if (data.mensajeGlobal) {
+              mensajeInfo.querySelector("span").textContent =
+                data.mensajeGlobal;
+              mensajeInfo.classList.remove("d-none");
+            } else {
+              mensajeInfo.classList.add("d-none");
+            }
+          } catch (error) {
+            console.error("Error guardando configuración:", error);
+            mostrarAlerta("Error guardando configuración", "danger");
+          }
+        });
+
+      // Cargar datos al iniciar
+      cargarDatos();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+{
+  "ubicacionGeografica": [
+    {
+      "valor": "rural",
+      "nombre": "Rural",
+      "descripcion": "Centro educativo ubicado en zona rural"
+    },
+    {
+      "valor": "urbano",
+      "nombre": "Urbano",
+      "descripcion": "Centro educativo ubicado en zona urbana"
+    }
+  ],
+  "tipoInstitucion": [
+    {
+      "valor": "unidocente",
+      "nombre": "Unidocente",
+      "descripcion": "Escuela con un solo docente para todos los niveles"
+    },
+    {
+      "valor": "multidocente",
+      "nombre": "Multidocente",
+      "descripcion": "Escuela con múltiples docentes especializados"
+    },
+    {
+      "valor": "especial",
+      "nombre": "Educación Especial",
+      "descripcion": "Centro especializado en educación especial"
+    },
+    {
+      "valor": "privado",
+      "nombre": "Privado",
+      "descripcion": "Institución educativa privada"
+    }
+  ],
+  "nivelesEducativos": [
+    {
+      "valor": "preescolar",
+      "nombre": "Preescolar",
+      "descripcion": "Educación inicial para niños de 4-6 años"
+    },
+    {
+      "valor": "primaria",
+      "nombre": "Primaria",
+      "descripcion": "Educación primaria de 1° a 6° grado"
+    },
+    {
+      "valor": "secundaria",
+      "nombre": "Secundaria",
+      "descripcion": "Educación secundaria de 7° a 11° año"
+    },
+    {
+      "valor": "técnico",
+      "nombre": "Técnico",
+      "descripcion": "Educación técnica especializada"
+    },
+    {
+      "valor": "nocturno",
+      "nombre": "Nocturno",
+      "descripcion": "Educación en modalidad nocturna"
+    },
+    {
+      "valor": "IB",
+      "nombre": "Bachillerato Internacional",
+      "descripcion": "Programa de Bachillerato Internacional"
+    }
+  ],
+  "provincias": [
+    "San José",
+    "Alajuela",
+    "Cartago",
+    "Heredia",
+    "Guanacaste",
+    "Puntarenas",
+    "Limón"
+  ]
+}
