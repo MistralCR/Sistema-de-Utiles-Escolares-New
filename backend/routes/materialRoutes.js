@@ -20,6 +20,14 @@ router.put(
   materialController.editarMaterial
 );
 
+// Configurar disponibilidad para docentes (solo administrador)
+router.put(
+  "/:id/configuracion",
+  authMiddleware,
+  checkRole(["administrador"]),
+  materialController.configurarMaterial
+);
+
 // Eliminar material (solo coordinador)
 router.delete(
   "/:id",

@@ -951,19 +951,44 @@
                   </div>
                 </div>
               </div>
-              <div class="mb-3">
-                <label for="centroResponsable" class="form-label"
-                  >Responsable <span class="text-danger">*</span></label
-                >
-                <input
-                  type="email"
-                  class="form-control"
-                  id="centroResponsable"
-                  required
-                  placeholder="email@mep.cr"
-                />
-                <div class="form-text">
-                  Debe ser un correo válido del MEP (@mep.cr)
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="centroResponsable" class="form-label"
+                      >Email del Responsable
+                      <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="centroResponsable"
+                      required
+                      placeholder="director@mep.cr"
+                    />
+                    <div class="form-text">
+                      Debe ser un correo válido del MEP (@mep.cr)
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="centroTelefono" class="form-label"
+                      >Teléfono del Responsable</label
+                    >
+                    <input
+                      type="tel"
+                      class="form-control"
+                      id="centroTelefono"
+                      placeholder="22223344"
+                      pattern="[0-9]{8}"
+                      title="Ingrese 8 dígitos sin guiones ni espacios"
+                      maxlength="8"
+                      oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    />
+                    <div class="form-text">
+                      8 dígitos sin guiones (ej: 22223344)
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="mb-3">
@@ -1886,6 +1911,8 @@
               centro.etiquetas?.tipoInstitucion || "";
             document.getElementById("centroResponsable").value =
               centro.responsable?.email || "";
+            document.getElementById("centroTelefono").value =
+              centro.responsable?.telefono || "";
             document.getElementById("centroDescripcion").value =
               centro.descripcion || "";
           }
@@ -1982,6 +2009,38 @@
           const nombreResponsable = emailResponsable
             .split("@")[0]
             .replace(/\./g, " ");
+          const telefonoResponsable = document
+            .getElementById("centroTelefono")
+            .value.trim();
+
+          // Limpiar el teléfono removiendo guiones y espacios
+          const telefonoLimpio = telefonoResponsable
+            ? telefonoResponsable.replace(/[-\s]/g, "")
+            : "";
+
+          console.log("DEBUG - Teléfono original:", telefonoResponsable);
+          console.log("DEBUG - Teléfono limpio:", telefonoLimpio);
+
+          // Validar que el teléfono tenga exactamente 8 dígitos si se proporciona
+          if (
+            telefonoLimpio &&
+            (telefonoLimpio.length !== 8 || !/^\d{8}$/.test(telefonoLimpio))
+          ) {
+            mostrarAlerta(
+              "📱 El teléfono debe tener exactamente 8 dígitos sin guiones (ej: 22334455)",
+              "danger"
+            );
+            return;
+          }
+
+          // Validar que el email sea del dominio @mep.go.cr
+          if (!emailResponsable.endsWith("@mep.go.cr")) {
+            mostrarAlerta(
+              "⚠️ El email del responsable debe usar el dominio @mep.go.cr (ej: director@mep.go.cr)",
+              "danger"
+            );
+            return;
+          }
 
           const data = {
             nombre: document.getElementById("centroNombre").value,
@@ -1992,7 +2051,7 @@
             responsable: {
               nombre: nombreResponsable,
               email: emailResponsable,
-              telefono: "", // Campo opcional
+              telefono: telefonoLimpio || undefined, // Solo enviar si tiene valor
             },
             etiquetas: {
               ubicacion: document.getElementById("centroUbicacion").value,
@@ -2015,7 +2074,29 @@
           await cargarCentros();
         } catch (error) {
           console.error("Error guardando centro:", error);
-          mostrarAlerta("Error guardando centro educativo", "danger");
+          console.error("Error response:", error.response?.data);
+          console.error("Error status:", error.response?.status);
+
+          // Mostrar mensaje de error más específico
+          let errorMessage = "Error guardando centro educativo";
+          if (error.response?.data?.mensaje) {
+            errorMessage = error.response.data.mensaje;
+          } else if (error.response?.data?.error) {
+            errorMessage = error.response.data.error;
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
+
+          // Mensajes más claros para errores comunes
+          if (errorMessage.includes("dominio @mep.go.cr")) {
+            errorMessage =
+              "⚠️ El email del responsable debe usar el dominio @mep.go.cr (ej: director@mep.go.cr)";
+          } else if (errorMessage.includes("teléfono debe tener 8 dígitos")) {
+            errorMessage =
+              "📱 El teléfono debe tener exactamente 8 dígitos sin guiones (ej: 22334455)";
+          }
+
+          mostrarAlerta(errorMessage, "danger");
         }
       };
 
@@ -2025,16 +2106,16 @@
           const id = document.getElementById("usuarioId").value;
           const data = {
             nombre: document.getElementById("usuarioNombre").value,
-            email: document.getElementById("usuarioEmail").value,
+            correo: document.getElementById("usuarioEmail").value,
             rol: document.getElementById("usuarioRol").value,
             centroEducativo: document.getElementById("usuarioCentro").value,
             estado: document.getElementById("usuarioEstado").value,
           };
 
           // Solo incluir contraseña si no está editando o si se proporcionó
-          const password = document.getElementById("usuarioPassword").value;
-          if (!id || password) {
-            data.password = password;
+          const contrasena = document.getElementById("usuarioPassword").value;
+          if (!id || contrasena) {
+            data.contraseña = contrasena;
           }
 
           if (id) {

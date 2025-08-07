@@ -157,3 +157,54 @@ exports.asignarMaterialesCentro = async (req, res) => {
       .json({ msg: "Error al asignar materiales", error: err.message });
   }
 };
+
+// 6. Configurar disponibilidad de material para docentes (solo administrador)
+exports.configurarMaterial = async (req, res) => {
+  try {
+    if (req.user.rol !== "administrador") {
+      return res
+        .status(403)
+        .json({ msg: "Solo administradores pueden configurar materiales" });
+    }
+
+    const { id } = req.params;
+    const { disponibleParaDocentes } = req.body;
+
+    if (typeof disponibleParaDocentes !== "boolean") {
+      return res
+        .status(400)
+        .json({ msg: "disponibleParaDocentes debe ser true o false" });
+    }
+
+    const material = await Material.findById(id);
+    if (!material) {
+      return res.status(404).json({ msg: "Material no encontrado" });
+    }
+
+    material.disponibleParaDocentes = disponibleParaDocentes;
+    await material.save();
+
+    // Registrar en historial
+    const registrarHistorial = require("../helpers/registrarHistorial");
+    registrarHistorial(
+      req,
+      `configuró disponibilidad para docentes: ${disponibleParaDocentes}`,
+      "Material",
+      material._id,
+      `Material: ${material.nombre}`
+    );
+
+    res.json({
+      msg: "Configuración actualizada correctamente",
+      material: {
+        _id: material._id,
+        nombre: material.nombre,
+        disponibleParaDocentes: material.disponibleParaDocentes,
+      },
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ msg: "Error al configurar material", error: err.message });
+  }
+};

@@ -16,17 +16,17 @@ const UsuarioSchema = new mongoose.Schema(
       trim: true,
       validate: {
         validator: function (email) {
-          // Solo coordinadores y padres pueden tener emails que no sean @mep.cr
-          if (this.rol === "coordinador" || this.rol === "padre") {
+          // Solo padres pueden tener cualquier correo
+          if (this.rol === "padre") {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
           }
-          // Todos los demás roles deben usar @mep.cr
-          return /^[^\s@]+@mep\.cr$/.test(email);
+          // Todos los demás roles deben usar @mep.go.cr
+          return /^[^\s@]+@mep\.go\.cr$/.test(email);
         },
-        message: "Para este rol, el correo debe ser del dominio @mep.cr",
+        message: "Para este rol, el correo debe ser del dominio @mep.go.cr",
       },
     },
-    contraseña: {
+    contrasenna: {
       type: String,
       required: true,
     },
@@ -105,15 +105,17 @@ const UsuarioSchema = new mongoose.Schema(
 );
 
 UsuarioSchema.pre("save", async function (next) {
-  if (this.isModified("contraseña")) {
+  if (this.isModified("contrasenna")) {
     const salt = await bcrypt.genSalt(10);
-    this.contraseña = await bcrypt.hash(this.contraseña, salt);
+    this.contrasenna = await bcrypt.hash(this.contrasenna, salt);
   }
   next();
 });
 
 UsuarioSchema.methods.compararPassword = async function (password) {
-  return await bcrypt.compare(password, this.contraseña);
+  console.log("CompararPassword - Recibida:", password);
+  console.log("CompararPassword - Hash:", this.contrasenna);
+  return await bcrypt.compare(password, this.contrasenna);
 };
 
 // Plugin de paginación

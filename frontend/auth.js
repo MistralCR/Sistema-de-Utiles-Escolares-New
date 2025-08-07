@@ -1,11 +1,11 @@
 // Configuración de la API
 const API_BASE_URL = "http://localhost:4000";
 
-export async function loginUsuario(email, password) {
+export async function loginUsuario(email, contrasenna) {
   const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ correo: email, contraseña: password }),
+    body: JSON.stringify({ correo: email, contrasenna }),
   });
   const data = await res.json();
 
