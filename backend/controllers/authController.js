@@ -203,6 +203,9 @@ exports.registroPadre = async (req, res) => {
       estudiantes,
     } = req.body;
 
+    const contrasenna = contraseña;
+
+
     // Validaciones básicas
     if (!nombre || !cedula || !telefono || !correo || !contraseña) {
       return res.status(400).json({
@@ -267,7 +270,7 @@ exports.registroPadre = async (req, res) => {
       cedula,
       telefono,
       correo,
-      contraseña,
+      contrasenna,
       direccion,
       rol: "padre",
       estado: "activo",
