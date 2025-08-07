@@ -1538,9 +1538,12 @@
 
             // Actualizar cada material
             for (const update of updates) {
-              await authenticatedPut(`/api/materiales/${update.id}`, {
-                disponibleParaDocentes: update.disponibleParaDocentes,
-              });
+              await authenticatedPut(
+                `/api/materiales/${update.id}/configuracion`,
+                {
+                  disponibleParaDocentes: update.disponibleParaDocentes,
+                }
+              );
             }
 
             mostrarAlerta(

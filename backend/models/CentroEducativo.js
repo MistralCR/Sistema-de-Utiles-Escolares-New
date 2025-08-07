@@ -62,7 +62,10 @@ const centroEducativoSchema = new mongoose.Schema(
         required: [true, "El email del responsable es obligatorio"],
         trim: true,
         lowercase: true,
-        match: [/^[^\s@]+@mep\.cr$/, "El email debe ser del dominio @mep.cr"],
+        match: [
+          /^[^\s@]+@mep\.go\.cr$/,
+          "El email debe ser del dominio @mep.go.cr",
+        ],
       },
     },
     etiquetas: {

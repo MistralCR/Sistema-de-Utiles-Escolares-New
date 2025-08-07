@@ -32,6 +32,10 @@ const MaterialSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+    disponibleParaDocentes: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );
