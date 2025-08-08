@@ -1059,14 +1059,14 @@
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="usuarioEmail" class="form-label"
+                    <label for="usuarioCorreo" class="form-label"
                       >Correo Electrónico
                       <span class="text-danger">*</span></label
                     >
                     <input
                       type="email"
                       class="form-control"
-                      id="usuarioEmail"
+                      id="usuarioCorreo"
                       required
                       placeholder="usuario@mep.go.cr"
                     />
@@ -1841,7 +1841,7 @@
             (usuario) => `
                 <tr>
                     <td><strong>${usuario.nombre}</strong></td>
-                    <td>${usuario.email}</td>
+                    <td>${usuario.correo}</td>
                     <td><span class="badge bg-primary">${
                       usuario.rol
                     }</span></td>
@@ -1976,7 +1976,7 @@
           if (usuario) {
             document.getElementById("usuarioId").value = usuario._id;
             document.getElementById("usuarioNombre").value = usuario.nombre;
-            document.getElementById("usuarioEmail").value = usuario.email;
+            document.getElementById("usuarioCorreo").value = usuario.email;
             document.getElementById("usuarioRol").value = usuario.rol;
             document.getElementById("usuarioCentro").value =
               usuario.centroEducativo?._id || "";
@@ -2100,76 +2100,64 @@
         }
       };
 
-      // Funciones de gestión para usuarios
-      window.guardarUsuario = async function () {
-        try {
-          const id = document.getElementById("usuarioId").value;
-          const data = {
-            nombre: document.getElementById("usuarioNombre").value,
-            correo: document.getElementById("usuarioEmail").value,
-            rol: document.getElementById("usuarioRol").value,
-            centroEducativo: document.getElementById("usuarioCentro").value,
-            estado: document.getElementById("usuarioEstado").value,
-          };
+   window.guardarUsuario = async function () {
+  try {
+    const id = document.getElementById("usuarioId").value;
+    
+    // Validar y obtener todos los campos necesarios
+    const data = {
+      nombre: document.getElementById("usuarioNombre").value,
+      correo: document.getElementById("usuarioCorreo").value,
+      rol: document.getElementById("usuarioRol").value,
+      estado: document.getElementById("usuarioEstado").value || "activo",
+      activo: true,
+      // Si es nuevo usuario o se proporcionó contraseña, incluirla
+      ...((!id || document.getElementById("usuarioPassword").value) && {
+        contrasenna: document.getElementById("usuarioPassword").value
+      }),
+      // Si es admin o docente, incluir centro educativo
+      ...(["administrador", "docente"].includes(document.getElementById("usuarioRol").value) && {
+        centroEducativo: document.getElementById("usuarioCentro").value
+      })
+    };
 
-          // Solo incluir contraseña si no está editando o si se proporcionó
-          const contrasena = document.getElementById("usuarioPassword").value;
-          if (!id || contrasena) {
-            data.contraseña = contrasena;
-          }
+    // Validaciones
+    if (!data.nombre || !data.correo || !data.rol) {
+      throw new Error("Nombre, correo y rol son obligatorios");
+    }
 
-          if (id) {
-            await authenticatedPut(`/api/usuarios/${id}`, data);
-            mostrarAlerta("Usuario actualizado correctamente");
-          } else {
-            await authenticatedPost("/api/usuarios", data);
-            mostrarAlerta("Usuario creado correctamente");
-          }
+    // Validar correo MEP para roles específicos
+    if (["administrador", "docente"].includes(data.rol) && !data.correo.endsWith("@mep.go.cr")) {
+      throw new Error("El correo debe ser del dominio @mep.go.cr para administradores y docentes");
+    }
 
-          bootstrap.Modal.getInstance(
-            document.getElementById("modalUsuario")
-          ).hide();
-          await cargarUsuarios();
-        } catch (error) {
-          console.error("Error guardando usuario:", error);
-          mostrarAlerta("Error guardando usuario", "danger");
-        }
-      };
+    // Validar centro educativo para roles específicos
+    if (["administrador", "docente"].includes(data.rol) && !data.centroEducativo) {
+      throw new Error("El centro educativo es obligatorio para administradores y docentes");
+    }
 
-      window.editarCentro = function (id) {
-        mostrarModalCentro(id);
-      };
+    // Validar contraseña para nuevos usuarios
+    if (!id && !data.contrasenna) {
+      throw new Error("La contraseña es obligatoria para nuevos usuarios");
+    }
 
-      window.editarUsuario = function (id) {
-        mostrarModalUsuario(id);
-      };
+    console.log('Datos a enviar:', data);
 
-      window.eliminarCentro = async function (id) {
-        if (confirm("¿Está seguro de eliminar este centro educativo?")) {
-          try {
-            await authenticatedDelete(`/api/centros/${id}`);
-            mostrarAlerta("Centro educativo eliminado correctamente");
-            await cargarCentros();
-          } catch (error) {
-            console.error("Error eliminando centro:", error);
-            mostrarAlerta("Error eliminando centro educativo", "danger");
-          }
-        }
-      };
+    if (id) {
+      await authenticatedPut(`/api/usuarios/${id}`, data);
+      mostrarAlerta("Usuario actualizado correctamente");
+    } else {
+      await authenticatedPost("/api/usuarios", data);
+      mostrarAlerta("Usuario creado correctamente");
+    }
 
-      window.eliminarUsuario = async function (id) {
-        if (confirm("¿Está seguro de eliminar este usuario?")) {
-          try {
-            await authenticatedDelete(`/api/usuarios/${id}`);
-            mostrarAlerta("Usuario eliminado correctamente");
-            await cargarUsuarios();
-          } catch (error) {
-            console.error("Error eliminando usuario:", error);
-            mostrarAlerta("Error eliminando usuario", "danger");
-          }
-        }
-      };
-
+    bootstrap.Modal.getInstance(document.getElementById("modalUsuario")).hide();
+    await cargarUsuarios();
+  } catch (error) {
+    console.error("Error guardando usuario:", error);
+    mostrarAlerta(error.message || "Error guardando usuario", "danger");
+  }
+};
       // Event listeners para filtros
       document.addEventListener("DOMContentLoaded", function () {
         // Filtros para centros
