@@ -89,7 +89,7 @@ Conexión a MongoDB Atlas exitosa
 ### 👨‍💼 **ADMINISTRADOR**
 
 ```
-📧 Correo: admin@mep.cr
+📧 Correo: admin@mep.go.cr
 🔑 Contraseña: admin123
 🎯 Panel: Panel de Administración
 ✨ Funciones: Gestión completa del sistema
@@ -98,7 +98,7 @@ Conexión a MongoDB Atlas exitosa
 ### 👨‍🏫 **COORDINADOR**
 
 ```
-📧 Correo: coordinador@mep.cr
+📧 Correo: coordinador@mep.go.cr
 🔑 Contraseña: coordinador123
 🎯 Panel: Panel de Coordinación
 ✨ Funciones: Gestión de centros, materiales, usuarios
@@ -107,7 +107,7 @@ Conexión a MongoDB Atlas exitosa
 ### 👨‍🏫 **DOCENTE**
 
 ```
-📧 Correo: maria.rodriguez@mep.cr
+📧 Correo: maria.rodriguez@mep.go.cr
 🔑 Contraseña: docente123
 🎯 Panel: Panel de Docente
 ✨ Funciones: Gestión de listas de útiles, estudiantes
@@ -181,7 +181,7 @@ Conexión a MongoDB Atlas exitosa
 
 ### 🎯 **Test Rápido**
 
-1. **Login como Administrador**: admin@mep.cr / admin123
+1. **Login como Administrador**: admin@mep.go.cr / admin123
 2. **Verificar estadísticas**: Debe mostrar usuarios, estudiantes, etc.
 3. **Login como Coordinador**: carloscoordinadorpérez@educativo.com / admin123
 4. **Verificar centros**: Debe mostrar 10 centros educativos

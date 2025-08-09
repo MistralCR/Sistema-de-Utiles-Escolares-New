@@ -4,21 +4,21 @@
 
 ### 👨‍💼 **ADMINISTRADOR**
 
-- **Email**: `admin@mep.cr`
+- **Email**: `admin@mep.go.cr`
 - **Contraseña**: `admin123`
 - **Rol**: Administrador
 - **Permisos**: Acceso completo al sistema
 
 ### 👩‍🏫 **COORDINADOR**
 
-- **Email**: `coordinador@mep.cr`
+- **Email**: `coordinador@mep.go.cr`
 - **Contraseña**: `coordinador123`
 - **Rol**: Coordinador
 - **Permisos**: Gestión de centros educativos y materiales
 
 ### 👨‍🏫 **DOCENTE**
 
-- **Email**: `maria.rodriguez@mep.cr`
+- **Email**: `maria.rodriguez@mep.go.cr`
 - **Contraseña**: `docente123`
 - **Rol**: Docente
 - **Centro**: Escuela República de Costa Rica

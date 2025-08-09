@@ -51,9 +51,9 @@ echo.
 
 echo 🎯 CREDENCIALES ACTUALIZADAS:
 echo ==============================
-echo 👨‍💼 Administrador: admin@mep.cr / admin123
-echo 👩‍🏫 Coordinador: coordinador@mep.cr / coordinador123
-echo 👨‍🏫 Docente: maria.rodriguez@mep.cr / docente123
+echo 👨‍💼 Administrador: admin@mep.go.cr / admin123
+echo 👩‍🏫 Coordinador: coordinador@mep.go.cr / coordinador123
+echo 👨‍🏫 Docente: maria.rodriguez@mep.go.cr / docente123
 echo 👨‍👩‍👧‍👦 Padre: juan.perez@gmail.com / padre123
 echo.
 

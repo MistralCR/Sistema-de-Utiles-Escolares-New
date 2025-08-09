@@ -963,10 +963,10 @@
                       class="form-control"
                       id="centroResponsable"
                       required
-                      placeholder="director@mep.cr"
+                      placeholder="director@mep.go.cr"
                     />
                     <div class="form-text">
-                      Debe ser un correo válido del MEP (@mep.cr)
+                      Debe ser un correo válido del MEP (@mep.go.cr)
                     </div>
                   </div>
                 </div>
@@ -1976,7 +1976,7 @@
           if (usuario) {
             document.getElementById("usuarioId").value = usuario._id;
             document.getElementById("usuarioNombre").value = usuario.nombre;
-            document.getElementById("usuarioCorreo").value = usuario.email;
+            document.getElementById("usuarioCorreo").value = usuario.correo;
             document.getElementById("usuarioRol").value = usuario.rol;
             document.getElementById("usuarioCentro").value =
               usuario.centroEducativo?._id || "";
@@ -2004,8 +2004,11 @@
           const id = document.getElementById("centroId").value;
 
           // Obtener el email del responsable para extraer el nombre
-          const emailResponsable =
-            document.getElementById("centroResponsable").value;
+          const emailResponsable = (
+            document.getElementById("centroResponsable").value || ""
+          )
+            .trim()
+            .toLowerCase();
           const nombreResponsable = emailResponsable
             .split("@")[0]
             .replace(/\./g, " ");
@@ -2100,137 +2103,165 @@
         }
       };
 
-   window.guardarUsuario = async function () {
-  try {
-    const id = document.getElementById("usuarioId").value;
-    
-    // Validar y obtener todos los campos necesarios
-    const data = {
-      nombre: document.getElementById("usuarioNombre").value,
-      correo: document.getElementById("usuarioCorreo").value,
-      rol: document.getElementById("usuarioRol").value,
-      estado: document.getElementById("usuarioEstado").value || "activo",
-      activo: true,
-      // Si es nuevo usuario o se proporcionó contraseña, incluirla
-      ...((!id || document.getElementById("usuarioPassword").value) && {
-        contrasenna: document.getElementById("usuarioPassword").value
-      }),
-      // Si es admin o docente, incluir centro educativo
-      ...(["administrador", "docente"].includes(document.getElementById("usuarioRol").value) && {
-        centroEducativo: document.getElementById("usuarioCentro").value
-      })
-    };
+      window.guardarUsuario = async function () {
+        try {
+          const id = document.getElementById("usuarioId").value;
 
-    // Validaciones
-    if (!data.nombre || !data.correo || !data.rol) {
-      throw new Error("Nombre, correo y rol son obligatorios");
-    }
+          // Validar y obtener todos los campos necesarios
+          const data = {
+            nombre: document.getElementById("usuarioNombre").value,
+            correo: document.getElementById("usuarioCorreo").value,
+            rol: document.getElementById("usuarioRol").value,
+            estado: document.getElementById("usuarioEstado").value || "activo",
+            activo: true,
+            // Si es nuevo usuario o se proporcionó contraseña, incluirla
+            ...((!id || document.getElementById("usuarioPassword").value) && {
+              contrasenna: document.getElementById("usuarioPassword").value,
+            }),
+            // Si es admin o docente, incluir centro educativo
+            ...(["administrador", "docente"].includes(
+              document.getElementById("usuarioRol").value
+            ) && {
+              centroEducativo: document.getElementById("usuarioCentro").value,
+            }),
+          };
 
-    // Validar correo MEP para roles específicos
-    if (["administrador", "docente"].includes(data.rol) && !data.correo.endsWith("@mep.go.cr")) {
-      throw new Error("El correo debe ser del dominio @mep.go.cr para administradores y docentes");
-    }
+          // Validaciones
+          if (!data.nombre || !data.correo || !data.rol) {
+            throw new Error("Nombre, correo y rol son obligatorios");
+          }
 
-    // Validar centro educativo para roles específicos
-    if (["administrador", "docente"].includes(data.rol) && !data.centroEducativo) {
-      throw new Error("El centro educativo es obligatorio para administradores y docentes");
-    }
+          // Validar correo MEP para roles específicos
+          if (
+            ["administrador", "docente"].includes(data.rol) &&
+            !data.correo.endsWith("@mep.go.cr")
+          ) {
+            throw new Error(
+              "El correo debe ser del dominio @mep.go.cr para administradores y docentes"
+            );
+          }
 
-    // Validar contraseña para nuevos usuarios
-    if (!id && !data.contrasenna) {
-      throw new Error("La contraseña es obligatoria para nuevos usuarios");
-    }
+          // Validar centro educativo para roles específicos
+          if (
+            ["administrador", "docente"].includes(data.rol) &&
+            !data.centroEducativo
+          ) {
+            throw new Error(
+              "El centro educativo es obligatorio para administradores y docentes"
+            );
+          }
 
-    console.log('Datos a enviar:', data);
+          // Validar contraseña para nuevos usuarios
+          if (!id && !data.contrasenna) {
+            throw new Error(
+              "La contraseña es obligatoria para nuevos usuarios"
+            );
+          }
 
-    if (id) {
-      await authenticatedPut(`/api/usuarios/${id}`, data);
-      mostrarAlerta("Usuario actualizado correctamente");
-    } else {
-      await authenticatedPost("/api/usuarios", data);
-      mostrarAlerta("Usuario creado correctamente");
-    }
+          console.log("Datos a enviar:", data);
 
-    bootstrap.Modal.getInstance(document.getElementById("modalUsuario")).hide();
-    await cargarUsuarios();
-  } catch (error) {
-    console.error("Error guardando usuario:", error);
-    mostrarAlerta(error.message || "Error guardando usuario", "danger");
-  }
-};
-   
-window.eliminarCentro = async function (id) {
-  if (confirm("¿Está seguro de eliminar este centro educativo?")) {
-    try {
-      await authenticatedDelete(`/api/centros/${id}`);
-      mostrarAlerta("Centro educativo eliminado correctamente");
-      await cargarCentros();
-    } catch (error) {
-      console.error("Error eliminando centro:", error);
-      mostrarAlerta("Error eliminando centro educativo", "danger");
-    }
-  }
-};
+          if (id) {
+            await authenticatedPut(`/api/usuarios/${id}`, data);
+            mostrarAlerta("Usuario actualizado correctamente");
+          } else {
+            await authenticatedPost("/api/usuarios", data);
+            mostrarAlerta("Usuario creado correctamente");
+          }
 
-window.eliminarUsuario = async function (id) {
-  if (confirm("¿Está seguro de eliminar este usuario?")) {
-    try {
-      await authenticatedDelete(`/api/usuarios/${id}`);
-      mostrarAlerta("Usuario eliminado correctamente");
-      await cargarUsuarios();
-    } catch (error) {
-      console.error("Error eliminando usuario:", error);
-      mostrarAlerta("Error eliminando usuario", "danger");
-    }
-  }
-};
+          bootstrap.Modal.getInstance(
+            document.getElementById("modalUsuario")
+          ).hide();
+          await cargarUsuarios();
+        } catch (error) {
+          console.error("Error guardando usuario:", error);
+          mostrarAlerta(error.message || "Error guardando usuario", "danger");
+        }
+      };
 
-window.editarUsuario = function (id) {
-  mostrarModalUsuario(id);
-};
+      window.eliminarCentro = async function (id) {
+        if (confirm("¿Está seguro de eliminar este centro educativo?")) {
+          try {
+            await authenticatedDelete(`/api/centros/${id}`);
+            mostrarAlerta("Centro educativo eliminado correctamente");
+            await cargarCentros();
+          } catch (error) {
+            console.error("Error eliminando centro:", error);
+            mostrarAlerta("Error eliminando centro educativo", "danger");
+          }
+        }
+      };
 
-window.mostrarModalUsuario = function (id = null) {
-  const modal = new bootstrap.Modal(document.getElementById("modalUsuario"));
-  
-  // Configurar roles permitidos para coordinador
-  configurarRolesPermitidos();
+      window.eliminarUsuario = async function (id) {
+        if (confirm("¿Está seguro de eliminar este usuario?")) {
+          try {
+            await authenticatedDelete(`/api/usuarios/${id}`);
+            mostrarAlerta("Usuario eliminado correctamente");
+            await cargarUsuarios();
+          } catch (error) {
+            console.error("Error eliminando usuario:", error);
+            mostrarAlerta("Error eliminando usuario", "danger");
+          }
+        }
+      };
 
-  if (id) {
-    const usuario = usuarios.find(u => u._id === id);
-    if (usuario) {
-      console.log('Usuario a editar:', usuario);
-      
-      // Llenar el formulario con los datos del usuario
-      document.getElementById("usuarioId").value = usuario._id;
-      document.getElementById("usuarioNombre").value = usuario.nombre;
-      document.getElementById("usuarioCorreo").value = usuario.correo;
-      document.getElementById("usuarioRol").value = usuario.rol;
-      document.getElementById("usuarioEstado").value = usuario.estado || "activo";
-      
-      // Si tiene centro educativo asignado, seleccionarlo
-      if (usuario.centroEducativo) {
-        document.getElementById("usuarioCentro").value = usuario.centroEducativo._id;
-      }
-      
-      // La contraseña no se carga por seguridad
-      const passwordInput = document.getElementById("usuarioPassword");
-      passwordInput.removeAttribute("required");
-      passwordInput.value = ""; // Limpiar el campo
-      passwordInput.placeholder = "Dejar en blanco para mantener la actual";
-    }
-  } else {
-    // Nuevo usuario
-    document.getElementById("formUsuario").reset();
-    document.getElementById("usuarioId").value = "";
-    document.getElementById("usuarioEstado").value = "activo";
-    document.getElementById("usuarioPassword").setAttribute("required", "");
-    document.getElementById("usuarioPassword").placeholder = "Mínimo 6 caracteres";
-  }
+      window.editarCentro = function (id) {
+        mostrarModalCentro(id);
+      };
 
-  modal.show();
-};
+      window.editarUsuario = function (id) {
+        mostrarModalUsuario(id);
+      };
 
-// Event listeners para filtros
+      window.mostrarModalUsuario = function (id = null) {
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalUsuario")
+        );
+
+        // Configurar roles permitidos para coordinador
+        configurarRolesPermitidos();
+
+        if (id) {
+          const usuario = usuarios.find((u) => u._id === id);
+          if (usuario) {
+            console.log("Usuario a editar:", usuario);
+
+            // Llenar el formulario con los datos del usuario
+            document.getElementById("usuarioId").value = usuario._id;
+            document.getElementById("usuarioNombre").value = usuario.nombre;
+            document.getElementById("usuarioCorreo").value = usuario.correo;
+            document.getElementById("usuarioRol").value = usuario.rol;
+            document.getElementById("usuarioEstado").value =
+              usuario.estado || "activo";
+
+            // Si tiene centro educativo asignado, seleccionarlo
+            if (usuario.centroEducativo) {
+              document.getElementById("usuarioCentro").value =
+                usuario.centroEducativo._id;
+            }
+
+            // La contraseña no se carga por seguridad
+            const passwordInput = document.getElementById("usuarioPassword");
+            passwordInput.removeAttribute("required");
+            passwordInput.value = ""; // Limpiar el campo
+            passwordInput.placeholder =
+              "Dejar en blanco para mantener la actual";
+          }
+        } else {
+          // Nuevo usuario
+          document.getElementById("formUsuario").reset();
+          document.getElementById("usuarioId").value = "";
+          document.getElementById("usuarioEstado").value = "activo";
+          document
+            .getElementById("usuarioPassword")
+            .setAttribute("required", "");
+          document.getElementById("usuarioPassword").placeholder =
+            "Mínimo 6 caracteres";
+        }
+
+        modal.show();
+      };
+
+      // Event listeners para filtros
       document.addEventListener("DOMContentLoaded", function () {
         // Filtros para centros
         const filtrosCentros = [
@@ -2321,7 +2352,7 @@ window.mostrarModalUsuario = function (id = null) {
           const coincideBusqueda =
             !busqueda ||
             usuario.nombre.toLowerCase().includes(busqueda) ||
-            usuario.email.toLowerCase().includes(busqueda);
+            usuario.correo.toLowerCase().includes(busqueda);
 
           return (
             coincideRol && coincideEstado && coincideCentro && coincideBusqueda
@@ -2407,7 +2438,7 @@ window.mostrarModalUsuario = function (id = null) {
             (usuario) => `
                 <tr>
                     <td><strong>${usuario.nombre}</strong></td>
-                    <td>${usuario.email}</td>
+                    <td>${usuario.correo}</td>
                     <td><span class="badge bg-primary">${
                       usuario.rol
                     }</span></td>

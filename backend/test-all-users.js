@@ -2,14 +2,18 @@ require("dotenv").config();
 
 async function testAllUsers() {
   const usuarios = [
-    { correo: "admin@mep.cr", contraseña: "admin123", rol: "administrador" },
     {
-      correo: "coordinador@mep.cr",
+      correo: "admin@mep.go.cr",
+      contraseña: "admin123",
+      rol: "administrador",
+    },
+    {
+      correo: "coordinador@mep.go.cr",
       contraseña: "coordinador123",
       rol: "coordinador",
     },
     {
-      correo: "maria.rodriguez@mep.cr",
+      correo: "maria.rodriguez@mep.go.cr",
       contraseña: "docente123",
       rol: "docente",
     },

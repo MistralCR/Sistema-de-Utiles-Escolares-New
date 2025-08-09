@@ -43,7 +43,7 @@ async function crearUsuariosPrueba() {
     const usuarios = [
       {
         nombre: "Administrador Sistema",
-        correo: "admin@mep.cr",
+        correo: "admin@mep.go.cr",
         contraseña: adminPass,
         rol: "administrador",
         estado: "activo",
@@ -51,14 +51,14 @@ async function crearUsuariosPrueba() {
       },
       {
         nombre: "Coordinador Regional",
-        correo: "coordinador@mep.cr",
+        correo: "coordinador@mep.go.cr",
         contraseña: coordinadorPass,
         rol: "coordinador",
         estado: "activo",
       },
       {
         nombre: "María Rodríguez",
-        correo: "maria.rodriguez@mep.cr",
+        correo: "maria.rodriguez@mep.go.cr",
         contraseña: docentePass,
         rol: "docente",
         estado: "activo",
@@ -88,15 +88,15 @@ async function crearUsuariosPrueba() {
     console.log("📋 CREDENCIALES DE ACCESO:");
     console.log("==========================");
     console.log("👨‍💼 Administrador:");
-    console.log("   Email: admin@mep.cr");
+    console.log("   Email: admin@mep.go.cr");
     console.log("   Contraseña: admin123");
     console.log("");
     console.log("👩‍🏫 Coordinador:");
-    console.log("   Email: coordinador@mep.cr");
+    console.log("   Email: coordinador@mep.go.cr");
     console.log("   Contraseña: coordinador123");
     console.log("");
     console.log("👨‍🏫 Docente:");
-    console.log("   Email: maria.rodriguez@mep.cr");
+    console.log("   Email: maria.rodriguez@mep.go.cr");
     console.log("   Contraseña: docente123");
     console.log("");
     console.log("👨‍👩‍👧‍👦 Padre:");

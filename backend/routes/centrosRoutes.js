@@ -168,10 +168,10 @@ router.post(
       }
 
       // Validar email del responsable
-      if (!responsable.email || !responsable.email.endsWith("@mep.cr")) {
+      if (!responsable.email || !responsable.email.endsWith("@mep.go.cr")) {
         return res.status(400).json({
           success: false,
-          msg: "El email del responsable debe ser del dominio @mep.cr",
+          msg: "El email del responsable debe ser del dominio @mep.go.cr",
         });
       }
 
@@ -289,7 +289,7 @@ router.put(
           responsable,
           etiquetas,
           estado,
-          actualizadoPor: req.user.userId,
+          actualizadoPor: req.user._id,
         },
         { new: true, runValidators: true }
       );

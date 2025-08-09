@@ -9,7 +9,7 @@ const authMiddleware = async (req, res, next) => {
   const token = authHeader.replace("Bearer ", "");
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const usuario = await Usuario.findById(decoded.uid).select("-contraseña");
+    const usuario = await Usuario.findById(decoded.uid).select("-contrasenna");
     if (!usuario) {
       return res.status(401).json({ msg: "Usuario no encontrado" });
     }

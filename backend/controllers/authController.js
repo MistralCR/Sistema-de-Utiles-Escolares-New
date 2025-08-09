@@ -43,7 +43,7 @@ exports.solicitarRecuperacion = async (req, res) => {
 // Cambiar contraseña usando token
 exports.cambiarPasswordConToken = async (req, res) => {
   try {
-    const { token, nuevaContraseña } = req.body;
+    const { token, nuevaContraseña, nuevaContrasenna } = req.body;
     const usuario = await Usuario.findOne({ resetToken: token });
     if (
       !usuario ||
@@ -52,8 +52,13 @@ exports.cambiarPasswordConToken = async (req, res) => {
     ) {
       return res.status(400).json({ msg: "Token inválido o expirado" });
     }
-    const salt = await bcrypt.genSalt(10);
-    usuario.contraseña = await bcrypt.hash(nuevaContraseña, salt);
+    // Aceptar ambos nombres de campo y normalizar
+    const plain = nuevaContrasenna || nuevaContraseña;
+    if (!plain) {
+      return res.status(400).json({ msg: "La nueva contraseña es requerida" });
+    }
+    // Asignar; el pre('save') en el modelo se encargará de hashear contrasenna
+    usuario.contrasenna = plain;
     usuario.resetToken = undefined;
     usuario.resetTokenExpires = undefined;
     await usuario.save();
@@ -66,8 +71,15 @@ exports.cambiarPasswordConToken = async (req, res) => {
 };
 exports.registerUsuario = async (req, res) => {
   try {
-    const { nombre, correo, contraseña, rol, centroEducativo, hijos } =
-      req.body;
+    const {
+      nombre,
+      correo,
+      contraseña,
+      contrasenna,
+      rol,
+      centroEducativo,
+      hijos,
+    } = req.body;
     let usuario = await Usuario.findOne({ correo });
     if (usuario) {
       return res.status(400).json({ msg: "El correo ya está registrado" });
@@ -75,7 +87,8 @@ exports.registerUsuario = async (req, res) => {
     usuario = new Usuario({
       nombre,
       correo,
-      contraseña,
+      // Normalizar el nombre del campo a 'contrasenna'
+      contrasenna: contrasenna || contraseña,
       rol,
       centroEducativo,
       hijos,
@@ -83,7 +96,7 @@ exports.registerUsuario = async (req, res) => {
     await usuario.save();
     const token = await generarJWT(usuario._id, usuario.rol);
     const usuarioSinPass = usuario.toObject();
-    delete usuarioSinPass.contraseña;
+    delete usuarioSinPass.contrasenna;
     res.status(201).json({ usuario: usuarioSinPass, token });
   } catch (err) {
     res.status(500).json({ msg: "Error en el registro", error: err.message });
@@ -92,7 +105,7 @@ exports.registerUsuario = async (req, res) => {
 
 exports.loginUsuario = async (req, res) => {
   try {
-    const { correo, contraseña } = req.body;
+    const { correo, contraseña, contrasenna } = req.body;
     const usuario = await Usuario.findOne({ correo });
     if (!usuario || !usuario.activo) {
       return res.status(400).json({
@@ -100,7 +113,9 @@ exports.loginUsuario = async (req, res) => {
         msg: "Usuario o contraseña incorrectos",
       });
     }
-    const esValido = await usuario.compararPassword(contraseña);
+    // Aceptar ambos nombres de campo
+    const plain = contrasenna || contraseña;
+    const esValido = await usuario.compararPassword(plain);
     if (!esValido) {
       return res.status(400).json({
         success: false,
@@ -114,7 +129,7 @@ exports.loginUsuario = async (req, res) => {
 
     const token = await generarJWT(usuario._id, usuario.rol);
     const usuarioSinPass = usuario.toObject();
-    delete usuarioSinPass.contraseña;
+    delete usuarioSinPass.contrasenna;
 
     res.json({
       success: true,
@@ -140,7 +155,7 @@ exports.obtenerPerfil = async (req, res) => {
     if (req.user.rol === "padre") {
       // Para padres, incluir información de estudiantes
       usuario = await Usuario.findById(req.user._id)
-        .select("-contraseña")
+        .select("-contrasenna")
         .populate(
           "estudiantes",
           "nombre cedula nivel grado fechaNacimiento estado"
@@ -152,7 +167,7 @@ exports.obtenerPerfil = async (req, res) => {
     } else {
       // Para otros roles, poblar centro educativo
       usuario = await Usuario.findById(req.user._id)
-        .select("-contraseña")
+        .select("-contrasenna")
         .populate(
           "centroEducativo",
           "nombre provincia canton distrito direccionCompleta"
@@ -199,15 +214,15 @@ exports.registroPadre = async (req, res) => {
       telefono,
       correo,
       contraseña,
+      contrasenna: contrasennaBody,
       direccion,
       estudiantes,
     } = req.body;
 
-    const contrasenna = contraseña;
-
+    const contrasenna = contrasennaBody || contraseña;
 
     // Validaciones básicas
-    if (!nombre || !cedula || !telefono || !correo || !contraseña) {
+    if (!nombre || !cedula || !telefono || !correo || !contrasenna) {
       return res.status(400).json({
         message: "Todos los campos obligatorios son requeridos",
       });
@@ -316,7 +331,7 @@ exports.registroPadre = async (req, res) => {
 
     // Preparar respuesta sin contraseña
     const padreRespuesta = nuevoPadre.toObject();
-    delete padreRespuesta.contraseña;
+    delete padreRespuesta.contrasenna;
 
     res.status(201).json({
       message: "Padre de familia registrado exitosamente",

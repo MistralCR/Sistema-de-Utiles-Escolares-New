@@ -11,7 +11,7 @@ async function verificarAdmin() {
 
     // Buscar administrador
     console.log("🔍 Buscando administrador en la base de datos...");
-    const admin = await Usuario.findOne({ correo: "admin@mep.cr" });
+    const admin = await Usuario.findOne({ correo: "admin@mep.go.cr" });
 
     if (!admin) {
       console.log("❌ NO se encontró el administrador en la base de datos");
@@ -40,7 +40,7 @@ async function verificarAdmin() {
         console.log("🔧 Actualizando contraseña del administrador...");
         const newPassword = await bcrypt.hash("admin123", 10);
         await Usuario.updateOne(
-          { correo: "admin@mep.cr" },
+          { correo: "admin@mep.go.cr" },
           { contraseña: newPassword }
         );
         console.log("✅ Contraseña actualizada");
