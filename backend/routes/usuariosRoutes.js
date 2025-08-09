@@ -186,7 +186,7 @@ router.post(
       const { nombre, correo, contraseña, rol, centroEducativo } = req.body;
 
       // Validaciones básicas
-      if (!nombre || !correo || !contraseña || !rol) {
+      if (!nombre || !correo || !contrasenna || !rol) {
         return res.status(400).json({
           success: false,
           msg: "Todos los campos obligatorios deben ser completados",
@@ -252,7 +252,7 @@ router.post(
       const nuevoUsuario = new Usuario({
         nombre,
         correo,
-        contraseña,
+        contrasenna,
         rol,
         centroEducativo: centroEducativo || undefined,
         creadoPor: req.user.userId,
