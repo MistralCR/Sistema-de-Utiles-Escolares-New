@@ -224,6 +224,25 @@ body {
   box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25) !important;
 }
 
+/* Fallbacks para campos nativos y placeholders (evita texto blanco sobre fondo blanco) */
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not(
+    [type="checkbox"]
+  ):not([type="radio"]),
+textarea,
+select {
+  color: var(--bs-body-color, var(--tema-texto, #212529)) !important;
+  background-color: var(--tema-input-bg, #ffffff) !important;
+}
+
+/* Placeholders accesibles */
+::placeholder,
+.form-control::placeholder,
+.form-control-landing::placeholder,
+textarea::placeholder {
+  color: var(--tema-texto-secundario, #6c757d) !important;
+  opacity: 1 !important; /* asegúrate de que el color sea visible */
+}
+
 /* Botones */
 .btn-primary,
 .btn-cr-primary,
@@ -399,4 +418,30 @@ footer {
     --tema-navbar-bg: #1e1e1e;
     --tema-card-bg: #2d2d2d;
   }
+}
+
+/* ===== Overrides de contraste en contenedores claros ===== */
+/* Asegura texto negro en componentes con fondo blanco dentro de la UI */
+.modal-content,
+.table-container {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+}
+
+.modal-content .form-control,
+.modal-content .form-select,
+.modal-content textarea,
+.table-container .form-control,
+.table-container .form-select,
+.table-container textarea {
+  color: #212529 !important;
+  background-color: #ffffff !important;
+}
+
+.modal-content .form-control::placeholder,
+.modal-content textarea::placeholder,
+.table-container .form-control::placeholder,
+.table-container textarea::placeholder {
+  color: #6c757d !important;
+  opacity: 1 !important;
 }

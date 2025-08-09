@@ -79,12 +79,15 @@ exports.registerUsuario = async (req, res) => {
       rol,
       centroEducativo,
       hijos,
+      cedula,
+      telefono,
+      direccion,
     } = req.body;
     let usuario = await Usuario.findOne({ correo });
     if (usuario) {
       return res.status(400).json({ msg: "El correo ya está registrado" });
     }
-    usuario = new Usuario({
+    const payload = {
       nombre,
       correo,
       // Normalizar el nombre del campo a 'contrasenna'
@@ -92,7 +95,16 @@ exports.registerUsuario = async (req, res) => {
       rol,
       centroEducativo,
       hijos,
-    });
+    };
+
+    // Si es padre, aceptar campos adicionales requeridos por el modelo
+    if (rol === "padre") {
+      payload.cedula = cedula;
+      payload.telefono = telefono;
+      if (direccion) payload.direccion = direccion;
+    }
+
+    usuario = new Usuario(payload);
     await usuario.save();
     const token = await generarJWT(usuario._id, usuario.rol);
     const usuarioSinPass = usuario.toObject();
@@ -164,6 +176,29 @@ exports.obtenerPerfil = async (req, res) => {
           "centroEducativo",
           "nombre provincia canton distrito direccionCompleta"
         );
+      // Backfill: vincular estudiantes si están creados pero no asociados aún
+      if (
+        usuario &&
+        (!usuario.estudiantes || usuario.estudiantes.length === 0)
+      ) {
+        const relacionados = await Estudiante.find({
+          padre: req.user._id,
+        }).select("_id");
+        if (relacionados.length > 0) {
+          usuario.estudiantes = relacionados.map((e) => e._id);
+          await usuario.save();
+          usuario = await Usuario.findById(req.user._id)
+            .select("-contrasenna")
+            .populate(
+              "estudiantes",
+              "nombre cedula nivel grado fechaNacimiento estado"
+            )
+            .populate(
+              "centroEducativo",
+              "nombre provincia canton distrito direccionCompleta"
+            );
+        }
+      }
     } else {
       // Para otros roles, poblar centro educativo
       usuario = await Usuario.findById(req.user._id)
@@ -194,7 +229,8 @@ exports.obtenerPerfil = async (req, res) => {
       perfil.telefono = usuario.telefono;
       perfil.direccion = usuario.direccion;
       perfil.estudiantes = usuario.estudiantes;
-      perfil.hijos = usuario.estudiantes?.map((est) => est.nombre) || []; // Para compatibilidad
+      // Compatibilidad: mantener hijos como nombres, pero la fuente es estudiantes
+      perfil.hijos = usuario.estudiantes?.map((est) => est.nombre) || [];
     }
 
     res.json({ usuario: perfil });
@@ -217,6 +253,7 @@ exports.registroPadre = async (req, res) => {
       contrasenna: contrasennaBody,
       direccion,
       estudiantes,
+      centroEducativo,
     } = req.body;
 
     const contrasenna = contrasennaBody || contraseña;
@@ -288,6 +325,7 @@ exports.registroPadre = async (req, res) => {
       contrasenna,
       direccion,
       rol: "padre",
+      centroEducativo: centroEducativo || undefined,
       estado: "activo",
       activo: true,
     });
@@ -315,6 +353,7 @@ exports.registroPadre = async (req, res) => {
         grado,
         fechaNacimiento: fechaNacimiento || undefined,
         padre: nuevoPadre._id,
+        centroEducativo: centroEducativo || undefined,
         estado: "activo",
       });
 

@@ -151,10 +151,29 @@ exports.obtenerListasEstudiantes = async (req, res) => {
     }
 
     // Obtener el usuario padre con sus estudiantes
-    const padre = await Usuario.findById(req.user._id).populate(
+    let padre = await Usuario.findById(req.user._id).populate(
       "estudiantes",
       "nombre cedula nivel grado"
     );
+
+    // Backfill: si no tiene estudiantes cargados, buscarlos por referencia y vincular
+    if (!padre) {
+      return res.status(404).json({ msg: "Padre no encontrado" });
+    }
+    if (!padre.estudiantes || padre.estudiantes.length === 0) {
+      const relacionados = await Estudiante.find({ padre: padre._id }).select(
+        "_id nombre cedula nivel grado"
+      );
+      if (relacionados.length > 0) {
+        padre.estudiantes = relacionados.map((e) => e._id);
+        await padre.save();
+        // Recargar con populate para responder con datos completos
+        padre = await Usuario.findById(req.user._id).populate(
+          "estudiantes",
+          "nombre cedula nivel grado"
+        );
+      }
+    }
 
     if (!padre || !padre.estudiantes || padre.estudiantes.length === 0) {
       return res.json({

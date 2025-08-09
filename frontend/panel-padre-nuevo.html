@@ -565,7 +565,7 @@
             const {
               nombre,
               centroEducativo,
-              hijos: hijosData,
+              estudiantes: estudiantesData,
             } = perfil.usuario;
 
             document.getElementById("nombreUsuario").textContent =
@@ -577,12 +577,13 @@
                 centroNombre;
             }
 
-            // Actualizar información de hijos
-            if (hijosData && hijosData.length > 0) {
-              hijos = hijosData.map((hijo) => ({
-                nombre: hijo,
-                nivel: "Por definir", // Esto se puede mejorar en el futuro
-                grado: "",
+            // Actualizar información de hijos desde estudiantes reales
+            if (estudiantesData && estudiantesData.length > 0) {
+              hijos = estudiantesData.map((est) => ({
+                _id: est._id,
+                nombre: est.nombre,
+                nivel: est.nivel,
+                grado: est.grado,
               }));
             }
           }
@@ -595,7 +596,7 @@
       // Cargar listas de útiles
       async function cargarListas() {
         try {
-          const response = await authenticatedGet("/api/listas");
+          const response = await authenticatedGet("/api/listas/estudiantes");
           if (response && response.data) {
             listas = response.data.docs || response.data;
             renderListas();

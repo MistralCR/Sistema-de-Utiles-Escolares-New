@@ -49,6 +49,15 @@ router.get(
             select: "nombre codigoMEP provincia canton distrito",
           },
           { path: "creadoPor", select: "nombre correo" },
+          // Para padres, incluir sus estudiantes (hijos reales)
+          {
+            path: "estudiantes",
+            select: "nombre cedula nivel grado centroEducativo",
+            populate: {
+              path: "centroEducativo",
+              select: "nombre codigoMEP",
+            },
+          },
         ],
         sort: { createdAt: -1 },
         select: "-contrasenna -resetToken -resetTokenExpires",
@@ -103,9 +112,58 @@ router.get(
       if (centroEducativo) filtros.centroEducativo = centroEducativo;
 
       console.log("🔍 Filtros aplicados:", filtros);
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
 
-      // Primero intentar sin populate
-      const estudiantes = await Estudiante.find(filtros).limit(parseInt(limit));
+      // Helper para ejecutar la consulta con populate
+      const ejecutarConsulta = async () => {
+        const docs = await Estudiante.find(filtros)
+          .limit(limitNum)
+          .populate("padre", "nombre correo")
+          .populate(
+            "centroEducativo",
+            "nombre codigoMEP provincia canton distrito"
+          );
+        return docs;
+      };
+
+      let estudiantes = await ejecutarConsulta();
+
+      // Si hay filtro por centro y no se encontraron estudiantes, intentar backfill por centro del padre
+      if (centroEducativo && estudiantes.length === 0) {
+        console.log(
+          "🧩 Sin resultados directos. Intentando backfill usando centro del padre..."
+        );
+        const padresCentro = await Usuario.find({
+          rol: "padre",
+          centroEducativo,
+        }).select("_id");
+
+        if (padresCentro.length > 0) {
+          const padresIds = padresCentro.map((p) => p._id);
+          // Buscar estudiantes con esos padres y sin centro asignado
+          const estudiantesSinCentro = await Estudiante.find({
+            padre: { $in: padresIds },
+            $or: [
+              { centroEducativo: { $exists: false } },
+              { centroEducativo: null },
+            ],
+          }).select("_id");
+
+          if (estudiantesSinCentro.length > 0) {
+            console.log(
+              `🔧 Asignando centroEducativo a ${estudiantesSinCentro.length} estudiantes sin centro...`
+            );
+            await Estudiante.updateMany(
+              { _id: { $in: estudiantesSinCentro.map((e) => e._id) } },
+              { $set: { centroEducativo } }
+            );
+          }
+
+          // Reintentar consulta original una vez aplicado el backfill
+          estudiantes = await ejecutarConsulta();
+        }
+      }
 
       console.log("✅ Estudiantes encontrados:", estudiantes.length);
 
@@ -114,8 +172,8 @@ router.get(
         data: {
           docs: estudiantes,
           totalDocs: estudiantes.length,
-          limit: parseInt(limit),
-          page: parseInt(page),
+          limit: limitNum,
+          page: pageNum,
           totalPages: 1,
           hasNextPage: false,
           hasPrevPage: false,
@@ -145,7 +203,12 @@ router.get(
           "nombre codigoMEP provincia canton distrito"
         )
         .populate("creadoPor", "nombre correo")
-        .populate("hijos", "nombre correo rol");
+        .populate("hijos", "nombre correo rol")
+        .populate({
+          path: "estudiantes",
+          select: "nombre nivel grado cedula estado centroEducativo",
+          populate: { path: "centroEducativo", select: "nombre codigoMEP" },
+        });
 
       if (!usuario) {
         return res.status(404).json({
