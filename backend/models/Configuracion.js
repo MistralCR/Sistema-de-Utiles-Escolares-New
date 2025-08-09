@@ -13,6 +13,20 @@ const ConfiguracionSchema = new mongoose.Schema(
     logoURL: {
       type: String,
     },
+    // Textos configurables para la sección de noticias/categorías
+    textosNoticias: {
+      tituloNoticias: {
+        type: String,
+        default: "Noticias y Novedades",
+      },
+      categorias: {
+        importante: { type: String, default: "Importante" },
+        actualizacion: { type: String, default: "Actualización" },
+        mejora: { type: String, default: "Mejora" },
+        formacion: { type: String, default: "Formación" },
+        soporte: { type: String, default: "Soporte" },
+      },
+    },
     actualizadoPor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Usuario",
