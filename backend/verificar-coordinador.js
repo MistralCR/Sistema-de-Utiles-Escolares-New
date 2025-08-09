@@ -11,7 +11,9 @@ async function verificarCredenciales() {
 
     // Buscar coordinador
     console.log("🔍 Buscando coordinador en la base de datos...");
-    const coordinador = await Usuario.findOne({ correo: "coordinador@mep.cr" });
+    const coordinador = await Usuario.findOne({
+      correo: "coordinador@mep.go.cr",
+    });
 
     if (!coordinador) {
       console.log("❌ NO se encontró el coordinador en la base de datos");
@@ -43,7 +45,7 @@ async function verificarCredenciales() {
         console.log("🔧 Actualizando contraseña del coordinador...");
         const newPassword = await bcrypt.hash("coordinador123", 10);
         await Usuario.updateOne(
-          { correo: "coordinador@mep.cr" },
+          { correo: "coordinador@mep.go.cr" },
           { contraseña: newPassword }
         );
         console.log("✅ Contraseña actualizada");

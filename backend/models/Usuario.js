@@ -113,8 +113,6 @@ UsuarioSchema.pre("save", async function (next) {
 });
 
 UsuarioSchema.methods.compararPassword = async function (password) {
-  console.log("CompararPassword - Recibida:", password);
-  console.log("CompararPassword - Hash:", this.contrasenna);
   return await bcrypt.compare(password, this.contrasenna);
 };
 

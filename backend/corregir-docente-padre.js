@@ -12,7 +12,9 @@ async function corregirDocuenteYPadre() {
 
     // Verificar y corregir DOCENTE
     console.log("🔍 Verificando DOCENTE...");
-    const docente = await Usuario.findOne({ correo: "maria.rodriguez@mep.cr" });
+    const docente = await Usuario.findOne({
+      correo: "maria.rodriguez@mep.go.cr",
+    });
 
     if (!docente) {
       console.log("❌ NO se encontró el docente");
@@ -36,7 +38,7 @@ async function corregirDocuenteYPadre() {
         console.log("🔧 Actualizando contraseña del docente...");
         const newDocentePassword = await bcrypt.hash("docente123", 10);
         await Usuario.updateOne(
-          { correo: "maria.rodriguez@mep.cr" },
+          { correo: "maria.rodriguez@mep.go.cr" },
           { contraseña: newDocentePassword }
         );
         console.log("✅ Contraseña del docente actualizada");

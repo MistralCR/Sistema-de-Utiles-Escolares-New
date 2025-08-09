@@ -5,7 +5,7 @@ export async function loginUsuario(email, contrasenna) {
   const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ correo: email, contrasenna }),
+    body: JSON.stringify({ correo: email, contraseña: contrasenna }),
   });
   const data = await res.json();
 
@@ -146,11 +146,22 @@ export async function authenticatedFetch(url, options = {}) {
       return null;
     }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (_) {
+      data = undefined;
+    }
 
-    // Si la respuesta no es exitosa pero no es error de auth, lanzar error
+    // Si la respuesta no es exitosa pero no es error de auth, lanzar error enriquecido
     if (!response.ok) {
-      throw new Error(data.msg || `Error ${response.status}`);
+      const message =
+        (data && (data.msg || data.mensaje || data.error)) ||
+        `Error ${response.status}`;
+      const err = new Error(message);
+      // Simular estructura de error de axios para compatibilidad del frontend existente
+      err.response = { status: response.status, data };
+      throw err;
     }
 
     return { response, data };

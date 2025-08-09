@@ -4,7 +4,9 @@ const Usuario = require("../models/Usuario");
 exports.actualizarUsuario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, password, centroEducativo } = req.body;
+    // Aceptar alias comunes para contraseña por compatibilidad
+    const { nombre, password, centroEducativo, contrasenna, contraseña } =
+      req.body;
 
     // Verificar que el usuario puede actualizar esta información
     // Solo el propio usuario o admin/coordinador pueden actualizar
@@ -36,13 +38,15 @@ exports.actualizarUsuario = async (req, res) => {
         .json({ msg: "El nombre debe tener al menos 2 caracteres" });
     }
 
-    if (password && typeof password !== "string") {
+    const nuevaPassword = password || contrasenna || contraseña;
+
+    if (nuevaPassword && typeof nuevaPassword !== "string") {
       return res
         .status(400)
         .json({ msg: "La contraseña debe ser una cadena de texto" });
     }
 
-    if (password && password.length < 6) {
+    if (nuevaPassword && nuevaPassword.length < 6) {
       return res
         .status(400)
         .json({ msg: "La contraseña debe tener al menos 6 caracteres" });
@@ -59,10 +63,10 @@ exports.actualizarUsuario = async (req, res) => {
       usuario.nombre = nombre.trim();
     }
 
-    if (password) {
+    if (nuevaPassword) {
       // El modelo Usuario automáticamente encriptará la contraseña
-      // gracias al middleware pre('save')
-      usuario.contraseña = password;
+      // gracias al middleware pre('save') al asignarla a 'contrasenna'
+      usuario.contrasenna = nuevaPassword;
     }
 
     if (centroEducativo !== undefined) {
@@ -76,7 +80,7 @@ exports.actualizarUsuario = async (req, res) => {
     const registrarHistorial = require("../helpers/registrarHistorial");
     const cambios = [];
     if (nombre) cambios.push("nombre");
-    if (password) cambios.push("contraseña");
+    if (nuevaPassword) cambios.push("contraseña");
     if (centroEducativo !== undefined) cambios.push("centro educativo");
 
     registrarHistorial(
@@ -88,7 +92,9 @@ exports.actualizarUsuario = async (req, res) => {
     );
 
     // Retornar usuario sin contraseña
-    const usuarioActualizado = await Usuario.findById(id).select("-contraseña");
+    const usuarioActualizado = await Usuario.findById(id).select(
+      "-contrasenna -resetToken -resetTokenExpires"
+    );
 
     res.json({
       msg: "Información actualizada correctamente",

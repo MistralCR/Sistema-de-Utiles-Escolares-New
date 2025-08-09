@@ -6,7 +6,7 @@ async function testLoginCoordinador() {
     console.log("🧪 Probando login del coordinador...");
 
     const response = await axios.post("http://localhost:4000/api/auth/login", {
-      correo: "coordinador@mep.cr",
+      correo: "coordinador@mep.go.cr",
       contraseña: "coordinador123",
     });
 

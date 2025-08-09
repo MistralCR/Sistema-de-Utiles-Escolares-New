@@ -51,7 +51,7 @@ router.get(
           { path: "creadoPor", select: "nombre correo" },
         ],
         sort: { createdAt: -1 },
-        select: "-contraseña -resetToken -resetTokenExpires",
+        select: "-contrasenna -resetToken -resetTokenExpires",
       };
 
       const usuarios = await Usuario.paginate(filtros, options);
@@ -139,7 +139,7 @@ router.get(
   async (req, res) => {
     try {
       const usuario = await Usuario.findById(req.params.id)
-        .select("-contraseña -resetToken -resetTokenExpires")
+        .select("-contrasenna -resetToken -resetTokenExpires")
         .populate(
           "centroEducativo",
           "nombre codigoMEP provincia canton distrito"
@@ -183,10 +183,14 @@ router.post(
   checkRole(["coordinador", "administrador"]),
   async (req, res) => {
     try {
-      const { nombre, correo, contraseña, rol, centroEducativo } = req.body;
+      const { nombre, correo, contraseña, contrasenna, rol, centroEducativo } =
+        req.body;
+
+      // Normalizar contraseña
+      const plainPass = contrasenna || contraseña;
 
       // Validaciones básicas
-      if (!nombre || !correo || !contraseña || !rol) {
+      if (!nombre || !correo || !plainPass || !rol) {
         return res.status(400).json({
           success: false,
           msg: "Todos los campos obligatorios deben ser completados",
@@ -252,10 +256,10 @@ router.post(
       const nuevoUsuario = new Usuario({
         nombre,
         correo,
-        contraseña,
+        contrasenna: plainPass,
         rol,
         centroEducativo: centroEducativo || undefined,
-        creadoPor: req.user.userId,
+        creadoPor: req.user._id,
         estado: "activo",
       });
 
@@ -263,7 +267,7 @@ router.post(
 
       // Respuesta sin contraseña
       const usuarioRespuesta = await Usuario.findById(nuevoUsuario._id)
-        .select("-contraseña -resetToken -resetTokenExpires")
+        .select("-contrasenna -resetToken -resetTokenExpires")
         .populate(
           "centroEducativo",
           "nombre codigoMEP provincia canton distrito"
@@ -310,7 +314,15 @@ router.put(
   checkRole(["coordinador", "administrador"]),
   async (req, res) => {
     try {
-      const { nombre, correo, rol, centroEducativo, estado } = req.body;
+      const {
+        nombre,
+        correo,
+        rol,
+        centroEducativo,
+        estado,
+        contrasenna,
+        contraseña,
+      } = req.body;
 
       const usuario = await Usuario.findById(req.params.id);
       if (!usuario) {
@@ -390,18 +402,28 @@ router.put(
         }
       }
 
+      // Preparar updates
+      const updates = {
+        nombre,
+        correo,
+        rol,
+        centroEducativo: centroEducativo || usuario.centroEducativo,
+        estado,
+      };
+
+      // Si viene nueva contraseña en claro, hashearla y asignarla
+      const nuevaPass = contrasenna || contraseña;
+      if (nuevaPass) {
+        const salt = await bcrypt.genSalt(10);
+        updates.contrasenna = await bcrypt.hash(nuevaPass, salt);
+      }
+
       const usuarioActualizado = await Usuario.findByIdAndUpdate(
         req.params.id,
-        {
-          nombre,
-          correo,
-          rol,
-          centroEducativo: centroEducativo || usuario.centroEducativo,
-          estado,
-        },
+        updates,
         { new: true, runValidators: true }
       )
-        .select("-contraseña -resetToken -resetTokenExpires")
+        .select("-contrasenna -resetToken -resetTokenExpires")
         .populate(
           "centroEducativo",
           "nombre codigoMEP provincia canton distrito"
@@ -452,9 +474,10 @@ router.put(
   checkRole(["coordinador", "administrador"]),
   async (req, res) => {
     try {
-      const { nuevaPassword } = req.body;
+      const { nuevaPassword, nuevaContrasenna } = req.body;
 
-      if (!nuevaPassword || nuevaPassword.length < 6) {
+      const plain = nuevaContrasenna || nuevaPassword;
+      if (!plain || plain.length < 6) {
         return res.status(400).json({
           success: false,
           msg: "La nueva contraseña debe tener al menos 6 caracteres",
@@ -479,10 +502,10 @@ router.put(
 
       // Hashear nueva contraseña
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(nuevaPassword, salt);
+      const hashedPassword = await bcrypt.hash(plain, salt);
 
       await Usuario.findByIdAndUpdate(req.params.id, {
-        contraseña: hashedPassword,
+        contrasenna: hashedPassword,
       });
 
       console.log(
