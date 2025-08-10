@@ -778,7 +778,7 @@
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
-              aria-label="Cerrar modal"
+              aria-label="Cerrar"
               title="Cerrar"
             ></button>
           </div>
@@ -821,6 +821,30 @@
             >
               <i class="fas fa-save me-2"></i>Guardar
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmación (reutilizable) -->
+    <div class="modal fade" id="modalConfirm" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="fas fa-exclamation-triangle me-2 text-warning"></i>Confirmación
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body" id="modalConfirmMessage">¿Está seguro?</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-danger" id="modalConfirmYes">Sí, eliminar</button>
           </div>
         </div>
       </div>
@@ -1151,6 +1175,8 @@
       </div>
     </div>
 
+    
+
     <!-- Alertas -->
     <div id="alertContainer" class="position-fixed alert-container"></div>
 
@@ -1182,6 +1208,14 @@
       // Función global para logout
       window.logoutUsuario = logoutUsuario;
 
+      // Silenciar consola
+      const SILENCE_CONSOLE = true;
+      if (SILENCE_CONSOLE && typeof console !== "undefined") {
+        ["log", "error", "warn", "info", "debug"].forEach((m) => {
+          console[m] = () => {};
+        });
+      }
+
       // Función para mostrar alertas
       function mostrarAlerta(mensaje, tipo = "success") {
         const alertContainer = document.getElementById("alertContainer");
@@ -1210,6 +1244,38 @@
         }, 5000);
       }
 
+      // Confirmación por modal Bootstrap (reutilizable)
+      function confirmarAccion(mensaje, textoBoton = "Sí, confirmar") {
+        const modalEl = document.getElementById("modalConfirm");
+        const msgEl = document.getElementById("modalConfirmMessage");
+        const btnYes = document.getElementById("modalConfirmYes");
+
+        msgEl.textContent = mensaje;
+        btnYes.textContent = textoBoton;
+
+        const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        return new Promise((resolve) => {
+          const onYes = () => {
+            cleanup();
+            bsModal.hide();
+            resolve(true);
+          };
+          const onHide = () => {
+            cleanup();
+            resolve(false);
+          };
+          const cleanup = () => {
+            btnYes.removeEventListener("click", onYes);
+            modalEl.removeEventListener("hidden.bs.modal", onHide);
+          };
+
+          btnYes.addEventListener("click", onYes, { once: true });
+          modalEl.addEventListener("hidden.bs.modal", onHide, { once: true });
+          bsModal.show();
+        });
+      }
+
       // Cargar datos iniciales
       async function cargarDatos() {
         try {
@@ -1229,7 +1295,6 @@
           // Renderizar tablas que dependen de múltiples datos después de que todo esté cargado
           renderizarTablaCategorias();
         } catch (error) {
-          console.error("Error cargando datos:", error);
           mostrarAlerta("Error cargando datos del sistema", "danger");
         }
       }
@@ -1237,10 +1302,6 @@
       // Cargar estadísticas
       async function cargarEstadisticas() {
         try {
-          console.log("📊 Actualizando estadísticas con datos cargados...");
-          console.log("📚 Materiales disponibles:", materiales.length);
-          console.log("📂 Categorías disponibles:", categorias.length);
-
           // Usar los datos ya cargados en las variables globales
           const totalMateriales = materiales.length;
           const totalCategorias = categorias.length;
@@ -1249,12 +1310,6 @@
           const totalListas = Math.ceil(materiales.length / 20); // Listas de ~20 materiales cada una
           const totalTickets = tickets.length || 0; // Usar tickets reales si están disponibles
 
-          console.log("📊 Estadísticas calculadas:");
-          console.log("   - Materiales:", totalMateriales);
-          console.log("   - Categorías:", totalCategorias);
-          console.log("   - Listas estimadas:", totalListas);
-          console.log("   - Tickets:", totalTickets);
-
           // Actualizar el DOM
           document.getElementById("totalMateriales").textContent =
             totalMateriales;
@@ -1262,10 +1317,7 @@
             totalCategorias;
           document.getElementById("totalListas").textContent = totalListas;
           document.getElementById("totalTickets").textContent = totalTickets;
-
-          console.log("✅ Estadísticas actualizadas en las tarjetas");
         } catch (error) {
-          console.error("Error actualizando estadísticas:", error);
           // Valores por defecto en caso de error
           document.getElementById("totalMateriales").textContent = "0";
           document.getElementById("totalCategorias").textContent = "0";
@@ -1295,7 +1347,7 @@
             }
           }
         } catch (error) {
-          console.error("Error cargando configuración:", error);
+          // Silenciado
         }
       }
 
@@ -1303,8 +1355,6 @@
       async function cargarMateriales() {
         try {
           const result = await authenticatedGet("/api/materiales");
-          console.log("📚 Resultado materiales:", result);
-          console.log("📚 result.data:", result?.data);
 
           // Verificar si tiene la estructura estandarizada {success: true, data: {docs: [...], totalDocs: X}}
           if (result?.data?.docs && Array.isArray(result.data.docs)) {
@@ -1313,17 +1363,10 @@
             materiales = result.data;
           } else {
             materiales = [];
-            console.warn("Estructura de materiales no reconocida:", result);
           }
 
-          console.log(
-            "📚 Materiales finales:",
-            materiales.length,
-            "materiales cargados"
-          );
           renderizarTablaMateriales();
         } catch (error) {
-          console.error("Error cargando materiales:", error);
           materiales = [];
           document.getElementById("tablaMateriales").innerHTML = `
                     <tr><td colspan="5" class="text-center text-danger">
@@ -1337,25 +1380,16 @@
       async function cargarCategorias() {
         try {
           const result = await authenticatedGet("/api/categorias");
-          console.log("📂 Resultado categorías:", result);
-          console.log("📂 result.data:", result?.data);
 
           // Verificar si tiene la estructura estandarizada {success: true, data: [...]}
           if (result?.data && Array.isArray(result.data)) {
             categorias = result.data;
           } else {
             categorias = [];
-            console.warn("Estructura de categorías no reconocida:", result);
           }
 
-          console.log(
-            "📂 Categorías finales:",
-            categorias.length,
-            "categorías cargadas"
-          );
           actualizarSelectCategorias();
         } catch (error) {
-          console.error("Error cargando categorías:", error);
           categorias = [];
           document.getElementById("tablaCategorias").innerHTML = `
                     <tr><td colspan="4" class="text-center text-danger">
@@ -1369,7 +1403,6 @@
       async function cargarTicketsSoporte() {
         try {
           const result = await authenticatedGet("/api/soporte");
-          console.log("🎫 Resultado tickets:", result);
 
           // Verificar estructura de datos
           if (result?.data?.data && Array.isArray(result.data.data)) {
@@ -1378,13 +1411,10 @@
             tickets = result.data;
           } else {
             tickets = [];
-            console.warn("Estructura de tickets no reconocida:", result);
           }
 
-          console.log("🎫 Tickets finales:", tickets);
           renderizarTablaSoporte();
         } catch (error) {
-          console.error("Error cargando tickets:", error);
           tickets = [];
           document.getElementById("tablaSoporte").innerHTML = `
                     <tr><td colspan="6" class="text-center text-danger">
@@ -1605,7 +1635,6 @@
           await cargarEstadisticas();
           renderizarTablaCategorias(); // Actualizar conteo de materiales por categoría
         } catch (error) {
-          console.error("Error guardando material:", error);
           mostrarAlerta("Error guardando material", "danger");
         }
       };
@@ -1633,7 +1662,6 @@
           await cargarEstadisticas();
           renderizarTablaCategorias(); // Actualizar tabla de categorías
         } catch (error) {
-          console.error("Error guardando categoría:", error);
           mostrarAlerta("Error guardando categoría", "danger");
         }
       };
@@ -1647,32 +1675,30 @@
       };
 
       window.eliminarMaterial = async function (id) {
-        if (confirm("¿Está seguro de eliminar este material?")) {
-          try {
-            await authenticatedDelete(`/api/materiales/${id}`);
-            mostrarAlerta("Material eliminado correctamente");
-            await cargarMateriales();
-            await cargarEstadisticas();
-            renderizarTablaCategorias(); // Actualizar conteo de materiales por categoría
-          } catch (error) {
-            console.error("Error eliminando material:", error);
-            mostrarAlerta("Error eliminando material", "danger");
-          }
+        const ok = await confirmarAccion("¿Está seguro de eliminar este material?", "Sí, eliminar");
+        if (!ok) return;
+        try {
+          await authenticatedDelete(`/api/materiales/${id}`);
+          mostrarAlerta("Material eliminado correctamente");
+          await cargarMateriales();
+          await cargarEstadisticas();
+          renderizarTablaCategorias(); // Actualizar conteo de materiales por categoría
+        } catch (_error) {
+          mostrarAlerta("Error eliminando material", "danger");
         }
       };
 
       window.eliminarCategoria = async function (id) {
-        if (confirm("¿Está seguro de eliminar esta categoría?")) {
-          try {
-            await authenticatedDelete(`/api/categorias/${id}`);
-            mostrarAlerta("Categoría eliminada correctamente");
-            await cargarCategorias();
-            await cargarEstadisticas();
-            renderizarTablaCategorias(); // Actualizar tabla de categorías
-          } catch (error) {
-            console.error("Error eliminando categoría:", error);
-            mostrarAlerta("Error eliminando categoría", "danger");
-          }
+        const ok = await confirmarAccion("¿Está seguro de eliminar esta categoría?", "Sí, eliminar");
+        if (!ok) return;
+        try {
+          await authenticatedDelete(`/api/categorias/${id}`);
+          mostrarAlerta("Categoría eliminada correctamente");
+          await cargarCategorias();
+          await cargarEstadisticas();
+          renderizarTablaCategorias(); // Actualizar tabla de categorías
+        } catch (_error) {
+          mostrarAlerta("Error eliminando categoría", "danger");
         }
       };
 
@@ -1689,11 +1715,7 @@
       // Cargar centros educativos
       async function cargarCentros() {
         try {
-          console.log("🔍 Iniciando carga de centros...");
           const result = await authenticatedGet("/api/centros");
-          console.log("📡 Resultado completo:", result);
-          console.log("📦 result.data:", result?.data);
-          console.log("� result.data.docs:", result?.data?.docs);
 
           // La API devuelve: {success: true, data: {docs: [...], ...}}
           if (result?.data?.docs && Array.isArray(result.data.docs)) {
@@ -1702,23 +1724,11 @@
             centros = result.data;
           } else {
             centros = [];
-            console.warn("Estructura de centros no reconocida:", result);
           }
-
-          console.log(
-            "✅ Centros asignados:",
-            centros.length,
-            "centros cargados"
-          );
-          console.log(
-            "🏛️  Primer centro:",
-            centros[0]?.nombre || "No disponible"
-          );
 
           renderizarTablaCentros();
           actualizarSelectCentros();
         } catch (error) {
-          console.error("❌ Error cargando centros:", error);
           centros = [];
           document.getElementById("tablaCentros").innerHTML = `
                     <tr><td colspan="6" class="text-center text-danger">
@@ -1731,9 +1741,7 @@
       // Cargar usuarios
       async function cargarUsuarios() {
         try {
-          console.log("👥 Iniciando carga de usuarios...");
           const result = await authenticatedGet("/api/usuarios");
-          console.log("📡 Resultado usuarios:", result);
 
           // La API devuelve: {success: true, data: {docs: [...], ...}}
           if (result?.data?.docs && Array.isArray(result.data.docs)) {
@@ -1742,13 +1750,10 @@
             usuarios = result.data;
           } else {
             usuarios = [];
-            console.warn("Estructura de usuarios no reconocida:", result);
           }
 
-          console.log("✅ Usuarios cargados:", usuarios.length, "usuarios");
           renderizarTablaUsuarios();
         } catch (error) {
-          console.error("Error cargando usuarios:", error);
           usuarios = [];
           document.getElementById("tablaUsuarios").innerHTML = `
                     <tr><td colspan="6" class="text-center text-danger">
@@ -1760,14 +1765,9 @@
 
       // Renderizar tabla de centros
       function renderizarTablaCentros() {
-        console.log("🎨 Renderizando tabla de centros...");
         const tbody = document.getElementById("tablaCentros");
-        console.log("📝 tbody element:", tbody);
-        console.log("📊 centros variable:", centros);
-        console.log("🔢 centros.length:", centros.length);
 
         if (centros.length === 0) {
-          console.log("⚠️  No hay centros, mostrando mensaje vacío");
           tbody.innerHTML = `
                     <tr><td colspan="6" class="text-center">
                         <div class="empty-state">
@@ -2021,9 +2021,6 @@
             ? telefonoResponsable.replace(/[-\s]/g, "")
             : "";
 
-          console.log("DEBUG - Teléfono original:", telefonoResponsable);
-          console.log("DEBUG - Teléfono limpio:", telefonoLimpio);
-
           // Validar que el teléfono tenga exactamente 8 dígitos si se proporciona
           if (
             telefonoLimpio &&
@@ -2076,17 +2073,13 @@
           ).hide();
           await cargarCentros();
         } catch (error) {
-          console.error("Error guardando centro:", error);
-          console.error("Error response:", error.response?.data);
-          console.error("Error status:", error.response?.status);
-
           // Mostrar mensaje de error más específico
           let errorMessage = "Error guardando centro educativo";
-          if (error.response?.data?.mensaje) {
+          if (error?.response?.data?.mensaje) {
             errorMessage = error.response.data.mensaje;
-          } else if (error.response?.data?.error) {
+          } else if (error?.response?.data?.error) {
             errorMessage = error.response.data.error;
-          } else if (error.message) {
+          } else if (error?.message) {
             errorMessage = error.message;
           }
 
@@ -2158,8 +2151,6 @@
             );
           }
 
-          console.log("Datos a enviar:", data);
-
           if (id) {
             await authenticatedPut(`/api/usuarios/${id}`, data);
             mostrarAlerta("Usuario actualizado correctamente");
@@ -2173,34 +2164,31 @@
           ).hide();
           await cargarUsuarios();
         } catch (error) {
-          console.error("Error guardando usuario:", error);
           mostrarAlerta(error.message || "Error guardando usuario", "danger");
         }
       };
 
       window.eliminarCentro = async function (id) {
-        if (confirm("¿Está seguro de eliminar este centro educativo?")) {
-          try {
-            await authenticatedDelete(`/api/centros/${id}`);
-            mostrarAlerta("Centro educativo eliminado correctamente");
-            await cargarCentros();
-          } catch (error) {
-            console.error("Error eliminando centro:", error);
-            mostrarAlerta("Error eliminando centro educativo", "danger");
-          }
+        const ok = await confirmarAccion("¿Está seguro de eliminar este centro educativo?", "Sí, eliminar");
+        if (!ok) return;
+        try {
+          await authenticatedDelete(`/api/centros/${id}`);
+          mostrarAlerta("Centro educativo eliminado correctamente");
+          await cargarCentros();
+        } catch (_error) {
+          mostrarAlerta("Error eliminando centro educativo", "danger");
         }
       };
 
       window.eliminarUsuario = async function (id) {
-        if (confirm("¿Está seguro de eliminar este usuario?")) {
-          try {
-            await authenticatedDelete(`/api/usuarios/${id}`);
-            mostrarAlerta("Usuario eliminado correctamente");
-            await cargarUsuarios();
-          } catch (error) {
-            console.error("Error eliminando usuario:", error);
-            mostrarAlerta("Error eliminando usuario", "danger");
-          }
+        const ok = await confirmarAccion("¿Está seguro de eliminar este usuario?", "Sí, eliminar");
+        if (!ok) return;
+        try {
+          await authenticatedDelete(`/api/usuarios/${id}`);
+          mostrarAlerta("Usuario eliminado correctamente");
+          await cargarUsuarios();
+        } catch (_error) {
+          mostrarAlerta("Error eliminando usuario", "danger");
         }
       };
 
@@ -2223,8 +2211,6 @@
         if (id) {
           const usuario = usuarios.find((u) => u._id === id);
           if (usuario) {
-            console.log("Usuario a editar:", usuario);
-
             // Llenar el formulario con los datos del usuario
             document.getElementById("usuarioId").value = usuario._id;
             document.getElementById("usuarioNombre").value = usuario.nombre;
@@ -2319,7 +2305,7 @@
             centro.nombre.toLowerCase().includes(busqueda) ||
             centro.codigoMEP.toString().includes(busqueda);
 
-          return (
+        return (
             coincideProvincia &&
             coincideUbicacion &&
             coincideTipo &&
@@ -2446,7 +2432,7 @@
                     <td><span class="badge bg-${
                       usuario.estado === "activo"
                         ? "success"
-                        : usuario.estado === "inactivo"
+                        : "inactivo" === usuario.estado
                         ? "warning"
                         : "danger"
                     }">${usuario.estado}</span></td>
@@ -2494,7 +2480,6 @@
               mensajeInfo.classList.add("d-none");
             }
           } catch (error) {
-            console.error("Error guardando configuración:", error);
             mostrarAlerta("Error guardando configuración", "danger");
           }
         });

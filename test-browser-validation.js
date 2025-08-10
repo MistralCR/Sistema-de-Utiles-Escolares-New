@@ -57,8 +57,8 @@ async function probarValidacionEmail() {
     console.log("✅ Email válido - termina en @mep.go.cr");
   }
 
-  console.log("\n=== PRUEBA 2: Email inválido @mep.go.cr ===");
-  const emailInvalido1 = "director.test@mep.go.cr";
+  console.log("\n=== PRUEBA 2: Email inválido @mep.cr ===");
+  const emailInvalido1 = "director.test@mep.cr";
   console.log("📧 Email de prueba:", emailInvalido1);
 
   if (!emailInvalido1.endsWith("@mep.go.cr")) {
@@ -80,7 +80,7 @@ async function probarValidacionEmail() {
   console.log("\n✅ Todas las pruebas de validación client-side completadas");
   console.log("📋 Resumen:");
   console.log("   - Emails con @mep.go.cr: ✅ ACEPTADOS");
-  console.log("   - Emails con @mep.go.cr: ❌ RECHAZADOS");
+  console.log("   - Emails con @mep.cr: ❌ RECHAZADOS");
   console.log("   - Emails con otros dominios: ❌ RECHAZADOS");
 }
 
