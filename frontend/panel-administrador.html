@@ -551,6 +551,47 @@
       </div>
     </div>
 
+    <!-- Modal: Estudiantes vinculados al Padre -->
+    <div
+      class="modal fade"
+      id="modalEstudiantesPadre"
+      tabindex="-1"
+      aria-labelledby="modalEstudiantesPadreLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEstudiantesPadreLabel">
+              <i class="fas fa-children me-2"></i>Estudiantes del Padre
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div id="contenidoEstudiantesPadre">
+              <div class="text-center py-4">
+                <i class="fas fa-spinner fa-spin me-2"></i>Cargando…
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal agregar padre -->
     <div
       class="modal fade"
@@ -574,57 +615,226 @@
           </div>
           <div class="modal-body">
             <form id="formAgregarPadre">
-              <div class="mb-3">
-                <label for="padreNombre" class="form-label">
-                  <i class="fas fa-user me-2"></i>Nombre Completo
-                </label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="padreNombre"
-                  required
-                  placeholder="Ej: Juan Carlos Rodríguez"
-                />
-              </div>
-              <div class="mb-3">
-                <label for="padreCorreo" class="form-label">
-                  <i class="fas fa-envelope me-2"></i>Correo Electrónico
-                </label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="padreCorreo"
-                  required
-                  placeholder="nombre@mep.go.cr"
-                />
-                <div class="form-text">
-                  Debe ser un correo del dominio @mep.go.cr
+              <!-- Datos del Padre -->
+              <div class="card mb-4">
+                <div class="card-header bg-light">
+                  <h6 class="mb-0">
+                    <i class="fas fa-user me-2"></i>
+                    Datos del Padre de Familia
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="nombrePadre" class="form-label"
+                        >Nombre Completo *</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="nombrePadre"
+                        required
+                        placeholder="Ej: Juan Pérez Morales"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="cedulaPadre" class="form-label"
+                        >Cédula *</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="cedulaPadre"
+                        required
+                        placeholder="Ej: 1-2345-6789"
+                        pattern="[0-9\-]+"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="telefonoPadre" class="form-label"
+                        >Teléfono *</label
+                      >
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="telefonoPadre"
+                        required
+                        placeholder="Ej: 8888-8888 o 88888888"
+                        pattern="^(?:\\d{8}|\\d{4}-\\d{4})$"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="correoPadre" class="form-label"
+                        >Correo Electrónico *</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="correoPadre"
+                        required
+                        placeholder="Ej: padre@email.com"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="contraseñaPadre" class="form-label"
+                        >Contraseña *</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="contraseñaPadre"
+                        required
+                        placeholder="Mínimo 6 caracteres"
+                        minlength="6"
+                      />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="confirmarContraseña" class="form-label"
+                        >Confirmar Contraseña *</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="confirmarContraseña"
+                        required
+                        placeholder="Repetir contraseña"
+                      />
+                    </div>
+                    <div class="col-12 mb-3">
+                      <label for="direccionPadre" class="form-label"
+                        >Dirección</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="direccionPadre"
+                        rows="2"
+                        placeholder="Dirección completa (opcional)"
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="mb-3">
-                <label for="padrePassword" class="form-label">
-                  <i class="fas fa-lock me-2"></i>Contraseña Temporal
-                </label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="padrePassword"
-                  required
-                  placeholder="Mínimo 6 caracteres"
-                />
+
+              <!-- Datos de los Estudiantes -->
+              <div class="card mb-4">
+                <div
+                  class="card-header bg-light d-flex justify-content-between align-items-center"
+                >
+                  <h6 class="mb-0">
+                    <i class="fas fa-graduation-cap me-2"></i>
+                    Datos de los Estudiantes
+                  </h6>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary"
+                    id="btnAgregarEstudiante"
+                  >
+                    <i class="fas fa-plus me-1"></i>
+                    Agregar Estudiante
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div id="contenedorEstudiantes">
+                    <!-- Primer estudiante por defecto -->
+                    <div
+                      class="estudiante-item border rounded p-3 mb-3"
+                      data-index="0"
+                    >
+                      <div
+                        class="d-flex justify-content-between align-items-center mb-3"
+                      >
+                        <h6 class="mb-0">
+                          <i class="fas fa-child me-2"></i>
+                          Estudiante #1
+                        </h6>
+                        <button
+                          type="button"
+                          class="btn btn-sm btn-outline-danger d-none eliminar-estudiante"
+                        >
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Nombre Completo *</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="nombreEstudiante"
+                            required
+                            placeholder="Ej: María Pérez González"
+                          />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label"
+                            >Cédula del Estudiante *</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="cedulaEstudiante"
+                            required
+                            placeholder="Ej: 1-2345-6789"
+                            pattern="[0-9\-]+"
+                          />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label class="form-label">Nivel *</label>
+                          <select
+                            class="form-select"
+                            name="nivelEstudiante"
+                            required
+                          >
+                            <option value="">Seleccionar nivel</option>
+                            <option value="Preescolar">Preescolar</option>
+                            <option value="Primaria">Primaria</option>
+                            <option value="Secundaria">Secundaria</option>
+                          </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label class="form-label">Grado *</label>
+                          <select
+                            class="form-select"
+                            name="gradoEstudiante"
+                            required
+                          >
+                            <option value="">Seleccionar grado</option>
+                            <option value="Kinder">Kinder</option>
+                            <option value="Preparatoria">Preparatoria</option>
+                            <option value="1°">1°</option>
+                            <option value="2°">2°</option>
+                            <option value="3°">3°</option>
+                            <option value="4°">4°</option>
+                            <option value="5°">5°</option>
+                            <option value="6°">6°</option>
+                            <option value="7°">7°</option>
+                            <option value="8°">8°</option>
+                            <option value="9°">9°</option>
+                            <option value="10°">10°</option>
+                            <option value="11°">11°</option>
+                          </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label class="form-label">Fecha de Nacimiento</label>
+                          <input
+                            type="date"
+                            class="form-control"
+                            name="fechaNacimientoEstudiante"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <small class="text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Puedes agregar hasta 15 estudiantes. Al menos uno es
+                    requerido.
+                  </small>
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="padreHijos" class="form-label">
-                  <i class="fas fa-child me-2"></i>Nombres de los Hijos
-                </label>
-                <textarea
-                  class="form-control"
-                  id="padreHijos"
-                  rows="3"
-                  placeholder="Escriba los nombres separados por comas. Ej: Ana Rodríguez, Luis Rodríguez"
-                ></textarea>
-                <div class="form-text">Opcional: Puede agregarse después</div>
-              </div>
+
+              <!-- Mensaje de error/éxito -->
+              <div id="mensajeRegistroPadreAdmin" class="alert d-none"></div>
             </form>
           </div>
           <div class="modal-footer">
@@ -844,7 +1054,7 @@
           }
 
           // Cargar estudiantes desde el endpoint específico
-          const estudiantesResponse = await authenticatedGet(
+          let estudiantesResponse = await authenticatedGet(
             `/api/usuarios/all-estudiantes${params}`
           );
           if (
@@ -852,8 +1062,19 @@
             estudiantesResponse.success &&
             estudiantesResponse.data
           ) {
-            const estudiantesData =
+            let estudiantesData =
               estudiantesResponse.data.docs || estudiantesResponse.data;
+
+            // Fallback: si no hay estudiantes con filtro, consultar sin filtro
+            if (estudiantesData.length === 0 && centroEducativoId) {
+              const sinFiltro = await authenticatedGet(
+                `/api/usuarios/all-estudiantes`
+              );
+              if (sinFiltro && sinFiltro.success && sinFiltro.data) {
+                estudiantesData = sinFiltro.data.docs || sinFiltro.data;
+              }
+            }
+
             document.getElementById("totalAlumnos").textContent =
               estudiantesData.length;
           } else {
@@ -1074,10 +1295,18 @@
             <td>${padre.correo}</td>
             <td>
               ${
-                padre.hijos && padre.hijos.length > 0
-                  ? `<span class="badge bg-info">${padre.hijos.length} hijo${
-                      padre.hijos.length > 1 ? "s" : ""
-                    }</span>`
+                (Array.isArray(padre.estudiantes) &&
+                  padre.estudiantes.length > 0) ||
+                (Array.isArray(padre.hijos) && padre.hijos.length > 0)
+                  ? (() => {
+                      const count =
+                        (Array.isArray(padre.estudiantes) &&
+                          padre.estudiantes.length) ||
+                        (Array.isArray(padre.hijos) ? padre.hijos.length : 0);
+                      return `<span class="badge bg-info">${count} hijo${
+                        count > 1 ? "s" : ""
+                      }</span>`;
+                    })()
                   : '<span class="text-muted">Sin hijos registrados</span>'
               }
             </td>
@@ -1090,6 +1319,11 @@
             </td>
             <td>
               <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-primary" onclick="verEstudiantesPadre('${
+                  padre._id
+                }')" title="Ver estudiantes">
+                  <i class="fas fa-eye"></i>
+                </button>
                 <button class="btn btn-sm btn-outline-warning" onclick="toggleEstadoUsuario('${
                   padre._id
                 }', '${padre.estado}')" title="${
@@ -1112,6 +1346,97 @@
           .join("");
       }
 
+      // Ver estudiantes reales de un padre (filtrados por centro del admin si aplica)
+      window.verEstudiantesPadre = async function (padreId) {
+        try {
+          // Abrir modal inmediatamente con loading
+          const modalEl = document.getElementById("modalEstudiantesPadre");
+          const modal = new bootstrap.Modal(modalEl);
+          document.getElementById("contenidoEstudiantesPadre").innerHTML = `
+            <div class="text-center py-4">
+              <i class="fas fa-spinner fa-spin me-2"></i>Cargando…
+            </div>`;
+          modal.show();
+
+          // Buscar el padre en memoria
+          let padre = padres.find((p) => p._id === padreId);
+          if (!padre || !Array.isArray(padre.estudiantes)) {
+            // Fallback: obtener datos completos del backend
+            const resp = await authenticatedGet(`/api/usuarios/${padreId}`);
+            if (resp && resp.success && resp.data) {
+              padre = resp.data;
+            }
+          }
+
+          const nombrePadre = padre?.nombre || "Padre";
+          document.getElementById("modalEstudiantesPadreLabel").innerHTML = `
+            <i class="fas fa-children me-2"></i>Estudiantes de ${nombrePadre}`;
+
+          let lista = Array.isArray(padre?.estudiantes)
+            ? padre.estudiantes
+            : [];
+
+          // Filtro por centro del administrador si está definido
+          if (centroEducativoId) {
+            lista = lista.filter((est) => {
+              const ce = est.centroEducativo;
+              const estCE = ce && (ce._id || ce);
+              return estCE ? estCE === centroEducativoId : true; // si no tiene centro, lo mostramos igual
+            });
+          }
+
+          if (lista.length === 0) {
+            document.getElementById("contenidoEstudiantesPadre").innerHTML = `
+              <div class="text-center py-4">
+                <i class="fas fa-inbox me-2"></i>No hay estudiantes para mostrar${
+                  centroEducativoId ? " en este centro" : ""
+                }.
+              </div>`;
+            return;
+          }
+
+          // Render tabla con datos reales
+          const rows = lista
+            .map((e) => {
+              const ce = e.centroEducativo;
+              const ceNombre = ce?.nombre || "";
+              return `
+                <tr>
+                  <td>${e.nombre || ""}</td>
+                  <td>${e.cedula || ""}</td>
+                  <td>${e.nivel || ""}</td>
+                  <td>${e.grado || ""}</td>
+                  <td>${ceNombre || "Sin asignar"}</td>
+                </tr>`;
+            })
+            .join("");
+
+          document.getElementById("contenidoEstudiantesPadre").innerHTML = `
+            <div class="table-responsive">
+              <table class="table table-striped align-middle">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Cédula</th>
+                    <th>Nivel</th>
+                    <th>Grado</th>
+                    <th>Centro</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows}
+                </tbody>
+              </table>
+            </div>`;
+        } catch (err) {
+          console.error("Error mostrando estudiantes del padre:", err);
+          document.getElementById("contenidoEstudiantesPadre").innerHTML = `
+            <div class="alert alert-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>Error al cargar estudiantes
+            </div>`;
+        }
+      };
+
       // Cargar estudiantes
       async function cargarEstudiantes() {
         try {
@@ -1119,12 +1444,22 @@
             ? `?centroEducativo=${centroEducativoId}`
             : "";
 
-          const result = await authenticatedGet(
+          let result = await authenticatedGet(
             `/api/usuarios/all-estudiantes${params}`
           );
 
           if (result && result.success && result.data) {
             estudiantes = result.data.docs || result.data;
+
+            // Fallback: si no se encontraron estudiantes con filtro, intentar sin filtro
+            if (estudiantes.length === 0 && centroEducativoId) {
+              const sinFiltro = await authenticatedGet(
+                `/api/usuarios/all-estudiantes`
+              );
+              if (sinFiltro && sinFiltro.success && sinFiltro.data) {
+                estudiantes = sinFiltro.data.docs || sinFiltro.data;
+              }
+            }
             renderEstudiantes();
           } else {
             mostrarAlerta("No se pudieron cargar los estudiantes", "warning");
@@ -1442,9 +1777,21 @@
           e.preventDefault();
 
           try {
+            // Normalizar y validar correo docente
+            const correoDocente = document
+              .getElementById("docenteCorreo")
+              .value.trim()
+              .toLowerCase();
+            if (!/^[^\s@]+@mep\.go\.cr$/.test(correoDocente)) {
+              mostrarAlerta(
+                "El correo del docente debe ser del dominio @mep.go.cr",
+                "danger"
+              );
+              return;
+            }
             const data = {
               nombre: document.getElementById("docenteNombre").value,
-              correo: document.getElementById("docenteCorreo").value,
+              correo: correoDocente,
               contraseña: document.getElementById("docentePassword").value,
               rol: "docente",
               centroEducativo: centroEducativoId,
@@ -1477,32 +1824,120 @@
           e.preventDefault();
 
           try {
-            const hijos = document
-              .getElementById("padreHijos")
-              .value.split(",")
-              .map((h) => h.trim())
-              .filter((h) => h);
+            const submitBtn = document.querySelector(
+              'button[form="formAgregarPadre"]'
+            );
 
-            const data = {
-              nombre: document.getElementById("padreNombre").value,
-              correo: document.getElementById("padreCorreo").value,
-              contraseña: document.getElementById("padrePassword").value,
+            // Validar contraseñas
+            const pass = document.getElementById("contraseñaPadre").value;
+            const pass2 = document.getElementById("confirmarContraseña").value;
+            if (pass !== pass2) {
+              mostrarAlerta("Las contraseñas no coinciden", "danger");
+              return;
+            }
+
+            // Normalizar
+            const correo = (document.getElementById("correoPadre").value || "")
+              .trim()
+              .toLowerCase();
+            const cedula = (document.getElementById("cedulaPadre").value || "")
+              .replace(/[‐‑‒–—−﹘﹣－]/g, "-")
+              .replace(/\s+/g, "")
+              .trim();
+            const telefono = (
+              document.getElementById("telefonoPadre").value || ""
+            ).replace(/\D/g, "");
+            const cedulaOk = /^[0-9]-[0-9]{4}-[0-9]{4}$/.test(cedula);
+            const telOk = /^\d{8}$/.test(telefono);
+            if (!cedulaOk) {
+              mostrarAlerta(
+                "La cédula debe tener el formato X-XXXX-XXXX",
+                "danger"
+              );
+              return;
+            }
+            if (!telOk) {
+              mostrarAlerta(
+                "El teléfono debe tener exactamente 8 dígitos",
+                "danger"
+              );
+              return;
+            }
+
+            const baseData = {
+              nombre: document.getElementById("nombrePadre").value,
+              cedula,
+              telefono,
+              correo,
+              contraseña: pass,
+              direccion: document.getElementById("direccionPadre").value,
               rol: "padre",
               centroEducativo: centroEducativoId,
-              hijos: hijos,
             };
 
-            await authenticatedPost("/api/auth/register", data);
-            mostrarAlerta("Padre de familia creado correctamente", "success");
+            // Estudiantes
+            const items = document.querySelectorAll(".estudiante-item");
+            const estudiantes = [];
+            for (const item of items) {
+              const nombre = item
+                .querySelector('input[name="nombreEstudiante"]')
+                .value.trim();
+              const ced = item
+                .querySelector('input[name="cedulaEstudiante"]')
+                .value.trim()
+                .replace(/[‐‑‒–—−﹘﹣－]/g, "-");
+              const nivel = item
+                .querySelector('select[name="nivelEstudiante"]')
+                .value.trim();
+              const grado = item
+                .querySelector('select[name="gradoEstudiante"]')
+                .value.trim();
+              const fechaNacimiento = item.querySelector(
+                'input[name="fechaNacimientoEstudiante"]'
+              ).value;
+              if (
+                !nombre ||
+                !ced ||
+                !nivel ||
+                !grado ||
+                !/^[0-9]-[0-9]{4}-[0-9]{4}$/.test(ced)
+              ) {
+                mostrarAlerta(
+                  "Complete correctamente los datos de los estudiantes (nombre, cédula, nivel y grado)",
+                  "danger"
+                );
+                return;
+              }
+              estudiantes.push({
+                nombre,
+                cedula: ced,
+                nivel,
+                grado,
+                fechaNacimiento,
+              });
+            }
+            if (estudiantes.length === 0) {
+              mostrarAlerta("Debe agregar al menos un estudiante", "danger");
+              return;
+            }
 
-            // Limpiar formulario y cerrar modal
+            submitBtn.innerHTML =
+              '<i class="fas fa-spinner fa-spin me-2"></i>Registrando...';
+            submitBtn.disabled = true;
+            await authenticatedPost("/api/auth/registro-padre", {
+              ...baseData,
+              estudiantes,
+            });
+            mostrarAlerta(
+              "Padre y estudiantes registrados correctamente",
+              "success"
+            );
+
             this.reset();
             const modal = bootstrap.Modal.getInstance(
               document.getElementById("modalAgregarPadre")
             );
             modal.hide();
-
-            // Recargar datos
             await cargarEstadisticas();
             await cargarPadres();
             await cargarUsuarios();
@@ -1512,6 +1947,116 @@
               error.message || "Error al crear padre de familia",
               "danger"
             );
+          } finally {
+            const submitBtn = document.querySelector(
+              'button[form="formAgregarPadre"]'
+            );
+            if (submitBtn) {
+              submitBtn.innerHTML =
+                '<i class="fas fa-save me-2"></i>Crear Padre';
+              submitBtn.disabled = false;
+            }
+          }
+        });
+
+      // Dinámica agregar/eliminar estudiante
+      let contadorEstudiantesAdmin = 1;
+      const maxEstudiantesAdmin = 15;
+      document
+        .getElementById("btnAgregarEstudiante")
+        ?.addEventListener("click", function () {
+          if (contadorEstudiantesAdmin >= maxEstudiantesAdmin) {
+            alert(`Máximo ${maxEstudiantesAdmin} estudiantes permitidos`);
+            return;
+          }
+          contadorEstudiantesAdmin++;
+          const contenedor = document.getElementById("contenedorEstudiantes");
+          const nuevo = document.createElement("div");
+          nuevo.className = "estudiante-item border rounded p-3 mb-3";
+          nuevo.setAttribute("data-index", contadorEstudiantesAdmin - 1);
+          nuevo.innerHTML = `
+          <div class=\"d-flex justify-content-between align-items-center mb-3\">
+            <h6 class=\"mb-0\"><i class=\"fas fa-child me-2\"></i>Estudiante #${contadorEstudiantesAdmin}</h6>
+            <button type=\"button\" class=\"btn btn-sm btn-outline-danger eliminar-estudiante\"><i class=\"fas fa-trash\"></i></button>
+          </div>
+          <div class=\"row\">
+            <div class=\"col-md-6 mb-3\">
+              <label class=\"form-label\">Nombre Completo *</label>
+              <input type=\"text\" class=\"form-control\" name=\"nombreEstudiante\" required placeholder=\"Ej: María Pérez González\" />
+            </div>
+            <div class=\"col-md-6 mb-3\">
+              <label class=\"form-label\">Cédula del Estudiante *</label>
+              <input type=\"text\" class=\"form-control\" name=\"cedulaEstudiante\" required placeholder=\"Ej: 1-2345-6789\" pattern=\"[0-9\\-]+\" />
+            </div>
+            <div class=\"col-md-4 mb-3\">
+              <label class=\"form-label\">Nivel *</label>
+              <select class=\"form-select\" name=\"nivelEstudiante\" required>
+                <option value=\"\">Seleccionar nivel</option>
+                <option value=\"Preescolar\">Preescolar</option>
+                <option value=\"Primaria\">Primaria</option>
+                <option value=\"Secundaria\">Secundaria</option>
+              </select>
+            </div>
+            <div class=\"col-md-4 mb-3\">
+              <label class=\"form-label\">Grado *</label>
+              <select class=\"form-select\" name=\"gradoEstudiante\" required>
+                <option value=\"\">Seleccionar grado</option>
+                <option value=\"Kinder\">Kinder</option>
+                <option value=\"Preparatoria\">Preparatoria</option>
+                <option value=\"1°\">1°</option>
+                <option value=\"2°\">2°</option>
+                <option value=\"3°\">3°</option>
+                <option value=\"4°\">4°</option>
+                <option value=\"5°\">5°</option>
+                <option value=\"6°\">6°</option>
+                <option value=\"7°\">7°</option>
+                <option value=\"8°\">8°</option>
+                <option value=\"9°\">9°</option>
+                <option value=\"10°\">10°</option>
+                <option value=\"11°\">11°</option>
+              </select>
+            </div>
+            <div class=\"col-md-4 mb-3\">
+              <label class=\"form-label\">Fecha de Nacimiento</label>
+              <input type=\"date\" class=\"form-control\" name=\"fechaNacimientoEstudiante\" />
+            </div>
+          </div>`;
+          contenedor.appendChild(nuevo);
+          nuevo
+            .querySelector(".eliminar-estudiante")
+            ?.addEventListener("click", () => eliminarEstudianteAdmin(nuevo));
+          if (contadorEstudiantesAdmin >= maxEstudiantesAdmin) {
+            document.getElementById("btnAgregarEstudiante").disabled = true;
+          }
+        });
+
+      function eliminarEstudianteAdmin(elemento) {
+        elemento.remove();
+        contadorEstudiantesAdmin--;
+        const estudiantes = document.querySelectorAll(".estudiante-item");
+        estudiantes.forEach((est, index) => {
+          const titulo = est.querySelector("h6");
+          if (titulo)
+            titulo.innerHTML = `<i class=\"fas fa-child me-2\"></i>Estudiante #${
+              index + 1
+            }`;
+          est.setAttribute("data-index", index.toString());
+        });
+        const btn = document.getElementById("btnAgregarEstudiante");
+        if (btn) btn.disabled = false;
+      }
+
+      document
+        .getElementById("confirmarContraseña")
+        ?.addEventListener("blur", function () {
+          const c1 = document.getElementById("contraseñaPadre").value;
+          const c2 = this.value;
+          if (c1 && c2 && c1 !== c2) {
+            this.setCustomValidity("Las contraseñas no coinciden");
+            this.classList.add("is-invalid");
+          } else {
+            this.setCustomValidity("");
+            this.classList.remove("is-invalid");
           }
         });
 
