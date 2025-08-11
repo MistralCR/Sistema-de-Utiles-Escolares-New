@@ -329,6 +329,81 @@
                   placeholder="Mensaje que verán todos los usuarios..."
                 ></textarea>
               </div>
+
+              <!-- Textos de noticias y categorías (edición ligera) -->
+              <div class="border rounded p-3 mb-3 bg-light">
+                <h6 class="mb-3">
+                  <i class="fas fa-newspaper me-2"></i>Textos de Noticias
+                </h6>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="tituloNoticias" class="form-label"
+                      >Título de la sección</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="tituloNoticias"
+                      placeholder="Noticias y Novedades"
+                    />
+                  </div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-4">
+                    <label for="catImportante" class="form-label"
+                      >Importante</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="catImportante"
+                      placeholder="Importante"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="catActualizacion" class="form-label"
+                      >Actualización</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="catActualizacion"
+                      placeholder="Actualización"
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <label for="catMejora" class="form-label">Mejora</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="catMejora"
+                      placeholder="Mejora"
+                    />
+                  </div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6">
+                    <label for="catFormacion" class="form-label"
+                      >Formación</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="catFormacion"
+                      placeholder="Formación"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="catSoporte" class="form-label">Soporte</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="catSoporte"
+                      placeholder="Soporte"
+                    />
+                  </div>
+                </div>
+              </div>
               <button type="submit" class="btn btn-cr-primary">
                 <i class="fas fa-save me-2"></i>Guardar Configuración
               </button>
@@ -1330,8 +1405,18 @@
       async function cargarConfiguracion() {
         try {
           const result = await authenticatedGet("/api/configuracion");
-          if (result?.data) {
-            const { nombreSistema, mensajeGlobal, logoURL } = result.data;
+          console.log("🔧 Respuesta de configuración:", result);
+
+          if (result) {
+            // El resultado puede venir directamente o en result.data
+            const config = result.data || result;
+            const { nombreSistema, mensajeGlobal, logoURL, textosNoticias } =
+              config;
+
+            console.log("📝 Cargando configuración:", {
+              nombreSistema,
+              textosNoticias,
+            });
 
             document.getElementById("nombreSistema").value =
               nombreSistema || "";
@@ -1339,15 +1424,43 @@
               mensajeGlobal || "";
             document.getElementById("logoURL").value = logoURL || "";
 
+            // Textos de noticias
+            if (textosNoticias) {
+              console.log("📰 Cargando textosNoticias:", textosNoticias);
+              document.getElementById("tituloNoticias").value =
+                textosNoticias.tituloNoticias || "Noticias y Novedades";
+
+              if (textosNoticias.categorias) {
+                document.getElementById("catImportante").value =
+                  textosNoticias.categorias.importante || "Importante";
+                document.getElementById("catActualizacion").value =
+                  textosNoticias.categorias.actualizacion || "Actualización";
+                document.getElementById("catMejora").value =
+                  textosNoticias.categorias.mejora || "Mejora";
+                document.getElementById("catFormacion").value =
+                  textosNoticias.categorias.formacion || "Formación";
+                document.getElementById("catSoporte").value =
+                  textosNoticias.categorias.soporte || "Soporte";
+              }
+            } else {
+              console.log(
+                "⚠️ No se encontraron textosNoticias en la configuración"
+              );
+            }
+
             // Mostrar mensaje global si existe
             if (mensajeGlobal) {
               const info = document.getElementById("mensajeGlobalInfo");
               info.querySelector("span").textContent = mensajeGlobal;
               info.classList.remove("d-none");
             }
+
+            console.log("✅ Configuración cargada correctamente");
+          } else {
+            console.log("⚠️ No se recibió configuración del servidor");
           }
         } catch (error) {
-          // Silenciado
+          console.error("❌ Error cargando configuración:", error);
         }
       }
 
@@ -2465,6 +2578,17 @@
               nombreSistema: document.getElementById("nombreSistema").value,
               mensajeGlobal: document.getElementById("mensajeGlobal").value,
               logoURL: document.getElementById("logoURL").value,
+              textosNoticias: {
+                tituloNoticias: document.getElementById("tituloNoticias").value,
+                categorias: {
+                  importante: document.getElementById("catImportante").value,
+                  actualizacion:
+                    document.getElementById("catActualizacion").value,
+                  mejora: document.getElementById("catMejora").value,
+                  formacion: document.getElementById("catFormacion").value,
+                  soporte: document.getElementById("catSoporte").value,
+                },
+              },
             };
 
             await authenticatedPut("/api/configuracion", data);

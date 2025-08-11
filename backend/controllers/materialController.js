@@ -102,7 +102,9 @@ exports.listarMateriales = async (req, res) => {
       filtro.categoria = req.query.categoria;
     }
     if (req.user.rol === "docente") {
-      filtro.centrosAsignados = req.user.centroEducativo;
+      // Para docentes: mostrar todos los materiales disponibles para docentes
+      // (sin limitar por centro), según solicitud funcional.
+      filtro.disponibleParaDocentes = true;
     }
 
     const { page = 1, limit = 50 } = req.query;

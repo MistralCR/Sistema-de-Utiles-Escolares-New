@@ -6,6 +6,77 @@ const authMiddleware = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/checkRole");
 const etiquetasData = require("../data/etiquetas.json");
 
+// Lista pública (sin autenticación) de centros educativos con campos mínimos
+router.get("/lista-publica", async (req, res) => {
+  try {
+    const { search, limit = 100, estado } = req.query;
+    const filtros = {};
+    // Estado: permitir all|todos para no filtrar; por defecto incluir activos (cualquier capitalización) y documentos sin estado
+    if (!estado || /^(activo|activos)$/i.test(estado)) {
+      filtros.$or = [
+        { estado: { $in: ["activo", "Activo"] } },
+        { estado: { $exists: false } },
+        { estado: null },
+      ];
+    } else if (!/^(all|todos)$/i.test(estado)) {
+      filtros.estado = { $regex: new RegExp(`^${estado}$`, "i") };
+    }
+
+    if (search) {
+      filtros.$or = [
+        { nombre: { $regex: search, $options: "i" } },
+        { codigoMEP: { $regex: search, $options: "i" } },
+        { canton: { $regex: search, $options: "i" } },
+        { distrito: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const docs = await CentroEducativo.find(filtros)
+      .select("nombre provincia canton distrito codigoMEP codigo estado")
+      .sort({ nombre: 1 })
+      .limit(parseInt(limit));
+
+    return res.json({ success: true, data: { docs, totalDocs: docs.length } });
+  } catch (error) {
+    console.error("Error obteniendo lista pública de centros:", error);
+    res.status(500).json({ success: false, msg: "Error interno del servidor" });
+  }
+});
+
+// Lista simple de centros educativos (autenticado, cualquier rol)
+// Devuelve campos mínimos para llenar selects en el frontend
+router.get("/lista-simple", authMiddleware, async (req, res) => {
+  try {
+    const { search, limit = 100, estado = "activo" } = req.query;
+
+    const filtros = {};
+    // Estado: permitir all|todos para no filtrar
+    if (/^(all|todos)$/i.test(estado)) {
+      // sin filtro de estado
+    } else {
+      filtros.estado = { $regex: new RegExp(`^${estado}$`, "i") };
+    }
+    if (search) {
+      filtros.$or = [
+        { nombre: { $regex: search, $options: "i" } },
+        { codigoMEP: { $regex: search, $options: "i" } },
+        { canton: { $regex: search, $options: "i" } },
+        { distrito: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const docs = await CentroEducativo.find(filtros)
+      .select("nombre provincia canton distrito codigoMEP codigo estado")
+      .sort({ nombre: 1 })
+      .limit(parseInt(limit));
+
+    return res.json({ success: true, data: { docs, totalDocs: docs.length } });
+  } catch (error) {
+    console.error("Error obteniendo lista simple de centros:", error);
+    res.status(500).json({ success: false, msg: "Error interno del servidor" });
+  }
+});
+
 // Obtener todas las etiquetas disponibles
 router.get(
   "/etiquetas",

@@ -4,7 +4,10 @@ const configuracionController = require("../controllers/configuracionController"
 const authMiddleware = require("../middleware/authMiddleware");
 const checkRole = require("../middleware/checkRole");
 
-// Obtener configuración global
+// Obtener configuración pública (sin autenticación) - para página de login
+router.get("/public", configuracionController.obtenerConfiguracionPublica);
+
+// Obtener configuración global (requiere autenticación)
 router.get("/", authMiddleware, configuracionController.obtenerConfiguracion);
 
 // Actualizar configuración global (solo admin/coordinador)
