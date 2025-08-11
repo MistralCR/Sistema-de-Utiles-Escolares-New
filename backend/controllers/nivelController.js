@@ -1,5 +1,17 @@
 const NivelEducativo = require("../models/NivelEducativo");
 
+// Normaliza el centroEducativo que puede venir como ObjectId, objeto poblado o string
+function normalizeCentro(centro) {
+  if (!centro) return null;
+  if (typeof centro === "string") return centro;
+  if (typeof centro === "object" && centro._id) return String(centro._id);
+  try {
+    return String(centro);
+  } catch {
+    return null;
+  }
+}
+
 // 1. Crear nivel (solo administrador)
 exports.crearNivel = async (req, res) => {
   try {
@@ -15,7 +27,7 @@ exports.crearNivel = async (req, res) => {
     const nivel = new NivelEducativo({
       nombre,
       descripcion,
-      centroEducativo: req.user.centroEducativo,
+      centroEducativo: normalizeCentro(req.user.centroEducativo),
     });
     await nivel.save();
     res.status(201).json(nivel);
@@ -36,7 +48,7 @@ exports.editarNivel = async (req, res) => {
     const { nombre, descripcion } = req.body;
     const nivel = await NivelEducativo.findOne({
       _id: id,
-      centroEducativo: req.user.centroEducativo,
+      centroEducativo: normalizeCentro(req.user.centroEducativo),
     });
     if (!nivel) return res.status(404).json({ msg: "Nivel no encontrado" });
     if (nombre) nivel.nombre = nombre;
@@ -59,7 +71,7 @@ exports.eliminarNivel = async (req, res) => {
     const { id } = req.params;
     const nivel = await NivelEducativo.findOne({
       _id: id,
-      centroEducativo: req.user.centroEducativo,
+      centroEducativo: normalizeCentro(req.user.centroEducativo),
     });
     if (!nivel) return res.status(404).json({ msg: "Nivel no encontrado" });
     nivel.activo = false;
@@ -75,10 +87,16 @@ exports.eliminarNivel = async (req, res) => {
 // 4. Listar niveles activos del centro
 exports.listarNiveles = async (req, res) => {
   try {
-    const niveles = await NivelEducativo.find({
-      centroEducativo: req.user.centroEducativo,
-      activo: true,
-    });
+    const centro = normalizeCentro(req.user.centroEducativo);
+    const query = { activo: true };
+    // Incluir niveles globales (General) además de los del centro del usuario
+    if (centro) {
+      query.$or = [{ centroEducativo: centro }, { centroEducativo: "General" }];
+    } else {
+      query.centroEducativo = "General";
+    }
+
+    const niveles = await NivelEducativo.find(query);
     res.json(niveles);
   } catch (err) {
     res

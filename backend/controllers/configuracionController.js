@@ -19,15 +19,15 @@ exports.actualizarConfiguracion = async (req, res) => {
     }
     const { nombreSistema, mensajeGlobal, logoURL, textosNoticias } = req.body;
     const config = await Configuracion.getSingleton();
+
+    // Solo actualizar campos que se proporcionen explícitamente
     if (nombreSistema !== undefined) config.nombreSistema = nombreSistema;
     if (mensajeGlobal !== undefined) config.mensajeGlobal = mensajeGlobal;
     if (logoURL !== undefined) config.logoURL = logoURL;
     if (textosNoticias && typeof textosNoticias === "object") {
       // Asegurar merges seguros evitando spreads de undefined/null
       const baseTN =
-        config.textosNoticias?.toObject?.() ||
-        config.textosNoticias ||
-        {};
+        config.textosNoticias?.toObject?.() || config.textosNoticias || {};
       const baseCat =
         baseTN?.categorias?.toObject?.() || baseTN?.categorias || {};
 
@@ -45,13 +45,50 @@ exports.actualizarConfiguracion = async (req, res) => {
     }
     config.actualizadoPor = req.user._id;
     await config.save();
+
+    // Política: sólo el COORDINADOR puede modificar 'textosNoticias'.
+    // Un administrador puede actualizar otros campos (nombreSistema, mensajeGlobal, logoURL),
+    // pero no 'textosNoticias'.
+    if (
+      typeof textosNoticias !== "undefined" &&
+      req.user.rol !== "coordinador"
+    ) {
+      return res.status(403).json({
+        msg: "Solo el coordinador puede actualizar 'Textos de Noticias'.",
+      });
+    }
     const updatedConfig = await Configuracion.findById(config._id).populate(
       "actualizadoPor"
     );
     res.json(updatedConfig);
   } catch (err) {
     // Log para diagnóstico (no expone detalles al cliente)
-    console.error("[configuracionController] actualizarConfiguracion error:", err?.message || err);
+    console.error(
+      "[configuracionController] actualizarConfiguracion error:",
+      err?.message || err
+    );
     res.status(500).json({ msg: "Error al actualizar la configuración." });
+  }
+};
+
+// Obtener configuración pública (sin autenticación) - solo datos necesarios para login
+exports.obtenerConfiguracionPublica = async (req, res) => {
+  try {
+    const config = await Configuracion.getSingleton();
+
+    // Retornar solo los campos públicos necesarios para la página de login
+    const configPublica = {
+      nombreSistema: config.nombreSistema,
+      logoURL: config.logoURL,
+      textosNoticias: config.textosNoticias,
+    };
+
+    res.json(configPublica);
+  } catch (err) {
+    console.error(
+      "[configuracionController] obtenerConfiguracionPublica error:",
+      err?.message || err
+    );
+    res.status(500).json({ msg: "Error al obtener la configuración pública." });
   }
 };

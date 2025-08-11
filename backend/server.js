@@ -1,5 +1,6 @@
 const app = require("./app");
-const PORT = process.env.PORT || 4000;
+// Prefer env var, fallback to 4100 to avoid local conflicts with 4000
+const PORT = Number(process.env.PORT) || 4100;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);

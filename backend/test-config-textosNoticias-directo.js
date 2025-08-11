@@ -91,22 +91,30 @@ function deepClone(obj) {
 
   // Asserts de persistencia y merge
   assert(
-    updated.textosNoticias && updated.textosNoticias.tituloNoticias === nuevaLeyenda,
+    updated.textosNoticias &&
+      updated.textosNoticias.tituloNoticias === nuevaLeyenda,
     "tituloNoticias no se actualizó"
   );
   const cat = updated.textosNoticias.categorias || {};
-  assert(cat.importante === "Urgente", "Categoria 'importante' no se actualizó");
+  assert(
+    cat.importante === "Urgente",
+    "Categoria 'importante' no se actualizó"
+  );
   assert(cat.soporte === "Ayuda", "Categoria 'soporte' no se actualizó");
   // Deben mantenerse las demás (si existían), al menos verificar que siguen presentes como string
   ["actualizacion", "mejora", "formacion"].forEach((k) => {
-    assert(typeof cat[k] === "string" && cat[k].length > 0, `Categoria '${k}' faltante o vacía`);
+    assert(
+      typeof cat[k] === "string" && cat[k].length > 0,
+      `Categoria '${k}' faltante o vacía`
+    );
   });
   assert(updated.actualizadoPor, "No se pobló 'actualizadoPor'");
 
   // Confirmar con un GET adicional
   const fetched = await getConfig(token);
   assert(
-    fetched.textosNoticias && fetched.textosNoticias.tituloNoticias === nuevaLeyenda,
+    fetched.textosNoticias &&
+      fetched.textosNoticias.tituloNoticias === nuevaLeyenda,
     "GET posterior no refleja cambios en tituloNoticias"
   );
 

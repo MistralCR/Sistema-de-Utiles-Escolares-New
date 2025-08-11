@@ -8,10 +8,14 @@ exports.crearLista = async (req, res) => {
     if (req.user.rol !== "docente") {
       return res.status(403).json({ msg: "Solo docentes pueden crear listas" });
     }
-    const { nombre, nivelEducativo, materiales, fechaLimite } = req.body;
+
+    // Aceptar tanto "nivelEducativo" como "nivel" desde el frontend
+    const { nombre, nivelEducativo, nivel, materiales, fechaLimite } = req.body;
+    const nivelFinal = nivelEducativo || nivel;
+
     if (
       !nombre ||
-      !nivelEducativo ||
+      !nivelFinal ||
       !Array.isArray(materiales) ||
       materiales.length === 0
     ) {
@@ -19,10 +23,34 @@ exports.crearLista = async (req, res) => {
         .status(400)
         .json({ msg: "Datos incompletos o materiales vacíos" });
     }
+
+    // Normalizar materiales: aceptar array de IDs o array de objetos { materialId, cantidad }
+    let materialesNormalizados = [];
+    if (typeof materiales[0] === "string") {
+      materialesNormalizados = materiales.map((id) => ({
+        materialId: id,
+        cantidad: 1,
+      }));
+    } else if (typeof materiales[0] === "object" && materiales[0] !== null) {
+      materialesNormalizados = materiales.map((m) => ({
+        materialId: m.materialId || m.id || m._id,
+        cantidad: Math.max(1, Number(m.cantidad) || 1),
+      }));
+      // Filtrar cualquier entrada sin materialId válido
+      materialesNormalizados = materialesNormalizados.filter(
+        (m) => !!m.materialId
+      );
+      if (materialesNormalizados.length === 0) {
+        return res.status(400).json({ msg: "Formato de materiales inválido" });
+      }
+    } else {
+      return res.status(400).json({ msg: "Formato de materiales inválido" });
+    }
+
     const lista = new ListaUtiles({
       nombre,
-      nivelEducativo,
-      materiales,
+      nivelEducativo: nivelFinal,
+      materiales: materialesNormalizados,
       creadoPor: req.user._id,
       centroEducativo: req.user.centroEducativo,
       fechaLimite,
@@ -113,7 +141,7 @@ exports.eliminarLista = async (req, res) => {
 exports.editarLista = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, nivelEducativo, materiales, fechaLimite } = req.body;
+    const { nombre, nivelEducativo, nivel, materiales, fechaLimite } = req.body;
     const lista = await ListaUtiles.findById(id);
     if (!lista) return res.status(404).json({ msg: "Lista no encontrada" });
     if (String(lista.creadoPor) !== String(req.user._id)) {
@@ -122,9 +150,28 @@ exports.editarLista = async (req, res) => {
         .json({ msg: "No autorizado para editar esta lista" });
     }
     if (nombre) lista.nombre = nombre;
-    if (nivelEducativo) lista.nivelEducativo = nivelEducativo;
-    if (Array.isArray(materiales) && materiales.length > 0)
-      lista.materiales = materiales;
+    const nivelFinal = nivelEducativo || nivel;
+    if (nivelFinal) lista.nivelEducativo = nivelFinal;
+    if (Array.isArray(materiales) && materiales.length > 0) {
+      // Normalizar materiales si llegan como IDs
+      let materialesNormalizados = [];
+      if (typeof materiales[0] === "string") {
+        materialesNormalizados = materiales.map((id) => ({
+          materialId: id,
+          cantidad: 1,
+        }));
+      } else if (typeof materiales[0] === "object" && materiales[0] !== null) {
+        materialesNormalizados = materiales
+          .map((m) => ({
+            materialId: m.materialId || m.id || m._id,
+            cantidad: Math.max(1, Number(m.cantidad) || 1),
+          }))
+          .filter((m) => !!m.materialId);
+      }
+      if (materialesNormalizados.length > 0) {
+        lista.materiales = materialesNormalizados;
+      }
+    }
     if (fechaLimite) lista.fechaLimite = fechaLimite;
     await lista.save();
     const registrarHistorial = require("../helpers/registrarHistorial");
@@ -153,7 +200,7 @@ exports.obtenerListasEstudiantes = async (req, res) => {
     // Obtener el usuario padre con sus estudiantes
     let padre = await Usuario.findById(req.user._id).populate(
       "estudiantes",
-      "nombre cedula nivel grado"
+      "nombre cedula nivel grado centroEducativo"
     );
 
     // Backfill: si no tiene estudiantes cargados, buscarlos por referencia y vincular
@@ -184,41 +231,54 @@ exports.obtenerListasEstudiantes = async (req, res) => {
     }
 
     // Obtener listas por nivel y grado de los estudiantes
-    const nivelesGrados = padre.estudiantes.map((est) => ({
-      nivel: est.nivel,
-      grado: est.grado,
-    }));
+    // Construir consultas por estudiante: nivel y centro
+    const queries = padre.estudiantes.map((est) => {
+      const filtro = {
+        nivelEducativo: est.nivel,
+        activo: true,
+      };
+      if (est.centroEducativo) {
+        filtro.centroEducativo = String(est.centroEducativo);
+      }
+      return filtro;
+    });
 
-    // Crear query para buscar listas que coincidan con los niveles/grados
-    const queries = nivelesGrados.map((ng) => ({
-      nivelEducativo: ng.nivel,
-      // Si el grado está especificado en la lista, debe coincidir
-      $or: [{ grado: { $exists: false } }, { grado: ng.grado }, { grado: "" }],
-      activo: true,
-    }));
-
-    const listas = await ListaUtiles.find({ $or: queries })
+    const listasDB = await ListaUtiles.find({ $or: queries })
       .populate("creadoPor", "nombre")
-      .populate("nivelEducativo", "nombre")
-      .populate("materiales.material", "nombre descripcion categoria precio")
+      .populate({
+        path: "materiales.materialId",
+        select: "nombre descripcion categoria precio",
+        populate: { path: "categoria", select: "nombre" },
+      })
       .sort({ fechaCreacion: -1 });
 
     // Agregar información de para qué estudiante aplica cada lista
-    const listasConEstudiantes = listas.map((lista) => {
+    const listasConEstudiantes = listasDB.map((lista) => {
       const estudiantesAplicables = padre.estudiantes.filter(
         (est) =>
-          est.nivel === lista.nivelEducativo?.nombre ||
-          est.nivel === lista.nivelEducativo
+          est.nivel === lista.nivelEducativo &&
+          (!est.centroEducativo ||
+            String(est.centroEducativo) === String(lista.centroEducativo))
       );
 
-      return {
-        ...lista.toObject(),
-        estudiantesAplicables: estudiantesAplicables.map((est) => ({
-          _id: est._id,
-          nombre: est.nombre,
-          grado: est.grado,
-        })),
-      };
+      // Formatear materiales como espera el frontend: arreglo de materiales poblados
+      const materialesPlano = (lista.materiales || [])
+        .map((m) =>
+          m.materialId
+            ? { ...m.materialId.toObject(), cantidad: m.cantidad }
+            : null
+        )
+        .filter(Boolean);
+
+      const obj = lista.toObject();
+      obj.nivel = { nombre: lista.nivelEducativo };
+      obj.materiales = materialesPlano;
+      obj.estudiantesAplicables = estudiantesAplicables.map((est) => ({
+        _id: est._id,
+        nombre: est.nombre,
+        grado: est.grado,
+      }));
+      return obj;
     });
 
     res.json({
@@ -257,9 +317,11 @@ exports.obtenerTodasLasListas = async (req, res) => {
 
     const listas = await ListaUtiles.find(query)
       .populate("creadoPor", "nombre correo")
-      .populate("centroEducativo", "nombre")
-      .populate("nivelEducativo", "nombre")
-      .populate("materiales.material", "nombre categoria precio")
+      .populate({
+        path: "materiales.materialId",
+        select: "nombre categoria precio",
+        populate: { path: "categoria", select: "nombre" },
+      })
       .sort({ fechaCreacion: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
