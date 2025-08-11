@@ -541,6 +541,21 @@
                   </button>
                 </div>
                 <div class="card-body">
+                  <!-- Centro Educativo (aplica a los estudiantes) -->
+                  <div class="row mb-3">
+                    <div class="col-md-8">
+                      <label for="centroRegistro" class="form-label"
+                        >Centro Educativo</label
+                      >
+                      <select id="centroRegistro" class="form-select">
+                        <option value="">Seleccionar centro</option>
+                      </select>
+                      <small class="text-muted"
+                        >Este centro se asociará a los estudiantes
+                        registrados.</small
+                      >
+                    </div>
+                  </div>
                   <div id="contenedorEstudiantes">
                     <!-- Primer estudiante por defecto -->
                     <div
@@ -680,12 +695,93 @@
         const newsContainer = document.getElementById("newsContainer");
 
         try {
-          const response = await fetch("noticias.json");
-          if (!response.ok) {
-            throw new Error("No se pudieron cargar las noticias");
+          // Primero intentar cargar desde la API de configuración
+          let noticias = [];
+          let tituloSeccion = "Noticias y Novedades";
+
+          try {
+            const configResponse = await fetch("/api/configuracion/public");
+            if (configResponse.ok) {
+              const config = await configResponse.json();
+
+              if (config.textosNoticias && config.textosNoticias.categorias) {
+                // Construir noticias desde la configuración dinámica
+                tituloSeccion =
+                  config.textosNoticias.tituloNoticias ||
+                  "Noticias y Novedades";
+
+                const categorias = config.textosNoticias.categorias;
+
+                noticias = [
+                  {
+                    titulo: "Información Importante",
+                    resumen:
+                      categorias.importante ||
+                      "Información importante del sistema",
+                    fecha: new Date().toISOString().split("T")[0],
+                    icono: "fas fa-exclamation-triangle",
+                    categoria: "Importante",
+                  },
+                  {
+                    titulo: "Actualizaciones del Sistema",
+                    resumen:
+                      categorias.actualizacion ||
+                      "Últimas actualizaciones disponibles",
+                    fecha: new Date().toISOString().split("T")[0],
+                    icono: "fas fa-sync-alt",
+                    categoria: "Actualización",
+                  },
+                  {
+                    titulo: "Mejoras Implementadas",
+                    resumen:
+                      categorias.mejora || "Nuevas mejoras en el sistema",
+                    fecha: new Date().toISOString().split("T")[0],
+                    icono: "fas fa-arrow-up",
+                    categoria: "Mejora",
+                  },
+                  {
+                    titulo: "Formación y Capacitación",
+                    resumen:
+                      categorias.formacion ||
+                      "Recursos de formación disponibles",
+                    fecha: new Date().toISOString().split("T")[0],
+                    icono: "fas fa-graduation-cap",
+                    categoria: "Formación",
+                  },
+                  {
+                    titulo: "Soporte Técnico",
+                    resumen:
+                      categorias.soporte || "Información de soporte técnico",
+                    fecha: new Date().toISOString().split("T")[0],
+                    icono: "fas fa-headset",
+                    categoria: "Soporte",
+                  },
+                ].filter((noticia) => noticia.resumen.trim() !== ""); // Solo mostrar las que tengan contenido
+              }
+            }
+          } catch (configError) {
+            console.log(
+              "No se pudo cargar configuración, usando archivo estático:",
+              configError
+            );
           }
 
-          const noticias = await response.json();
+          // Si no hay noticias de configuración, cargar desde archivo JSON
+          if (noticias.length === 0) {
+            const response = await fetch("noticias.json");
+            if (!response.ok) {
+              throw new Error("No se pudieron cargar las noticias");
+            }
+            noticias = await response.json();
+          }
+
+          // Actualizar título si está disponible
+          const tituloElement = document.querySelector(
+            "h3.h4.mb-4.text-primary"
+          );
+          if (tituloElement) {
+            tituloElement.innerHTML = `<i class="fas fa-newspaper me-2"></i>${tituloSeccion}`;
+          }
 
           // Ocultar loading
           loadingElement.classList.add("d-none");
@@ -820,6 +916,32 @@
 
       let contadorEstudiantes = 1;
       const maxEstudiantes = 15;
+
+      // Cargar lista de centros (público, sin autenticación)
+      async function cargarCentrosPublicos() {
+        try {
+          const resp = await fetch("/api/centros/lista-publica?limit=500");
+          const data = await resp.json().catch(() => null);
+          const docs = data?.data?.docs || [];
+
+          const select = document.getElementById("centroRegistro");
+          if (!select) return;
+          select.innerHTML = '<option value="">Seleccionar centro</option>';
+          docs.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c._id || c.id || "";
+            const cantonTxt = c.canton ? " - " + c.canton : "";
+            const provTxt = c.provincia ? " (" + c.provincia + ")" : "";
+            opt.textContent = (c.nombre + cantonTxt + provTxt).trim();
+            select.appendChild(opt);
+          });
+        } catch (e) {
+          console.warn("No se pudieron cargar centros públicos", e);
+        }
+      }
+
+      // Cargar centros públicos para el registro de padres
+      cargarCentrosPublicos();
 
       // Agregar nuevo estudiante
       document
@@ -973,6 +1095,8 @@
             direccion: document.getElementById("direccionPadre").value,
             rol: "padre",
             estudiantes: [],
+            centroEducativo:
+              document.getElementById("centroRegistro")?.value || undefined,
           };
 
           // Recopilar datos de estudiantes
@@ -1025,7 +1149,7 @@
 
           try {
             const response = await fetch(
-              "http://localhost:4000/api/auth/registro-padre",
+              "http://localhost:4100/api/auth/registro-padre",
               {
                 method: "POST",
                 headers: {

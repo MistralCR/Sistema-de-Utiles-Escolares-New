@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const dbConnect = require("./config/db");
 
 const app = express();
@@ -17,6 +18,8 @@ const corsOptions = {
       "http://127.0.0.1:3000",
       "http://localhost:4000",
       "http://127.0.0.1:4000",
+      "http://localhost:4100",
+      "http://127.0.0.1:4100",
       "http://localhost:8080",
       "http://127.0.0.1:8080",
       "http://localhost:8000",
@@ -42,10 +45,10 @@ app.use(express.json());
 
 // Servir archivos estáticos
 app.use(express.static("public"));
-app.use(
-  express.static("/Volumes/Orico SSD/Sistema de Utiles Escolares/frontend")
-); // Usar ruta absoluta
-app.use("/frontend", express.static("../frontend")); // Mantener compatibilidad
+// Servir la carpeta frontend desde la raíz del proyecto
+app.use("/frontend", express.static(path.join(__dirname, "../frontend")));
+// También servir archivos frontend desde la raíz para mayor accesibilidad
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Logging middleware para desarrollo
 if (process.env.NODE_ENV === "development") {
@@ -100,6 +103,10 @@ app.use("/api/configuracion", configuracionRoutes);
 // Rutas de autenticación y usuarios básicos
 const usuarioRoutes = require("./routes/usuarioRoutes");
 app.use("/api/auth", usuarioRoutes);
+
+// Rutas de estudiantes (edición por parte de padres/admin/coordinador)
+const estudiantesRoutes = require("./routes/estudiantesRoutes");
+app.use("/api/estudiantes", estudiantesRoutes);
 
 // Nuevas rutas para coordinador
 const centrosRoutes = require("./routes/centrosRoutes");

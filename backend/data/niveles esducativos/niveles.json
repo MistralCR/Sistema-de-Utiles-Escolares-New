@@ -1,0 +1,44 @@
+[
+  { "nombre": "Inicial", "descripcion": "Educación inicial / preescolar" },
+  {
+    "nombre": "Preescolar",
+    "descripcion": "Ciclo de educación preescolar (Materno, Transición)"
+  },
+
+  { "nombre": "Primaria 1°", "descripcion": "Primer grado de primaria" },
+  { "nombre": "Primaria 2°", "descripcion": "Segundo grado de primaria" },
+  { "nombre": "Primaria 3°", "descripcion": "Tercer grado de primaria" },
+  { "nombre": "Primaria 4°", "descripcion": "Cuarto grado de primaria" },
+  { "nombre": "Primaria 5°", "descripcion": "Quinto grado de primaria" },
+  { "nombre": "Primaria 6°", "descripcion": "Sexto grado de primaria" },
+
+  {
+    "nombre": "Secundaria 7°",
+    "descripcion": "Sétimo año de secundaria (III Ciclo)"
+  },
+  {
+    "nombre": "Secundaria 8°",
+    "descripcion": "Octavo año de secundaria (III Ciclo)"
+  },
+  {
+    "nombre": "Secundaria 9°",
+    "descripcion": "Noveno año de secundaria (III Ciclo)"
+  },
+
+  {
+    "nombre": "Secundaria 10°",
+    "descripcion": "Décimo año (Educación Diversificada)"
+  },
+  {
+    "nombre": "Secundaria 11°",
+    "descripcion": "Undécimo año (Educación Diversificada)"
+  },
+  {
+    "nombre": "Secundaria 12°",
+    "descripcion": "Duodécimo año (si aplica técnico/IB)"
+  },
+
+  { "nombre": "Técnico", "descripcion": "Especialidades técnicas (CTP)" },
+  { "nombre": "Nocturno", "descripcion": "Modalidad nocturna" },
+  { "nombre": "IB", "descripcion": "Bachillerato Internacional (si aplica)" }
+]

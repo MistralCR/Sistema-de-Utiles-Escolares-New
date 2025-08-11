@@ -219,20 +219,11 @@
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="card stats-card text-center p-3">
-            <div class="card-body">
-              <i class="fas fa-check-circle fa-2x text-info mb-2"></i>
-              <h5 class="card-title">Completado</h5>
-              <h3 class="text-info" id="progresoCompras">0%</h3>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Navegación por Pestañas -->
-      <ul class="nav nav-tabs mb-4" id="padreTabs" role="tablist">
-        <li class="nav-item" role="presentation">
+      <div class="nav nav-tabs mb-4" id="padreTabs" role="tablist">
+        <div class="nav-item">
           <button
             class="nav-link active"
             id="mis-hijos-tab"
@@ -245,8 +236,8 @@
           >
             <i class="fas fa-child me-2"></i>Mis Hijos
           </button>
-        </li>
-        <li class="nav-item" role="presentation">
+        </div>
+        <div class="nav-item">
           <button
             class="nav-link"
             id="listas-utiles-tab"
@@ -259,22 +250,8 @@
           >
             <i class="fas fa-list-alt me-2"></i>Listas de Útiles
           </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="progreso-compras-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#progreso-compras"
-            type="button"
-            role="tab"
-            aria-controls="progreso-compras"
-            aria-selected="false"
-          >
-            <i class="fas fa-shopping-cart me-2"></i>Progreso de Compras
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
+        </div>
+        <div class="nav-item">
           <button
             class="nav-link"
             id="notificaciones-tab"
@@ -287,8 +264,8 @@
           >
             <i class="fas fa-bell me-2"></i>Notificaciones
           </button>
-        </li>
-      </ul>
+        </div>
+      </div>
 
       <!-- Contenido de las Pestañas -->
       <div class="tab-content" id="padreTabsContent">
@@ -328,28 +305,6 @@
               <div class="text-center py-4">
                 <i class="fas fa-spinner fa-spin me-2"></i>Cargando listas de
                 útiles...
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- PROGRESO DE COMPRAS -->
-        <div class="tab-pane fade" id="progreso-compras" role="tabpanel">
-          <div class="table-container">
-            <h4 class="mb-4">
-              <i class="fas fa-shopping-cart me-2"></i>Progreso de Compras
-            </h4>
-
-            <div class="alert alert-info">
-              <i class="fas fa-info-circle me-2"></i>
-              <strong>Información:</strong> Marca los materiales que ya has
-              comprado para llevar un control de tu progreso.
-            </div>
-
-            <div id="progresoContainer">
-              <div class="text-center py-4">
-                <i class="fas fa-spinner fa-spin me-2"></i>Cargando progreso de
-                compras...
               </div>
             </div>
           </div>
@@ -418,10 +373,21 @@
                 </label>
                 <select id="nivelHijo" class="form-select" required>
                   <option value="">Seleccione el nivel</option>
-                  <option value="Inicial">Inicial</option>
+                  <option value="Preescolar">Preescolar</option>
                   <option value="Primaria">Primaria</option>
                   <option value="Secundaria">Secundaria</option>
                 </select>
+              </div>
+              <div class="mb-3">
+                <label for="centroHijo" class="form-label">
+                  <i class="fas fa-school me-2"></i>Centro Educativo
+                </label>
+                <select id="centroHijo" class="form-select" required>
+                  <option value="">Seleccione el centro</option>
+                </select>
+                <div class="form-text">
+                  Se cargan los centros activos disponibles en el sistema.
+                </div>
               </div>
               <div class="mb-3">
                 <label for="gradoHijo" class="form-label">
@@ -503,6 +469,118 @@
       </div>
     </div>
 
+    <!-- Modal Editar Hijo -->
+    <div
+      class="modal fade"
+      id="modalEditarHijo"
+      tabindex="-1"
+      aria-labelledby="modalEditarHijoLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalEditarHijoLabel">
+              <i class="fas fa-edit me-2"></i>Editar Información del Hijo
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formEditarHijo">
+              <input type="hidden" id="editarHijoId" />
+              <input type="hidden" id="editarHijoIndex" />
+              <div class="mb-3">
+                <label for="editarNombreHijo" class="form-label">
+                  <i class="fas fa-user me-2"></i>Nombre Completo
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editarNombreHijo"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="editarCedulaHijo" class="form-label">
+                  <i class="fas fa-id-card me-2"></i>Cédula (X-XXXX-XXXX)
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editarCedulaHijo"
+                  placeholder="1-2345-6789"
+                />
+                <div class="form-text">
+                  Debe cumplir el formato costarricense X-XXXX-XXXX
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="editarNivelHijo" class="form-label">
+                  <i class="fas fa-layer-group me-2"></i>Nivel Educativo
+                </label>
+                <select id="editarNivelHijo" class="form-select" required>
+                  <option value="">Seleccione el nivel</option>
+                  <option value="Preescolar">Preescolar</option>
+                  <option value="Primaria">Primaria</option>
+                  <option value="Secundaria">Secundaria</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editarGradoHijo" class="form-label">
+                  <i class="fas fa-graduation-cap me-2"></i>Grado o Año
+                </label>
+                <select id="editarGradoHijo" class="form-select">
+                  <option value="">Seleccione el grado</option>
+                  <option value="Kinder">Kinder</option>
+                  <option value="Preparatoria">Preparatoria</option>
+                  <option value="1°">1°</option>
+                  <option value="2°">2°</option>
+                  <option value="3°">3°</option>
+                  <option value="4°">4°</option>
+                  <option value="5°">5°</option>
+                  <option value="6°">6°</option>
+                  <option value="7°">7°</option>
+                  <option value="8°">8°</option>
+                  <option value="9°">9°</option>
+                  <option value="10°">10°</option>
+                  <option value="11°">11°</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="editarCentroHijo" class="form-label">
+                  <i class="fas fa-school me-2"></i>Centro Educativo
+                </label>
+                <select id="editarCentroHijo" class="form-select">
+                  <option value="">Seleccione el centro</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="formEditarHijo"
+              class="btn btn-cr-primary"
+            >
+              <i class="fas fa-save me-2"></i>Guardar Cambios
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    <!-- Gestor de temas (necesario para que aparezca el botón) -->
@@ -513,9 +591,7 @@
       // Importar funciones de autenticación
       import {
         authenticatedGet,
-        authenticatedPost,
         authenticatedPut,
-        authenticatedDelete,
         logoutUsuario,
         isAuthenticated,
       } from "./auth.js";
@@ -530,6 +606,7 @@
       let listas = [];
       let materialesComprados = [];
       let usuarioActual = null;
+      let centrosDisponibles = [];
 
       // Función global para logout
       window.logoutUsuario = logoutUsuario;
@@ -586,8 +663,10 @@
               hijos = estudiantesData.map((est) => ({
                 _id: est._id,
                 nombre: est.nombre,
+                cedula: est.cedula,
                 nivel: est.nivel,
                 grado: est.grado,
+                centroEducativo: est.centroEducativo,
               }));
             }
           }
@@ -597,12 +676,62 @@
         }
       }
 
+      // Cargar centros educativos (lista simple)
+      async function cargarCentros() {
+        try {
+          const resp = await authenticatedGet(
+            "/api/centros/lista-simple?limit=500"
+          );
+          const data = resp && (resp.data || resp);
+          const docs = (data && (data.docs || data)) || [];
+          centrosDisponibles = docs;
+
+          const select = document.getElementById("centroHijo");
+          if (!select) return;
+          // Limpiar excepto el placeholder
+          select.innerHTML = '<option value="">Seleccione el centro</option>';
+          docs.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c._id || c.id || c.nombre; // prefer id, fallback nombre
+            const cantonTxt = c.canton ? " - " + c.canton : "";
+            const provTxt = c.provincia ? " (" + c.provincia + ")" : "";
+            opt.textContent = (c.nombre + cantonTxt + provTxt).trim();
+            opt.dataset.nombre = c.nombre;
+            select.appendChild(opt);
+          });
+
+          // Seleccionar por defecto el centro del usuario si existe
+          const userCentroId =
+            (usuarioActual &&
+              usuarioActual.centroEducativo &&
+              (usuarioActual.centroEducativo._id ||
+                usuarioActual.centroEducativo)) ||
+            null;
+          if (userCentroId) {
+            select.value = userCentroId;
+          }
+
+          console.log(`Centros cargados: ${docs.length}`);
+        } catch (error) {
+          console.error("Error cargando centros:", error);
+          mostrarAlerta(
+            "No se pudieron cargar los centros educativos",
+            "warning"
+          );
+        }
+      }
+
       // Cargar listas de útiles
       async function cargarListas() {
         try {
           const response = await authenticatedGet("/api/listas/estudiantes");
-          if (response && response.data) {
-            listas = response.data.docs || response.data;
+          console.log("Response from API:", response); // Debug log
+          if (response) {
+            // authenticatedGet devuelve directamente el objeto de datos
+            const data = response.data || response;
+            // Acceder correctamente a las listas desde la respuesta
+            listas = data.listas || data.docs || data;
+            console.log("Listas cargadas:", listas); // Debug log
             renderListas();
             actualizarEstadisticas();
           }
@@ -624,12 +753,7 @@
         document.getElementById("totalMateriales").textContent =
           totalMateriales;
 
-        // Calcular progreso de compras (simulado por ahora)
-        const progreso =
-          totalMateriales > 0
-            ? Math.round((materialesComprados.length / totalMateriales) * 100)
-            : 0;
-        document.getElementById("progresoCompras").textContent = `${progreso}%`;
+        // Progreso de compras eliminado
       }
 
       // Render hijos
@@ -666,6 +790,17 @@
                       <i class="fas fa-layer-group me-1"></i>
                       ${hijo.nivel}
                     </span>
+                    ${
+                      hijo.centroEducativo &&
+                      (hijo.centroEducativo.nombre || hijo.centroEducativo._id)
+                        ? `
+                      <span class="badge bg-primary me-2">
+                        <i class="fas fa-school me-1"></i>
+                        ${hijo.centroEducativo.nombre || "Centro asignado"}
+                      </span>
+                    `
+                        : ""
+                    }
                     ${
                       hijo.grado
                         ? `
@@ -723,10 +858,13 @@
           return;
         }
 
-        // Agrupar listas por hijo (simulado por nivel)
+        // Agrupar listas por nivel (acepta string u objeto)
         const listasPorNivel = {};
         listas.forEach((lista) => {
-          const nivel = lista.nivel?.nombre || "Sin nivel";
+          const nivel =
+            (typeof lista.nivel === "string"
+              ? lista.nivel
+              : lista.nivel?.nombre) || "Sin nivel";
           if (!listasPorNivel[nivel]) {
             listasPorNivel[nivel] = [];
           }
@@ -753,11 +891,15 @@
                     </h6>
                     <small class="text-muted">
                       <i class="fas fa-user me-1"></i>
-                      Docente: ${lista.docente?.nombre || "No especificado"} |
+                      Docente: ${lista.creadoPor?.nombre || "No especificado"} |
                       <i class="fas fa-boxes me-1"></i>
                       ${lista.materiales?.length || 0} materiales |
                       <i class="fas fa-calendar me-1"></i>
-                      ${new Date(lista.createdAt).toLocaleDateString()}
+                      ${
+                        lista.createdAt
+                          ? new Date(lista.createdAt).toLocaleDateString()
+                          : ""
+                      }
                     </small>
                     ${
                       lista.observaciones
@@ -776,86 +918,13 @@
                     }')">
                       <i class="fas fa-eye me-1"></i>Ver Detalles
                     </button>
-                    <button class="btn btn-outline-success btn-sm" onclick="marcarProgreso('${
-                      lista._id
-                    }')">
-                      <i class="fas fa-shopping-cart me-1"></i>Compras
-                    </button>
+                    
                   </div>
                 </div>
               </div>
             `
               )
               .join("")}
-          </div>
-        `
-          )
-          .join("");
-      }
-
-      // Render progreso de compras
-      function renderProgresoCompras() {
-        const container = document.getElementById("progresoContainer");
-
-        if (listas.length === 0) {
-          container.innerHTML = `
-            <div class="text-center py-5">
-              <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-              <h5 class="text-muted">No hay listas para hacer seguimiento</h5>
-              <p class="text-muted">Cuando haya listas de útiles disponibles, podrás hacer seguimiento de tus compras aquí</p>
-            </div>
-          `;
-          return;
-        }
-
-        container.innerHTML = listas
-          .map(
-            (lista) => `
-          <div class="card mb-3">
-            <div class="card-header">
-              <h6 class="mb-0">
-                <i class="fas fa-list-alt me-2"></i>
-                ${lista.nombre} - ${lista.nivel?.nombre || "Sin nivel"}
-              </h6>
-            </div>
-            <div class="card-body">
-              ${
-                lista.materiales && lista.materiales.length > 0
-                  ? lista.materiales
-                      .map(
-                        (material) => `
-                  <div class="material-item ${
-                    materialesComprados.includes(material._id) ? "comprado" : ""
-                  }">
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" 
-                             id="material_${material._id}" 
-                             ${
-                               materialesComprados.includes(material._id)
-                                 ? "checked"
-                                 : ""
-                             }
-                             onchange="toggleMaterialComprado('${
-                               material._id
-                             }')">
-                      <label class="form-check-label" for="material_${
-                        material._id
-                      }">
-                        <strong>${material.nombre}</strong>
-                        ${
-                          material.categoria
-                            ? `<small class="text-muted ms-2">(${material.categoria.nombre})</small>`
-                            : ""
-                        }
-                      </label>
-                    </div>
-                  </div>
-                `
-                      )
-                      .join("")
-                  : '<p class="text-muted">No hay materiales en esta lista</p>'
-              }
-            </div>
           </div>
         `
           )
@@ -870,8 +939,36 @@
       };
 
       window.editarHijo = function (index) {
-        // Implementar edición de hijo
-        mostrarAlerta("Función de edición en desarrollo", "info");
+        const hijo = hijos[index];
+        if (!hijo) return;
+        // Prefill modal
+        document.getElementById("editarHijoIndex").value = index;
+        document.getElementById("editarHijoId").value = hijo._id || "";
+        document.getElementById("editarNombreHijo").value = hijo.nombre || "";
+        document.getElementById("editarCedulaHijo").value = hijo.cedula || "";
+        document.getElementById("editarNivelHijo").value = hijo.nivel || "";
+        document.getElementById("editarGradoHijo").value = hijo.grado || "";
+        // Centros en select
+        const selCentro = document.getElementById("editarCentroHijo");
+        selCentro.innerHTML = '<option value="">Seleccione el centro</option>';
+        (centrosDisponibles || []).forEach((c) => {
+          const opt = document.createElement("option");
+          opt.value = c._id || c.id || "";
+          const cantonTxt = c.canton ? " - " + c.canton : "";
+          const provTxt = c.provincia ? " (" + c.provincia + ")" : "";
+          opt.textContent = (c.nombre + cantonTxt + provTxt).trim();
+          opt.dataset.nombre = c.nombre;
+          selCentro.appendChild(opt);
+        });
+        const hijoCentroId =
+          hijo.centroEducativo &&
+          (hijo.centroEducativo._id || hijo.centroEducativo);
+        if (hijoCentroId) selCentro.value = hijoCentroId;
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("modalEditarHijo")
+        );
+        modal.show();
       };
 
       window.eliminarHijo = function (index) {
@@ -942,25 +1039,6 @@
         modal.show();
       };
 
-      window.marcarProgreso = function (listaId) {
-        // Cambiar a la pestaña de progreso
-        document.getElementById("progreso-compras-tab").click();
-        mostrarAlerta("Puedes marcar los materiales que ya compraste", "info");
-      };
-
-      window.toggleMaterialComprado = function (materialId) {
-        const index = materialesComprados.indexOf(materialId);
-        if (index > -1) {
-          materialesComprados.splice(index, 1);
-        } else {
-          materialesComprados.push(materialId);
-        }
-
-        // Actualizar estadísticas y render
-        actualizarEstadisticas();
-        renderProgresoCompras();
-      };
-
       window.imprimirLista = function () {
         window.print();
       };
@@ -973,11 +1051,94 @@
 
         // Inicializar datos
         await inicializarUsuario();
+        await cargarCentros();
         await cargarListas();
         renderHijos();
-        renderProgresoCompras();
         actualizarEstadisticas();
       });
+
+      // Guardar edición de hijo
+      document
+        .getElementById("formEditarHijo")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          try {
+            const index = parseInt(
+              document.getElementById("editarHijoIndex").value,
+              10
+            );
+            const id = document.getElementById("editarHijoId").value;
+            const nombre = document
+              .getElementById("editarNombreHijo")
+              .value.trim();
+            const cedula = document
+              .getElementById("editarCedulaHijo")
+              .value.trim();
+            const nivel = document.getElementById("editarNivelHijo").value;
+            const grado = document.getElementById("editarGradoHijo").value;
+            const sel = document.getElementById("editarCentroHijo");
+            const centroEducativo = sel.value || undefined;
+
+            const payload = { nombre, nivel };
+            if (cedula) payload.cedula = cedula;
+            if (grado) payload.grado = grado;
+            if (centroEducativo) payload.centroEducativo = centroEducativo;
+
+            if (!nombre || !nivel) {
+              mostrarAlerta("Nombre y nivel son obligatorios", "warning");
+              return;
+            }
+
+            if (!id) {
+              mostrarAlerta(
+                "No se puede guardar: estudiante sin identificador",
+                "danger"
+              );
+              return;
+            }
+
+            const resp = await authenticatedPut(
+              `/api/estudiantes/${id}`,
+              payload
+            );
+            if (!resp || !resp.data) {
+              throw new Error(resp?.msg || "Error inesperado");
+            }
+
+            // Actualizar en memoria
+            const actualizado = resp.data;
+            hijos[index] = {
+              _id: actualizado._id,
+              nombre: actualizado.nombre,
+              cedula: actualizado.cedula,
+              nivel: actualizado.nivel,
+              grado: actualizado.grado,
+              centroEducativo: actualizado.centroEducativo
+                ? {
+                    _id: actualizado.centroEducativo._id,
+                    nombre: actualizado.centroEducativo.nombre,
+                  }
+                : undefined,
+            };
+
+            // Cerrar modal y refrescar
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("modalEditarHijo")
+            );
+            modal?.hide();
+            renderHijos();
+            // Puede afectar qué listas aplican, recargar listas
+            await cargarListas();
+            actualizarEstadisticas();
+            mostrarAlerta("Información actualizada", "success");
+          } catch (error) {
+            console.error("Error editando hijo:", error);
+            mostrarAlerta(
+              error.message || "Error al actualizar hijo",
+              "danger"
+            );
+          }
+        });
 
       // Form agregar hijo
       document
@@ -990,6 +1151,15 @@
               nombre: document.getElementById("nombreHijo").value,
               nivel: document.getElementById("nivelHijo").value,
               grado: document.getElementById("gradoHijo").value,
+              centroEducativo: (function () {
+                const sel = document.getElementById("centroHijo");
+                const id = sel.value;
+                const nombre =
+                  sel.options[sel.selectedIndex]?.dataset?.nombre ||
+                  sel.options[sel.selectedIndex]?.textContent ||
+                  "";
+                return id ? { _id: id, nombre } : undefined;
+              })(),
             };
 
             // Agregar al array local
@@ -1018,16 +1188,6 @@
             mostrarAlerta(error.message || "Error al agregar hijo", "danger");
           }
         });
-
-      // Tab changes para cargar contenido dinámico
-      document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab) => {
-        tab.addEventListener("shown.bs.tab", function (e) {
-          const target = e.target.getAttribute("data-bs-target");
-          if (target === "#progreso-compras") {
-            renderProgresoCompras();
-          }
-        });
-      });
 
       // Logout
       document
