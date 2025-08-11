@@ -47,6 +47,8 @@ app.use(express.json());
 app.use(express.static("public"));
 // Servir la carpeta frontend desde la raíz del proyecto
 app.use("/frontend", express.static(path.join(__dirname, "../frontend")));
+// También servir archivos frontend desde la raíz para mayor accesibilidad
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Logging middleware para desarrollo
 if (process.env.NODE_ENV === "development") {
