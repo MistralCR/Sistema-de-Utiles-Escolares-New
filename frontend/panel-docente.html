@@ -15,7 +15,6 @@
     <!-- Temas Accesibles -->
     <link rel="stylesheet" href="css/temas-accesibles.css">
     
-   
     <style>
       .dashboard-header {
         background: linear-gradient(135deg, #002b7f 0%, #004494 100%);
@@ -122,35 +121,6 @@
           left: 20px;
         }
       }
-
-      .tema-selector {
-      position: relative;
-      z-index: 1000;
-      }
-
-      .tema-selector select {
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: white;
-      padding: 0.4rem 2rem 0.4rem 1rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      }
-
-      .tema-selector select:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      }
-
-      .tema-selector select:focus {
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
-      outline: none;
-      }
-
-      .tema-selector select option {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      }
     </style>
   </head>
   <body>
@@ -171,27 +141,18 @@
             </p>
           </div>
           <div class="col-md-6 text-end">
-           <div class="d-flex align-items-center justify-content-end">
-  <!-- Selector de Tema -->
- <div class="tema-selector me-3">
-  <select id="selectorTema" class="form-select form-select-sm">
-    <option value="claro">🌞 Tema Claro</option>
-    <option value="oscuro">🌙 Tema Oscuro</option>
-    <option value="alto-contraste">🎯 Alto Contraste</option>
-    <option value="bajo-contraste">👁️ Bajo Contraste</option>
-  </select>
-</div>
-  <div class="me-4">
-    <div class="fw-bold" id="nombreUsuario">Docente</div>
-    <small class="opacity-75">
-      <i class="fas fa-calendar me-1"></i>
-      <span id="fechaActual"></span>
-    </small>
-  </div>
-  <button id="logoutBtn" class="btn btn-outline-light">
-    <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
-  </button>
-</div>
+            <div class="d-flex align-items-center justify-content-end">
+            </div>
+            <div class="me-4">
+              <div class="fw-bold" id="nombreUsuario">Docente</div>
+              <small class="opacity-75">
+                <i class="fas fa-calendar me-1"></i>
+                <span id="fechaActual"></span>
+              </small>
+            </div>
+            <button id="logoutBtn" class="btn btn-outline-light">
+              <i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión
+            </button>
           </div>
         </div>
       </div>
@@ -335,9 +296,9 @@
                     </label>
                     <select id="nivelLista" class="form-select" required>
                       <option value="">Seleccione un nivel</option>
-                             <option value="Preescolar">Preescolar</option>
-                            <option value="Primaria">Primaria</option>
-                            <option value="Secundaria">Secundaria</option>
+                      <option value="Preescolar">Preescolar</option>
+                      <option value="Primaria">Primaria</option>
+                      <option value="Secundaria">Secundaria</option>
                     </select>
                   </div>
                 </div>
@@ -484,6 +445,9 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Gestor de temas (botón redondo) -->
+    <script src="js/gestor-temas.js" defer></script>
     
     <script type="module">
       // Importar funciones de autenticación
@@ -789,8 +753,6 @@
       window.verLista = function(id) {
         const lista = misListas.find(l => l._id === id);
         if (!lista) return;
-        
-        // Aquí puedes implementar la vista detallada de la lista
         mostrarAlerta(`Vista detallada de: ${lista.nombre}`, "info");
       };
 
@@ -942,8 +904,5 @@
       // Logout
       document.getElementById("logoutBtn").addEventListener("click", logoutUsuario);
     </script>
-
-    <script src="js/gestor-temas.js"></script>
-
   </body>
 </html>

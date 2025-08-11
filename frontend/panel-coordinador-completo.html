@@ -4,17 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel Coordinador - MEP Costa Rica</title>
-
+    <script>
+      (function () {
+        var raw =
+          localStorage.getItem("tema") ||
+          localStorage.getItem("theme") ||
+          localStorage.getItem("tema-accesible") ||
+          "claro";
+        var x = (raw || "").toLowerCase().trim();
+        var tema =
+          (x === "oscuro" || x === "dark" || x === "tema-oscuro") ? "oscuro" :
+          (x === "alto-contraste" || x === "contraste-alto" || x === "high-contrast" || x === "contrast-high") ? "contraste-alto" :
+          (x === "bajo-contraste" || x === "contraste-bajo" || x === "low-contrast" || x === "contrast-low") ? "contraste-bajo" :
+          "claro";
+        document.documentElement.setAttribute("data-theme", tema);
+      })();
+    </script>
+  
     <!-- Bootstrap 5 -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Font Awesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- Temas Accesibles -->
     <link rel="stylesheet" href="css/temas-accesibles.css" />
 
@@ -25,69 +35,17 @@
         padding: 2rem 0;
         margin-bottom: 2rem;
       }
-
-      .stats-card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-      }
-
-      .stats-card:hover {
-        transform: translateY(-5px);
-      }
-
-      .nav-tabs .nav-link {
-        border: none;
-        border-radius: 10px 10px 0 0;
-        margin-right: 5px;
-        font-weight: 600;
-      }
-
-      .nav-tabs .nav-link.active {
-        background-color: var(--cr-azul);
-        color: white;
-      }
-
-      .table-container {
-        background: white;
-        border-radius: 15px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .btn-cr-primary {
-        background: var(--cr-azul);
-        border-color: var(--cr-azul);
-        color: white;
-      }
-
-      .btn-cr-primary:hover {
-        background: var(--cr-azul-oscuro);
-        border-color: var(--cr-azul-oscuro);
-      }
-
-      .action-buttons .btn {
-        margin: 0 2px;
-      }
-
-      .empty-state {
-        text-align: center;
-        padding: 3rem;
-        color: #6c757d;
-      }
-
-      .empty-state i {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        opacity: 0.5;
-      }
-
-      .alert-container {
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-      }
+      .stats-card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,.1); transition: transform .3s ease; }
+      .stats-card:hover { transform: translateY(-5px); }
+      .nav-tabs .nav-link { border: none; border-radius: 10px 10px 0 0; margin-right: 5px; font-weight: 600; }
+      .nav-tabs .nav-link.active { background-color: var(--cr-azul); color: white; }
+      .table-container { background: white; border-radius: 15px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
+      .btn-cr-primary { background: var(--cr-azul); border-color: var(--cr-azul); color: white; }
+      .btn-cr-primary:hover { background: var(--cr-azul-oscuro); border-color: var(--cr-azul-oscuro); }
+      .action-buttons .btn { margin: 0 2px; }
+      .empty-state { text-align: center; padding: 3rem; color: #6c757d; }
+      .empty-state i { font-size: 4rem; margin-bottom: 1rem; opacity: .5; }
+      .alert-container { top: 20px; right: 20px; z-index: 9999; }
     </style>
   </head>
   <body>
@@ -106,22 +64,8 @@
           </div>
           <div class="col-md-4 text-end">
             <div class="d-flex justify-content-end align-items-center gap-3">
-              <!-- Selector de Tema -->
-              <div class="tema-selector">
-                <label for="selectorTema" class="visually-hidden"
-                  >Seleccionar tema de accesibilidad</label
-                >
-                <select
-                  id="selectorTema"
-                  class="form-select form-select-sm"
-                  title="Seleccionar tema"
-                >
-                  <option value="claro">🌞 Tema Claro</option>
-                  <option value="oscuro">🌙 Tema Oscuro</option>
-                  <option value="alto-contraste">🎯 Alto Contraste</option>
-                  <option value="bajo-contraste">👁️ Bajo Contraste</option>
-                </select>
-              </div>
+              
+             
               <button onclick="logoutUsuario()" class="btn btn-outline-light">
                 <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
               </button>
@@ -176,100 +120,37 @@
       <!-- Navegación por Pestañas -->
       <ul class="nav nav-tabs mb-4" id="coordinatorTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link active"
-            id="config-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#config"
-            type="button"
-            role="tab"
-            aria-controls="config"
-            aria-selected="true"
-          >
+          <button class="nav-link active" id="config-tab" data-bs-toggle="tab" data-bs-target="#config" type="button" role="tab" aria-controls="config" aria-selected="true">
             <i class="fas fa-cogs me-2"></i>Configuración Global
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="materiales-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#materiales"
-            type="button"
-            role="tab"
-            aria-controls="materiales"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="materiales-tab" data-bs-toggle="tab" data-bs-target="#materiales" type="button" role="tab" aria-controls="materiales" aria-selected="false">
             <i class="fas fa-box me-2"></i>Gestión de Materiales
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="categorias-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#categorias"
-            type="button"
-            role="tab"
-            aria-controls="categorias"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="categorias-tab" data-bs-toggle="tab" data-bs-target="#categorias" type="button" role="tab" aria-controls="categorias" aria-selected="false">
             <i class="fas fa-tags me-2"></i>Categorías
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="reportes-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#reportes"
-            type="button"
-            role="tab"
-            aria-controls="reportes"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="reportes-tab" data-bs-toggle="tab" data-bs-target="#reportes" type="button" role="tab" aria-controls="reportes" aria-selected="false">
             <i class="fas fa-chart-bar me-2"></i>Reportes
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="soporte-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#soporte"
-            type="button"
-            role="tab"
-            aria-controls="soporte"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="soporte-tab" data-bs-toggle="tab" data-bs-target="#soporte" type="button" role="tab" aria-controls="soporte" aria-selected="false">
             <i class="fas fa-headset me-2"></i>Soporte
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="centros-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#centros"
-            type="button"
-            role="tab"
-            aria-controls="centros"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="centros-tab" data-bs-toggle="tab" data-bs-target="#centros" type="button" role="tab" aria-controls="centros" aria-selected="false">
             <i class="fas fa-school me-2"></i>Centros Educativos
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button
-            class="nav-link"
-            id="usuarios-tab"
-            data-bs-toggle="tab"
-            data-bs-target="#usuarios"
-            type="button"
-            role="tab"
-            aria-controls="usuarios"
-            aria-selected="false"
-          >
+          <button class="nav-link" id="usuarios-tab" data-bs-toggle="tab" data-bs-target="#usuarios" type="button" role="tab" aria-controls="usuarios" aria-selected="false">
             <i class="fas fa-users me-2"></i>Gestión de Usuarios
           </button>
         </li>
@@ -280,9 +161,7 @@
         <!-- CONFIGURACIÓN GLOBAL -->
         <div class="tab-pane fade show active" id="config" role="tabpanel">
           <div class="table-container">
-            <h4 class="mb-4">
-              <i class="fas fa-cogs me-2"></i>Configuración Global del Sistema
-            </h4>
+            <h4 class="mb-4"><i class="fas fa-cogs me-2"></i>Configuración Global del Sistema</h4>
 
             <div id="mensajeGlobalInfo" class="alert alert-info d-none">
               <i class="fas fa-info-circle me-2"></i>
@@ -293,45 +172,22 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="nombreSistema" class="form-label">
-                      <i class="fas fa-tag me-2"></i>Nombre del Sistema
-                    </label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="nombreSistema"
-                      placeholder="Ej: Sistema de Útiles Escolares MEP"
-                    />
+                    <label for="nombreSistema" class="form-label"><i class="fas fa-tag me-2"></i>Nombre del Sistema</label>
+                    <input type="text" class="form-control" id="nombreSistema" placeholder="Ej: Sistema de Útiles Escolares MEP" />
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="logoURL" class="form-label">
-                      <i class="fas fa-image me-2"></i>URL del Logo
-                    </label>
-                    <input
-                      type="url"
-                      class="form-control"
-                      id="logoURL"
-                      placeholder="https://ejemplo.com/logo.png"
-                    />
+                    <label for="logoURL" class="form-label"><i class="fas fa-image me-2"></i>URL del Logo</label>
+                    <input type="url" class="form-control" id="logoURL" placeholder="https://ejemplo.com/logo.png" />
                   </div>
                 </div>
               </div>
               <div class="mb-3">
-                <label for="mensajeGlobal" class="form-label">
-                  <i class="fas fa-bullhorn me-2"></i>Mensaje Global
-                </label>
-                <textarea
-                  class="form-control"
-                  id="mensajeGlobal"
-                  rows="3"
-                  placeholder="Mensaje que verán todos los usuarios..."
-                ></textarea>
+                <label for="mensajeGlobal" class="form-label"><i class="fas fa-bullhorn me-2"></i>Mensaje Global</label>
+                <textarea class="form-control" id="mensajeGlobal" rows="3" placeholder="Mensaje que verán todos los usuarios..."></textarea>
               </div>
-              <button type="submit" class="btn btn-cr-primary">
-                <i class="fas fa-save me-2"></i>Guardar Configuración
-              </button>
+              <button type="submit" class="btn btn-cr-primary"><i class="fas fa-save me-2"></i>Guardar Configuración</button>
             </form>
           </div>
         </div>
@@ -341,12 +197,7 @@
           <div class="table-container">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h4><i class="fas fa-box me-2"></i>Gestión de Materiales</h4>
-              <button
-                class="btn btn-cr-primary"
-                onclick="mostrarModalMaterial()"
-              >
-                <i class="fas fa-plus me-2"></i>Nuevo Material
-              </button>
+              <button class="btn btn-cr-primary" onclick="mostrarModalMaterial()"><i class="fas fa-plus me-2"></i>Nuevo Material</button>
             </div>
 
             <div class="table-responsive">
@@ -362,10 +213,7 @@
                 </thead>
                 <tbody id="tablaMateriales">
                   <tr>
-                    <td colspan="5" class="text-center">
-                      <i class="fas fa-spinner fa-spin"></i> Cargando
-                      materiales...
-                    </td>
+                    <td colspan="5" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando materiales...</td>
                   </tr>
                 </tbody>
               </table>
@@ -378,12 +226,7 @@
           <div class="table-container">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h4><i class="fas fa-tags me-2"></i>Gestión de Categorías</h4>
-              <button
-                class="btn btn-cr-primary"
-                onclick="mostrarModalCategoria()"
-              >
-                <i class="fas fa-plus me-2"></i>Nueva Categoría
-              </button>
+              <button class="btn btn-cr-primary" onclick="mostrarModalCategoria()"><i class="fas fa-plus me-2"></i>Nueva Categoría</button>
             </div>
 
             <div class="table-responsive">
@@ -398,10 +241,7 @@
                 </thead>
                 <tbody id="tablaCategorias">
                   <tr>
-                    <td colspan="4" class="text-center">
-                      <i class="fas fa-spinner fa-spin"></i> Cargando
-                      categorías...
-                    </td>
+                    <td colspan="4" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando categorías...</td>
                   </tr>
                 </tbody>
               </table>
@@ -412,9 +252,7 @@
         <!-- REPORTES -->
         <div class="tab-pane fade" id="reportes" role="tabpanel">
           <div class="table-container">
-            <h4 class="mb-4">
-              <i class="fas fa-chart-bar me-2"></i>Centro de Reportes
-            </h4>
+            <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Centro de Reportes</h4>
 
             <div class="row">
               <div class="col-md-4 mb-3">
@@ -423,10 +261,7 @@
                     <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
                     <h5>Reporte General</h5>
                     <p class="text-muted">Estadísticas generales del sistema</p>
-                    <button
-                      class="btn btn-outline-primary"
-                      onclick="generarReporte('general')"
-                    >
+                    <button class="btn btn-outline-primary" onclick="generarReporte('general')">
                       <i class="fas fa-download me-2"></i>Generar
                     </button>
                   </div>
@@ -438,10 +273,7 @@
                     <i class="fas fa-box fa-3x text-success mb-3"></i>
                     <h5>Reporte de Materiales</h5>
                     <p class="text-muted">Inventario y uso de materiales</p>
-                    <button
-                      class="btn btn-outline-success"
-                      onclick="generarReporte('materiales')"
-                    >
+                    <button class="btn btn-outline-success" onclick="generarReporte('materiales')">
                       <i class="fas fa-download me-2"></i>Generar
                     </button>
                   </div>
@@ -453,10 +285,7 @@
                     <i class="fas fa-users fa-3x text-warning mb-3"></i>
                     <h5>Reporte de Usuarios</h5>
                     <p class="text-muted">Actividad de usuarios del sistema</p>
-                    <button
-                      class="btn btn-outline-warning"
-                      onclick="generarReporte('usuarios')"
-                    >
+                    <button class="btn btn-outline-warning" onclick="generarReporte('usuarios')">
                       <i class="fas fa-download me-2"></i>Generar
                     </button>
                   </div>
@@ -469,9 +298,7 @@
         <!-- SOPORTE -->
         <div class="tab-pane fade" id="soporte" role="tabpanel">
           <div class="table-container">
-            <h4 class="mb-4">
-              <i class="fas fa-headset me-2"></i>Centro de Soporte
-            </h4>
+            <h4 class="mb-4"><i class="fas fa-headset me-2"></i>Centro de Soporte</h4>
 
             <div class="table-responsive">
               <table class="table table-hover">
@@ -487,9 +314,7 @@
                 </thead>
                 <tbody id="tablaSoporte">
                   <tr>
-                    <td colspan="6" class="text-center">
-                      <i class="fas fa-spinner fa-spin"></i> Cargando tickets...
-                    </td>
+                    <td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando tickets...</td>
                   </tr>
                 </tbody>
               </table>
@@ -502,22 +327,14 @@
           <div class="table-container">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h4><i class="fas fa-school me-2"></i>Centros Educativos</h4>
-              <button class="btn btn-cr-primary" onclick="mostrarModalCentro()">
-                <i class="fas fa-plus me-2"></i>Nuevo Centro
-              </button>
+              <button class="btn btn-cr-primary" onclick="mostrarModalCentro()"><i class="fas fa-plus me-2"></i>Nuevo Centro</button>
             </div>
 
             <!-- Filtros -->
             <div class="row mb-3">
               <div class="col-md-3">
-                <label for="filtroProvincia" class="form-label visually-hidden"
-                  >Filtrar por provincia</label
-                >
-                <select
-                  class="form-select"
-                  id="filtroProvincia"
-                  title="Filtrar por provincia"
-                >
+                <label for="filtroProvincia" class="form-label visually-hidden">Filtrar por provincia</label>
+                <select class="form-select" id="filtroProvincia" title="Filtrar por provincia">
                   <option value="">Todas las provincias</option>
                   <option value="San José">San José</option>
                   <option value="Alajuela">Alajuela</option>
@@ -529,28 +346,16 @@
                 </select>
               </div>
               <div class="col-md-3">
-                <label for="filtroUbicacion" class="form-label visually-hidden"
-                  >Filtrar por ubicación</label
-                >
-                <select
-                  class="form-select"
-                  id="filtroUbicacion"
-                  title="Filtrar por ubicación"
-                >
+                <label for="filtroUbicacion" class="form-label visually-hidden">Filtrar por ubicación</label>
+                <select class="form-select" id="filtroUbicacion" title="Filtrar por ubicación">
                   <option value="">Todas las ubicaciones</option>
                   <option value="urbano">Urbano</option>
                   <option value="rural">Rural</option>
                 </select>
               </div>
               <div class="col-md-3">
-                <label for="filtroTipo" class="form-label visually-hidden"
-                  >Filtrar por tipo</label
-                >
-                <select
-                  class="form-select"
-                  id="filtroTipo"
-                  title="Filtrar por tipo de institución"
-                >
+                <label for="filtroTipo" class="form-label visually-hidden">Filtrar por tipo</label>
+                <select class="form-select" id="filtroTipo" title="Filtrar por tipo de institución">
                   <option value="">Todos los tipos</option>
                   <option value="multidocente">Multidocente</option>
                   <option value="unidocente">Unidocente</option>
@@ -559,16 +364,8 @@
                 </select>
               </div>
               <div class="col-md-3">
-                <label for="buscarCentro" class="form-label visually-hidden"
-                  >Buscar centro</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="buscarCentro"
-                  placeholder="Buscar centro..."
-                  title="Buscar centro educativo"
-                />
+                <label for="buscarCentro" class="form-label visually-hidden">Buscar centro</label>
+                <input type="text" class="form-control" id="buscarCentro" placeholder="Buscar centro..." title="Buscar centro educativo" />
               </div>
             </div>
 
@@ -586,9 +383,7 @@
                 </thead>
                 <tbody id="tablaCentros">
                   <tr>
-                    <td colspan="6" class="text-center">
-                      <i class="fas fa-spinner fa-spin"></i> Cargando centros...
-                    </td>
+                    <td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando centros...</td>
                   </tr>
                 </tbody>
               </table>
@@ -601,42 +396,22 @@
           <div class="table-container">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h4><i class="fas fa-users me-2"></i>Gestión de Usuarios</h4>
-              <button
-                class="btn btn-cr-primary"
-                onclick="mostrarModalUsuario()"
-              >
-                <i class="fas fa-user-plus me-2"></i>Nuevo Usuario
-              </button>
+              <button class="btn btn-cr-primary" onclick="mostrarModalUsuario()"><i class="fas fa-user-plus me-2"></i>Nuevo Usuario</button>
             </div>
 
             <!-- Filtros -->
             <div class="row mb-3">
               <div class="col-md-3">
-                <label for="filtroRolUsuario" class="form-label visually-hidden"
-                  >Filtrar por rol</label
-                >
-                <select
-                  class="form-select"
-                  id="filtroRolUsuario"
-                  title="Filtrar por rol de usuario"
-                >
+                <label for="filtroRolUsuario" class="form-label visually-hidden">Filtrar por rol</label>
+                <select class="form-select" id="filtroRolUsuario" title="Filtrar por rol de usuario">
                   <option value="">Todos los roles</option>
                   <option value="administrador">Administrador</option>
                   <option value="docente">Docente</option>
-                  <!-- Nota: Coordinadores solo pueden gestionar administradores y docentes -->
                 </select>
               </div>
               <div class="col-md-3">
-                <label
-                  for="filtroEstadoUsuario"
-                  class="form-label visually-hidden"
-                  >Filtrar por estado</label
-                >
-                <select
-                  class="form-select"
-                  id="filtroEstadoUsuario"
-                  title="Filtrar por estado de usuario"
-                >
+                <label for="filtroEstadoUsuario" class="form-label visually-hidden">Filtrar por estado</label>
+                <select class="form-select" id="filtroEstadoUsuario" title="Filtrar por estado de usuario">
                   <option value="">Todos los estados</option>
                   <option value="activo">Activo</option>
                   <option value="inactivo">Inactivo</option>
@@ -644,30 +419,14 @@
                 </select>
               </div>
               <div class="col-md-3">
-                <label
-                  for="filtroCentroUsuario"
-                  class="form-label visually-hidden"
-                  >Filtrar por centro</label
-                >
-                <select
-                  class="form-select"
-                  id="filtroCentroUsuario"
-                  title="Filtrar por centro educativo"
-                >
+                <label for="filtroCentroUsuario" class="form-label visually-hidden">Filtrar por centro</label>
+                <select class="form-select" id="filtroCentroUsuario" title="Filtrar por centro educativo">
                   <option value="">Todos los centros</option>
                 </select>
               </div>
               <div class="col-md-3">
-                <label for="buscarUsuario" class="form-label visually-hidden"
-                  >Buscar usuario</label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="buscarUsuario"
-                  placeholder="Buscar usuario..."
-                  title="Buscar usuario por nombre o correo"
-                />
+                <label for="buscarUsuario" class="form-label visually-hidden">Buscar usuario</label>
+                <input type="text" class="form-control" id="buscarUsuario" placeholder="Buscar usuario..." title="Buscar usuario por nombre o correo" />
               </div>
             </div>
 
@@ -685,10 +444,7 @@
                 </thead>
                 <tbody id="tablaUsuarios">
                   <tr>
-                    <td colspan="6" class="text-center">
-                      <i class="fas fa-spinner fa-spin"></i> Cargando
-                      usuarios...
-                    </td>
+                    <td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando usuarios...</td>
                   </tr>
                 </tbody>
               </table>
@@ -703,64 +459,31 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-box me-2"></i>Gestionar Material
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Cerrar modal"
-              title="Cerrar"
-            ></button>
+            <h5 class="modal-title"><i class="fas fa-box me-2"></i>Gestionar Material</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar modal" title="Cerrar"></button>
           </div>
           <div class="modal-body">
             <form id="formMaterial">
               <input type="hidden" id="materialId" />
               <div class="mb-3">
                 <label for="materialNombre" class="form-label">Nombre</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="materialNombre"
-                  required
-                />
+                <input type="text" class="form-control" id="materialNombre" required />
               </div>
               <div class="mb-3">
-                <label for="materialCategoria" class="form-label"
-                  >Categoría</label
-                >
+                <label for="materialCategoria" class="form-label">Categoría</label>
                 <select class="form-select" id="materialCategoria" required>
                   <option value="">Seleccionar categoría...</option>
                 </select>
               </div>
               <div class="mb-3">
-                <label for="materialDescripcion" class="form-label"
-                  >Descripción</label
-                >
-                <textarea
-                  class="form-control"
-                  id="materialDescripcion"
-                  rows="3"
-                ></textarea>
+                <label for="materialDescripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="materialDescripcion" rows="3"></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-cr-primary"
-              onclick="guardarMaterial()"
-            >
-              <i class="fas fa-save me-2"></i>Guardar
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-cr-primary" onclick="guardarMaterial()"><i class="fas fa-save me-2"></i>Guardar</button>
           </div>
         </div>
       </div>
@@ -771,56 +494,25 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-tags me-2"></i>Gestionar Categoría
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Cerrar"
-              title="Cerrar"
-            ></button>
+            <h5 class="modal-title"><i class="fas fa-tags me-2"></i>Gestionar Categoría</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" title="Cerrar"></button>
           </div>
           <div class="modal-body">
             <form id="formCategoria">
               <input type="hidden" id="categoriaId" />
               <div class="mb-3">
                 <label for="categoriaNombre" class="form-label">Nombre</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="categoriaNombre"
-                  required
-                />
+                <input type="text" class="form-control" id="categoriaNombre" required />
               </div>
               <div class="mb-3">
-                <label for="categoriaDescripcion" class="form-label"
-                  >Descripción</label
-                >
-                <textarea
-                  class="form-control"
-                  id="categoriaDescripcion"
-                  rows="3"
-                ></textarea>
+                <label for="categoriaDescripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="categoriaDescripcion" rows="3"></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-cr-primary"
-              onclick="guardarCategoria()"
-            >
-              <i class="fas fa-save me-2"></i>Guardar
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-cr-primary" onclick="guardarCategoria()"><i class="fas fa-save me-2"></i>Guardar</button>
           </div>
         </div>
       </div>
@@ -831,15 +523,8 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-exclamation-triangle me-2 text-warning"></i>Confirmación
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Cerrar"
-            ></button>
+            <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Confirmación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body" id="modalConfirmMessage">¿Está seguro?</div>
           <div class="modal-footer">
@@ -855,15 +540,8 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-school me-2"></i>Gestionar Centro Educativo
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Cerrar modal"
-            ></button>
+            <h5 class="modal-title"><i class="fas fa-school me-2"></i>Gestionar Centro Educativo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar modal"></button>
           </div>
           <div class="modal-body">
             <form id="formCentro">
@@ -871,40 +549,21 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="centroNombre" class="form-label"
-                      >Nombre del Centro
-                      <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="centroNombre"
-                      required
-                      placeholder="Ej: Escuela República de Chile"
-                    />
+                    <label for="centroNombre" class="form-label">Nombre del Centro <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="centroNombre" required placeholder="Ej: Escuela República de Chile" />
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="centroCodigoMEP" class="form-label"
-                      >Código MEP <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="centroCodigoMEP"
-                      required
-                      placeholder="Ej: 12345"
-                    />
+                    <label for="centroCodigoMEP" class="form-label">Código MEP <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="centroCodigoMEP" required placeholder="Ej: 12345" />
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label for="centroProvincia" class="form-label"
-                      >Provincia <span class="text-danger">*</span></label
-                    >
+                    <label for="centroProvincia" class="form-label">Provincia <span class="text-danger">*</span></label>
                     <select class="form-select" id="centroProvincia" required>
                       <option value="">Seleccionar provincia</option>
                       <option value="San José">San José</option>
@@ -919,39 +578,21 @@
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label for="centroCanton" class="form-label"
-                      >Cantón <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="centroCanton"
-                      required
-                      placeholder="Ej: Central"
-                    />
+                    <label for="centroCanton" class="form-label">Cantón <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="centroCanton" required placeholder="Ej: Central" />
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="mb-3">
-                    <label for="centroDistrito" class="form-label"
-                      >Distrito <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="centroDistrito"
-                      required
-                      placeholder="Ej: Carmen"
-                    />
+                    <label for="centroDistrito" class="form-label">Distrito <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="centroDistrito" required placeholder="Ej: Carmen" />
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="centroUbicacion" class="form-label"
-                      >Ubicación <span class="text-danger">*</span></label
-                    >
+                    <label for="centroUbicacion" class="form-label">Ubicación <span class="text-danger">*</span></label>
                     <select class="form-select" id="centroUbicacion" required>
                       <option value="">Seleccionar ubicación</option>
                       <option value="urbano">Urbano</option>
@@ -961,10 +602,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="centroTipo" class="form-label"
-                      >Tipo de Institución
-                      <span class="text-danger">*</span></label
-                    >
+                    <label for="centroTipo" class="form-label">Tipo de Institución <span class="text-danger">*</span></label>
                     <select class="form-select" id="centroTipo" required>
                       <option value="">Seleccionar tipo</option>
                       <option value="multidocente">Multidocente</option>
@@ -978,71 +616,28 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="centroResponsable" class="form-label"
-                      >Email del Responsable
-                      <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="centroResponsable"
-                      required
-                      placeholder="director@mep.go.cr"
-                    />
-                    <div class="form-text">
-                      Debe ser un correo válido del MEP (@mep.go.cr)
-                    </div>
+                    <label for="centroResponsable" class="form-label">Email del Responsable <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="centroResponsable" required placeholder="director@mep.go.cr" />
+                    <div class="form-text">Debe ser un correo válido del MEP (@mep.go.cr)</div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="centroTelefono" class="form-label"
-                      >Teléfono del Responsable</label
-                    >
-                    <input
-                      type="tel"
-                      class="form-control"
-                      id="centroTelefono"
-                      placeholder="22223344"
-                      pattern="[0-9]{8}"
-                      title="Ingrese 8 dígitos sin guiones ni espacios"
-                      maxlength="8"
-                      oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                    />
-                    <div class="form-text">
-                      8 dígitos sin guiones (ej: 22223344)
-                    </div>
+                    <label for="centroTelefono" class="form-label">Teléfono del Responsable</label>
+                    <input type="tel" class="form-control" id="centroTelefono" placeholder="22223344" pattern="[0-9]{8}" title="Ingrese 8 dígitos sin guiones ni espacios" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                    <div class="form-text">8 dígitos sin guiones (ej: 22223344)</div>
                   </div>
                 </div>
               </div>
               <div class="mb-3">
-                <label for="centroDescripcion" class="form-label"
-                  >Descripción</label
-                >
-                <textarea
-                  class="form-control"
-                  id="centroDescripcion"
-                  rows="3"
-                  placeholder="Información adicional del centro educativo..."
-                ></textarea>
+                <label for="centroDescripcion" class="form-label">Descripción</label>
+                <textarea class="form-control" id="centroDescripcion" rows="3" placeholder="Información adicional del centro educativo..."></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-cr-primary"
-              onclick="guardarCentro()"
-            >
-              <i class="fas fa-save me-2"></i>Guardar Centro
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-cr-primary" onclick="guardarCentro()"><i class="fas fa-save me-2"></i>Guardar Centro</button>
           </div>
         </div>
       </div>
@@ -1053,15 +648,8 @@
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">
-              <i class="fas fa-user-plus me-2"></i>Gestionar Usuario
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Cerrar modal"
-            ></button>
+            <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Gestionar Usuario</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar modal"></button>
           </div>
           <div class="modal-body">
             <form id="formUsuario">
@@ -1069,43 +657,22 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="usuarioNombre" class="form-label"
-                      >Nombre <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="usuarioNombre"
-                      required
-                      placeholder="Ej: María José González"
-                    />
+                    <label for="usuarioNombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="usuarioNombre" required placeholder="Ej: María José González" />
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="usuarioCorreo" class="form-label"
-                      >Correo Electrónico
-                      <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="usuarioCorreo"
-                      required
-                      placeholder="usuario@mep.go.cr"
-                    />
-                    <div class="form-text">
-                      Solo correos del MEP (@mep.go.cr) son válidos
-                    </div>
+                    <label for="usuarioCorreo" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="usuarioCorreo" required placeholder="usuario@mep.go.cr" />
+                    <div class="form-text">Solo correos del MEP (@mep.go.cr) son válidos</div>
                   </div>
                 </div>
               </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="usuarioRol" class="form-label"
-                      >Rol <span class="text-danger">*</span></label
-                    >
+                    <label for="usuarioRol" class="form-label">Rol <span class="text-danger">*</span></label>
                     <select class="form-select" id="usuarioRol" required>
                       <option value="">Seleccionar rol</option>
                       <option value="administrador">Administrador</option>
@@ -1117,10 +684,7 @@
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="usuarioCentro" class="form-label"
-                      >Centro Educativo
-                      <span class="text-danger">*</span></label
-                    >
+                    <label for="usuarioCentro" class="form-label">Centro Educativo <span class="text-danger">*</span></label>
                     <select class="form-select" id="usuarioCentro" required>
                       <option value="">Seleccionar centro</option>
                     </select>
@@ -1130,16 +694,8 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="mb-3">
-                    <label for="usuarioPassword" class="form-label"
-                      >Contraseña <span class="text-danger">*</span></label
-                    >
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="usuarioPassword"
-                      required
-                      placeholder="Mínimo 6 caracteres"
-                    />
+                    <label for="usuarioPassword" class="form-label">Contraseña <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="usuarioPassword" required placeholder="Mínimo 6 caracteres" />
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -1156,42 +712,22 @@
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              class="btn btn-cr-primary"
-              onclick="guardarUsuario()"
-            >
-              <i class="fas fa-save me-2"></i>Guardar Usuario
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-cr-primary" onclick="guardarUsuario()"><i class="fas fa-save me-2"></i>Guardar Usuario</button>
           </div>
         </div>
       </div>
     </div>
-
-    
 
     <!-- Alertas -->
     <div id="alertContainer" class="position-fixed alert-container"></div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/gestor-temas.js"></script>
+    <script src="js/gestor-temas.js" defer></script>
     <script type="module">
-      import {
-        authenticatedGet,
-        authenticatedPost,
-        authenticatedPut,
-        authenticatedDelete,
-        logoutUsuario,
-        isAuthenticated,
-      } from "./auth.js";
+
+      import { authenticatedGet, authenticatedPost, authenticatedPut, authenticatedDelete, logoutUsuario, isAuthenticated } from "./auth.js";
 
       // Verificar autenticación
       if (!isAuthenticated()) {
@@ -1211,37 +747,21 @@
       // Silenciar consola
       const SILENCE_CONSOLE = true;
       if (SILENCE_CONSOLE && typeof console !== "undefined") {
-        ["log", "error", "warn", "info", "debug"].forEach((m) => {
-          console[m] = () => {};
-        });
+        ["log", "error", "warn", "info", "debug"].forEach((m) => { console[m] = () => {}; });
       }
 
       // Función para mostrar alertas
       function mostrarAlerta(mensaje, tipo = "success") {
         const alertContainer = document.getElementById("alertContainer");
         const alertId = "alert-" + Date.now();
-
         const alertHTML = `
-                <div id="${alertId}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">
-                    <i class="fas fa-${
-                      tipo === "success"
-                        ? "check-circle"
-                        : "exclamation-triangle"
-                    } me-2"></i>
-                    ${mensaje}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            `;
-
+          <div id="${alertId}" class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${tipo === "success" ? "check-circle" : "exclamation-triangle"} me-2"></i>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>`;
         alertContainer.insertAdjacentHTML("beforeend", alertHTML);
-
-        // Auto-remove después de 5 segundos
-        setTimeout(() => {
-          const alert = document.getElementById(alertId);
-          if (alert) {
-            alert.remove();
-          }
-        }, 5000);
+        setTimeout(() => { const alert = document.getElementById(alertId); if (alert) alert.remove(); }, 5000);
       }
 
       // Confirmación por modal Bootstrap (reutilizable)
@@ -1249,27 +769,13 @@
         const modalEl = document.getElementById("modalConfirm");
         const msgEl = document.getElementById("modalConfirmMessage");
         const btnYes = document.getElementById("modalConfirmYes");
-
         msgEl.textContent = mensaje;
         btnYes.textContent = textoBoton;
-
         const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
-
         return new Promise((resolve) => {
-          const onYes = () => {
-            cleanup();
-            bsModal.hide();
-            resolve(true);
-          };
-          const onHide = () => {
-            cleanup();
-            resolve(false);
-          };
-          const cleanup = () => {
-            btnYes.removeEventListener("click", onYes);
-            modalEl.removeEventListener("hidden.bs.modal", onHide);
-          };
-
+          const onYes = () => { cleanup(); bsModal.hide(); resolve(true); };
+          const onHide = () => { cleanup(); resolve(false); };
+          const cleanup = () => { btnYes.removeEventListener("click", onYes); modalEl.removeEventListener("hidden.bs.modal", onHide); };
           btnYes.addEventListener("click", onYes, { once: true });
           modalEl.addEventListener("hidden.bs.modal", onHide, { once: true });
           bsModal.show();
@@ -1279,7 +785,6 @@
       // Cargar datos iniciales
       async function cargarDatos() {
         try {
-          // Primero cargar los datos
           await Promise.all([
             cargarConfiguracion(),
             cargarMateriales(),
@@ -1288,11 +793,7 @@
             cargarCentros(),
             cargarUsuarios(),
           ]);
-
-          // Después actualizar estadísticas usando los datos cargados
           await cargarEstadisticas();
-
-          // Renderizar tablas que dependen de múltiples datos después de que todo esté cargado
           renderizarTablaCategorias();
         } catch (error) {
           mostrarAlerta("Error cargando datos del sistema", "danger");
@@ -1302,23 +803,15 @@
       // Cargar estadísticas
       async function cargarEstadisticas() {
         try {
-          // Usar los datos ya cargados en las variables globales
           const totalMateriales = materiales.length;
           const totalCategorias = categorias.length;
-
-          // Calcular estadísticas adicionales
-          const totalListas = Math.ceil(materiales.length / 20); // Listas de ~20 materiales cada una
-          const totalTickets = tickets.length || 0; // Usar tickets reales si están disponibles
-
-          // Actualizar el DOM
-          document.getElementById("totalMateriales").textContent =
-            totalMateriales;
-          document.getElementById("totalCategorias").textContent =
-            totalCategorias;
+          const totalListas = Math.ceil(materiales.length / 20);
+          const totalTickets = tickets.length || 0;
+          document.getElementById("totalMateriales").textContent = totalMateriales;
+          document.getElementById("totalCategorias").textContent = totalCategorias;
           document.getElementById("totalListas").textContent = totalListas;
           document.getElementById("totalTickets").textContent = totalTickets;
         } catch (error) {
-          // Valores por defecto en caso de error
           document.getElementById("totalMateriales").textContent = "0";
           document.getElementById("totalCategorias").textContent = "0";
           document.getElementById("totalListas").textContent = "0";
@@ -1332,47 +825,34 @@
           const result = await authenticatedGet("/api/configuracion");
           if (result?.data) {
             const { nombreSistema, mensajeGlobal, logoURL } = result.data;
-
-            document.getElementById("nombreSistema").value =
-              nombreSistema || "";
-            document.getElementById("mensajeGlobal").value =
-              mensajeGlobal || "";
+            document.getElementById("nombreSistema").value = nombreSistema || "";
+            document.getElementById("mensajeGlobal").value = mensajeGlobal || "";
             document.getElementById("logoURL").value = logoURL || "";
-
-            // Mostrar mensaje global si existe
             if (mensajeGlobal) {
               const info = document.getElementById("mensajeGlobalInfo");
               info.querySelector("span").textContent = mensajeGlobal;
               info.classList.remove("d-none");
             }
           }
-        } catch (error) {
-          // Silenciado
-        }
+        } catch (_) {}
       }
 
       // Cargar materiales
       async function cargarMateriales() {
         try {
           const result = await authenticatedGet("/api/materiales");
-
-          // Verificar si tiene la estructura estandarizada {success: true, data: {docs: [...], totalDocs: X}}
           if (result?.data?.docs && Array.isArray(result.data.docs)) {
             materiales = result.data.docs;
           } else if (result?.data && Array.isArray(result.data)) {
             materiales = result.data;
-          } else {
-            materiales = [];
-          }
-
+          } else materiales = [];
           renderizarTablaMateriales();
-        } catch (error) {
+        } catch (_) {
           materiales = [];
-          document.getElementById("tablaMateriales").innerHTML = `
-                    <tr><td colspan="5" class="text-center text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando materiales
-                    </td></tr>
-                `;
+          document.getElementById("tablaMateriales").innerHTML =
+            `<tr><td colspan="5" class="text-center text-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>Error cargando materiales
+            </td></tr>`;
         }
       }
 
@@ -1380,22 +860,15 @@
       async function cargarCategorias() {
         try {
           const result = await authenticatedGet("/api/categorias");
-
-          // Verificar si tiene la estructura estandarizada {success: true, data: [...]}
-          if (result?.data && Array.isArray(result.data)) {
-            categorias = result.data;
-          } else {
-            categorias = [];
-          }
-
+          if (result?.data && Array.isArray(result.data)) categorias = result.data;
+          else categorias = [];
           actualizarSelectCategorias();
-        } catch (error) {
+        } catch (_) {
           categorias = [];
-          document.getElementById("tablaCategorias").innerHTML = `
-                    <tr><td colspan="4" class="text-center text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando categorías
-                    </td></tr>
-                `;
+          document.getElementById("tablaCategorias").innerHTML =
+            `<tr><td colspan="4" class="text-center text-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>Error cargando categorías
+            </td></tr>`;
         }
       }
 
@@ -1403,163 +876,90 @@
       async function cargarTicketsSoporte() {
         try {
           const result = await authenticatedGet("/api/soporte");
-
-          // Verificar estructura de datos
-          if (result?.data?.data && Array.isArray(result.data.data)) {
-            tickets = result.data.data;
-          } else if (result?.data && Array.isArray(result.data)) {
-            tickets = result.data;
-          } else {
-            tickets = [];
-          }
-
+          if (result?.data?.data && Array.isArray(result.data.data)) tickets = result.data.data;
+          else if (result?.data && Array.isArray(result.data)) tickets = result.data;
+          else tickets = [];
           renderizarTablaSoporte();
-        } catch (error) {
+        } catch (_) {
           tickets = [];
-          document.getElementById("tablaSoporte").innerHTML = `
-                    <tr><td colspan="6" class="text-center text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando tickets
-                    </td></tr>
-                `;
+          document.getElementById("tablaSoporte").innerHTML =
+            `<tr><td colspan="6" class="text-center text-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>Error cargando tickets
+            </td></tr>`;
         }
       }
 
       // Renderizar tabla de materiales
       function renderizarTablaMateriales() {
         const tbody = document.getElementById("tablaMateriales");
-
         if (materiales.length === 0) {
-          tbody.innerHTML = `
-                    <tr><td colspan="5" class="text-center">
-                        <div class="empty-state">
-                            <i class="fas fa-box-open"></i>
-                            <p>No hay materiales registrados</p>
-                        </div>
-                    </td></tr>
-                `;
+          tbody.innerHTML = `<tr><td colspan="5" class="text-center">
+            <div class="empty-state"><i class="fas fa-box-open"></i><p>No hay materiales registrados</p></div>
+          </td></tr>`;
           return;
         }
-
-        tbody.innerHTML = materiales
-          .map(
-            (material) => `
-                <tr>
-                    <td><strong>${material.nombre}</strong></td>
-                    <td><span class="badge bg-secondary">${
-                      material.categoria?.nombre || "Sin categoría"
-                    }</span></td>
-                    <td>${material.descripcion || "-"}</td>
-                    <td><span class="badge bg-success">Activo</span></td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-outline-primary" onclick="editarMaterial('${
-                          material._id
-                        }')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarMaterial('${
-                          material._id
-                        }')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `
-          )
-          .join("");
+        tbody.innerHTML = materiales.map((material) => `
+          <tr>
+            <td><strong>${material.nombre}</strong></td>
+            <td><span class="badge bg-secondary">${material.categoria?.nombre || "Sin categoría"}</span></td>
+            <td>${material.descripcion || "-"}</td>
+            <td><span class="badge bg-success">Activo</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editarMaterial('${material._id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="eliminarMaterial('${material._id}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`).join("");
       }
 
       // Renderizar tabla de categorías
       function renderizarTablaCategorias() {
         const tbody = document.getElementById("tablaCategorias");
-
         if (categorias.length === 0) {
-          tbody.innerHTML = `
-                    <tr><td colspan="4" class="text-center">
-                        <div class="empty-state">
-                            <i class="fas fa-tags"></i>
-                            <p>No hay categorías registradas</p>
-                        </div>
-                    </td></tr>
-                `;
+          tbody.innerHTML = `<tr><td colspan="4" class="text-center">
+            <div class="empty-state"><i class="fas fa-tags"></i><p>No hay categorías registradas</p></div>
+          </td></tr>`;
           return;
         }
-
-        tbody.innerHTML = categorias
-          .map((categoria) => {
-            // Calcular número de materiales por categoría
-            const materialesEnCategoria = materiales.filter(
-              (material) =>
-                material.categoria && material.categoria._id === categoria._id
-            ).length;
-
-            return `
-                <tr>
-                    <td><strong>${categoria.nombre}</strong></td>
-                    <td>${categoria.descripcion || "-"}</td>
-                    <td><span class="badge bg-info">${materialesEnCategoria} materiales</span></td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-outline-primary" onclick="editarCategoria('${
-                          categoria._id
-                        }')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria('${
-                          categoria._id
-                        }')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-              `;
-          })
-          .join("");
+        tbody.innerHTML = categorias.map((categoria) => {
+          const materialesEnCategoria = materiales.filter((m) => m.categoria && m.categoria._id === categoria._id).length;
+          return `<tr>
+            <td><strong>${categoria.nombre}</strong></td>
+            <td>${categoria.descripcion || "-"}</td>
+            <td><span class="badge bg-info">${materialesEnCategoria} materiales</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editarCategoria('${categoria._id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="eliminarCategoria('${categoria._id}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join("");
       }
 
       // Renderizar tabla de soporte
       function renderizarTablaSoporte() {
         const tbody = document.getElementById("tablaSoporte");
-
         if (tickets.length === 0) {
-          tbody.innerHTML = `
-                    <tr><td colspan="6" class="text-center">
-                        <div class="empty-state">
-                            <i class="fas fa-headset"></i>
-                            <p>No hay tickets de soporte</p>
-                        </div>
-                    </td></tr>
-                `;
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">
+            <div class="empty-state"><i class="fas fa-headset"></i><p>No hay tickets de soporte</p></div>
+          </td></tr>`;
           return;
         }
-
-        tbody.innerHTML = tickets
-          .map(
-            (ticket) => `
-                <tr>
-                    <td><strong>#${ticket._id?.slice(-6) || "N/A"}</strong></td>
-                    <td>${ticket.usuario?.nombre || "Usuario"}</td>
-                    <td>${ticket.asunto || "-"}</td>
-                    <td><span class="badge bg-warning">Pendiente</span></td>
-                    <td>${
-                      new Date(ticket.fecha).toLocaleDateString() || "-"
-                    }</td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-outline-primary" onclick="responderTicket('${
-                          ticket._id
-                        }')">
-                            <i class="fas fa-reply"></i>
-                        </button>
-                    </td>
-                </tr>
-            `
-          )
-          .join("");
+        tbody.innerHTML = tickets.map((ticket) => `
+          <tr>
+            <td><strong>#${ticket._id?.slice(-6) || "N/A"}</strong></td>
+            <td>${ticket.usuario?.nombre || "Usuario"}</td>
+            <td>${ticket.asunto || "-"}</td>
+            <td><span class="badge bg-warning">Pendiente</span></td>
+            <td>${new Date(ticket.fecha).toLocaleDateString() || "-"}</td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="responderTicket('${ticket._id}')"><i class="fas fa-reply"></i></button>
+            </td>
+          </tr>`).join("");
       }
 
       // Actualizar select de categorías
       function actualizarSelectCategorias() {
         const select = document.getElementById("materialCategoria");
         select.innerHTML = '<option value="">Seleccionar categoría...</option>';
-
         categorias.forEach((categoria) => {
           select.innerHTML += `<option value="${categoria._id}">${categoria.nombre}</option>`;
         });
@@ -1567,46 +967,35 @@
 
       // Funciones de modales
       window.mostrarModalMaterial = function (id = null) {
-        const modal = new bootstrap.Modal(
-          document.getElementById("modalMaterial")
-        );
-
+        const modal = new bootstrap.Modal(document.getElementById("modalMaterial"));
         if (id) {
           const material = materiales.find((m) => m._id === id);
           if (material) {
             document.getElementById("materialId").value = material._id;
             document.getElementById("materialNombre").value = material.nombre;
-            document.getElementById("materialCategoria").value =
-              material.categoria?._id || "";
-            document.getElementById("materialDescripcion").value =
-              material.descripcion || "";
+            document.getElementById("materialCategoria").value = material.categoria?._id || "";
+            document.getElementById("materialDescripcion").value = material.descripcion || "";
           }
         } else {
           document.getElementById("formMaterial").reset();
           document.getElementById("materialId").value = "";
         }
-
         modal.show();
       };
 
       window.mostrarModalCategoria = function (id = null) {
-        const modal = new bootstrap.Modal(
-          document.getElementById("modalCategoria")
-        );
-
+        const modal = new bootstrap.Modal(document.getElementById("modalCategoria"));
         if (id) {
           const categoria = categorias.find((c) => c._id === id);
           if (categoria) {
             document.getElementById("categoriaId").value = categoria._id;
             document.getElementById("categoriaNombre").value = categoria.nombre;
-            document.getElementById("categoriaDescripcion").value =
-              categoria.descripcion || "";
+            document.getElementById("categoriaDescripcion").value = categoria.descripcion || "";
           }
         } else {
           document.getElementById("formCategoria").reset();
           document.getElementById("categoriaId").value = "";
         }
-
         modal.show();
       };
 
@@ -1619,7 +1008,6 @@
             categoria: document.getElementById("materialCategoria").value,
             descripcion: document.getElementById("materialDescripcion").value,
           };
-
           if (id) {
             await authenticatedPut(`/api/materiales/${id}`, data);
             mostrarAlerta("Material actualizado correctamente");
@@ -1627,14 +1015,11 @@
             await authenticatedPost("/api/materiales", data);
             mostrarAlerta("Material creado correctamente");
           }
-
-          bootstrap.Modal.getInstance(
-            document.getElementById("modalMaterial")
-          ).hide();
+          bootstrap.Modal.getInstance(document.getElementById("modalMaterial")).hide();
           await cargarMateriales();
           await cargarEstadisticas();
-          renderizarTablaCategorias(); // Actualizar conteo de materiales por categoría
-        } catch (error) {
+          renderizarTablaCategorias();
+        } catch (_) {
           mostrarAlerta("Error guardando material", "danger");
         }
       };
@@ -1646,7 +1031,6 @@
             nombre: document.getElementById("categoriaNombre").value,
             descripcion: document.getElementById("categoriaDescripcion").value,
           };
-
           if (id) {
             await authenticatedPut(`/api/categorias/${id}`, data);
             mostrarAlerta("Categoría actualizada correctamente");
@@ -1654,25 +1038,17 @@
             await authenticatedPost("/api/categorias", data);
             mostrarAlerta("Categoría creada correctamente");
           }
-
-          bootstrap.Modal.getInstance(
-            document.getElementById("modalCategoria")
-          ).hide();
+          bootstrap.Modal.getInstance(document.getElementById("modalCategoria")).hide();
           await cargarCategorias();
           await cargarEstadisticas();
-          renderizarTablaCategorias(); // Actualizar tabla de categorías
-        } catch (error) {
+          renderizarTablaCategorias();
+        } catch (_) {
           mostrarAlerta("Error guardando categoría", "danger");
         }
       };
 
-      window.editarMaterial = function (id) {
-        mostrarModalMaterial(id);
-      };
-
-      window.editarCategoria = function (id) {
-        mostrarModalCategoria(id);
-      };
+      window.editarMaterial = function (id) { mostrarModalMaterial(id); };
+      window.editarCategoria = function (id) { mostrarModalCategoria(id); };
 
       window.eliminarMaterial = async function (id) {
         const ok = await confirmarAccion("¿Está seguro de eliminar este material?", "Sí, eliminar");
@@ -1682,8 +1058,8 @@
           mostrarAlerta("Material eliminado correctamente");
           await cargarMateriales();
           await cargarEstadisticas();
-          renderizarTablaCategorias(); // Actualizar conteo de materiales por categoría
-        } catch (_error) {
+          renderizarTablaCategorias();
+        } catch (_) {
           mostrarAlerta("Error eliminando material", "danger");
         }
       };
@@ -1696,45 +1072,30 @@
           mostrarAlerta("Categoría eliminada correctamente");
           await cargarCategorias();
           await cargarEstadisticas();
-          renderizarTablaCategorias(); // Actualizar tabla de categorías
-        } catch (_error) {
+          renderizarTablaCategorias();
+        } catch (_) {
           mostrarAlerta("Error eliminando categoría", "danger");
         }
       };
 
-      window.generarReporte = function (tipo) {
-        mostrarAlerta(`Generando reporte de ${tipo}...`, "info");
-        // Aquí implementarías la lógica de generación de reportes
-      };
-
-      window.responderTicket = function (id) {
-        mostrarAlerta("Función de respuesta en desarrollo", "info");
-        // Aquí implementarías la lógica de respuesta a tickets
-      };
+      window.generarReporte = function (tipo) { mostrarAlerta(`Generando reporte de ${tipo}...`, "info"); };
+      window.responderTicket = function (id) { mostrarAlerta("Función de respuesta en desarrollo", "info"); };
 
       // Cargar centros educativos
       async function cargarCentros() {
         try {
           const result = await authenticatedGet("/api/centros");
-
-          // La API devuelve: {success: true, data: {docs: [...], ...}}
-          if (result?.data?.docs && Array.isArray(result.data.docs)) {
-            centros = result.data.docs;
-          } else if (result?.data && Array.isArray(result.data)) {
-            centros = result.data;
-          } else {
-            centros = [];
-          }
-
+          if (result?.data?.docs && Array.isArray(result.data.docs)) centros = result.data.docs;
+          else if (result?.data && Array.isArray(result.data)) centros = result.data;
+          else centros = [];
           renderizarTablaCentros();
           actualizarSelectCentros();
-        } catch (error) {
+        } catch (_) {
           centros = [];
-          document.getElementById("tablaCentros").innerHTML = `
-                    <tr><td colspan="6" class="text-center text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando centros
-                    </td></tr>
-                `;
+          document.getElementById("tablaCentros").innerHTML =
+            `<tr><td colspan="6" class="text-center text-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>Error cargando centros
+            </td></tr>`;
         }
       }
 
@@ -1742,160 +1103,84 @@
       async function cargarUsuarios() {
         try {
           const result = await authenticatedGet("/api/usuarios");
-
-          // La API devuelve: {success: true, data: {docs: [...], ...}}
-          if (result?.data?.docs && Array.isArray(result.data.docs)) {
-            usuarios = result.data.docs;
-          } else if (result?.data && Array.isArray(result.data)) {
-            usuarios = result.data;
-          } else {
-            usuarios = [];
-          }
-
+          if (result?.data?.docs && Array.isArray(result.data.docs)) usuarios = result.data.docs;
+          else if (result?.data && Array.isArray(result.data)) usuarios = result.data;
+          else usuarios = [];
           renderizarTablaUsuarios();
-        } catch (error) {
+        } catch (_) {
           usuarios = [];
-          document.getElementById("tablaUsuarios").innerHTML = `
-                    <tr><td colspan="6" class="text-center text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Error cargando usuarios
-                    </td></tr>
-                `;
+          document.getElementById("tablaUsuarios").innerHTML =
+            `<tr><td colspan="6" class="text-center text-danger">
+              <i class="fas fa-exclamation-triangle me-2"></i>Error cargando usuarios
+            </td></tr>`;
         }
       }
 
       // Renderizar tabla de centros
       function renderizarTablaCentros() {
         const tbody = document.getElementById("tablaCentros");
-
         if (centros.length === 0) {
-          tbody.innerHTML = `
-                    <tr><td colspan="6" class="text-center">
-                        <div class="empty-state">
-                            <i class="fas fa-school"></i>
-                            <p>No hay centros educativos registrados</p>
-                        </div>
-                    </td></tr>
-                `;
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">
+            <div class="empty-state"><i class="fas fa-school"></i><p>No hay centros educativos registrados</p></div>
+          </td></tr>`;
           return;
         }
-
-        tbody.innerHTML = centros
-          .map(
-            (centro) => `
-                <tr>
-                    <td><strong>${centro.nombre}</strong></td>
-                    <td><span class="badge bg-primary">${
-                      centro.codigoMEP
-                    }</span></td>
-                    <td>${centro.provincia}, ${
-              centro.canton
-            }<br><small class="text-muted">${centro.distrito}</small></td>
-                    <td><span class="badge bg-${
-                      centro.etiquetas?.ubicacion === "urbano"
-                        ? "success"
-                        : "warning"
-                    }">${
-              centro.etiquetas?.ubicacion || "N/A"
-            }</span><br><span class="badge bg-secondary">${
-              centro.etiquetas?.tipoInstitucion || "N/A"
-            }</span></td>
-                    <td><span class="badge bg-info">${
-                      centro.usuariosAsociados || 0
-                    } usuarios</span></td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-outline-primary" onclick="editarCentro('${
-                          centro._id
-                        }')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCentro('${
-                          centro._id
-                        }')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `
-          )
-          .join("");
+        tbody.innerHTML = centros.map((centro) => `
+          <tr>
+            <td><strong>${centro.nombre}</strong></td>
+            <td><span class="badge bg-primary">${centro.codigoMEP}</span></td>
+            <td>${centro.provincia}, ${centro.canton}<br><small class="text-muted">${centro.distrito}</small></td>
+            <td>
+              <span class="badge bg-${centro.etiquetas?.ubicacion === "urbano" ? "success" : "warning"}">${centro.etiquetas?.ubicacion || "N/A"}</span><br>
+              <span class="badge bg-secondary">${centro.etiquetas?.tipoInstitucion || "N/A"}</span>
+            </td>
+            <td><span class="badge bg-info">${centro.usuariosAsociados || 0} usuarios</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editarCentro('${centro._id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="eliminarCentro('${centro._id}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`).join("");
       }
 
       // Renderizar tabla de usuarios
       function renderizarTablaUsuarios() {
         const tbody = document.getElementById("tablaUsuarios");
-
         if (usuarios.length === 0) {
-          tbody.innerHTML = `
-                    <tr><td colspan="6" class="text-center">
-                        <div class="empty-state">
-                            <i class="fas fa-users"></i>
-                            <p>No hay usuarios registrados</p>
-                        </div>
-                    </td></tr>
-                `;
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">
+            <div class="empty-state"><i class="fas fa-users"></i><p>No hay usuarios registrados</p></div>
+          </td></tr>`;
           return;
         }
-
-        tbody.innerHTML = usuarios
-          .map(
-            (usuario) => `
-                <tr>
-                    <td><strong>${usuario.nombre}</strong></td>
-                    <td>${usuario.correo}</td>
-                    <td><span class="badge bg-primary">${
-                      usuario.rol
-                    }</span></td>
-                    <td>${usuario.centroEducativo?.nombre || "Sin centro"}</td>
-                    <td><span class="badge bg-${
-                      usuario.estado === "activo"
-                        ? "success"
-                        : usuario.estado === "inactivo"
-                        ? "warning"
-                        : "danger"
-                    }">${usuario.estado}</span></td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario('${
-                          usuario._id
-                        }')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario('${
-                          usuario._id
-                        }')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `
-          )
-          .join("");
+        tbody.innerHTML = usuarios.map((usuario) => `
+          <tr>
+            <td><strong>${usuario.nombre}</strong></td>
+            <td>${usuario.correo}</td>
+            <td><span class="badge bg-primary">${usuario.rol}</span></td>
+            <td>${usuario.centroEducativo?.nombre || "Sin centro"}</td>
+            <td><span class="badge bg-${usuario.estado === "activo" ? "success" : usuario.estado === "inactivo" ? "warning" : "danger"}">${usuario.estado}</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario('${usuario._id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario('${usuario._id}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`).join("");
       }
 
       // Actualizar select de centros
       function actualizarSelectCentros() {
         const selects = ["usuarioCentro", "filtroCentroUsuario"];
-
         selects.forEach((selectId) => {
           const select = document.getElementById(selectId);
           if (select) {
             const isFilter = selectId.includes("filtro");
-            select.innerHTML = isFilter
-              ? '<option value="">Todos los centros</option>'
-              : '<option value="">Seleccionar centro</option>';
-
-            centros.forEach((centro) => {
-              select.innerHTML += `<option value="${centro._id}">${centro.nombre}</option>`;
-            });
+            select.innerHTML = isFilter ? '<option value="">Todos los centros</option>' : '<option value="">Seleccionar centro</option>';
+            centros.forEach((centro) => { select.innerHTML += `<option value="${centro._id}">${centro.nombre}</option>`; });
           }
         });
       }
 
       // Funciones de modales para centros
       window.mostrarModalCentro = function (id = null) {
-        const modal = new bootstrap.Modal(
-          document.getElementById("modalCentro")
-        );
-
+        const modal = new bootstrap.Modal(document.getElementById("modalCentro"));
         if (id) {
           const centro = centros.find((c) => c._id === id);
           if (centro) {
@@ -1905,72 +1190,49 @@
             document.getElementById("centroProvincia").value = centro.provincia;
             document.getElementById("centroCanton").value = centro.canton;
             document.getElementById("centroDistrito").value = centro.distrito;
-            document.getElementById("centroUbicacion").value =
-              centro.etiquetas?.ubicacion || "";
-            document.getElementById("centroTipo").value =
-              centro.etiquetas?.tipoInstitucion || "";
-            document.getElementById("centroResponsable").value =
-              centro.responsable?.email || "";
-            document.getElementById("centroTelefono").value =
-              centro.responsable?.telefono || "";
-            document.getElementById("centroDescripcion").value =
-              centro.descripcion || "";
+            document.getElementById("centroUbicacion").value = centro.etiquetas?.ubicacion || "";
+            document.getElementById("centroTipo").value = centro.etiquetas?.tipoInstitucion || "";
+            document.getElementById("centroResponsable").value = centro.responsable?.email || "";
+            document.getElementById("centroTelefono").value = centro.responsable?.telefono || "";
+            document.getElementById("centroDescripcion").value = centro.descripcion || "";
           }
         } else {
           document.getElementById("formCentro").reset();
           document.getElementById("centroId").value = "";
         }
-
         modal.show();
       };
 
-      // 🔒 Configurar roles permitidos según el rol del usuario actual
+      // Configurar roles permitidos según el rol del usuario actual
       function configurarRolesPermitidos() {
         const selectRol = document.getElementById("usuarioRol");
-        const userRole = localStorage.getItem("userRole") || "coordinador"; // Asumir coordinador por defecto
-
-        // Limpiar opciones existentes
+        const userRole = localStorage.getItem("userRole") || "coordinador";
         selectRol.innerHTML = '<option value="">Seleccionar rol</option>';
-
         if (userRole === "coordinador") {
-          // 🔒 RESTRICCIÓN: Coordinadores solo pueden crear administradores y docentes
-          selectRol.innerHTML +=
-            '<option value="administrador">Administrador</option>';
+          selectRol.innerHTML += '<option value="administrador">Administrador</option>';
           selectRol.innerHTML += '<option value="docente">Docente</option>';
-
-          // Agregar mensaje informativo
           const helpText = selectRol.parentNode.querySelector(".form-text");
           if (helpText) {
-            helpText.textContent =
-              "Como coordinador, solo puedes crear administradores y docentes.";
+            helpText.textContent = "Como coordinador, solo puedes crear administradores y docentes.";
             helpText.className = "form-text text-warning";
           } else {
             const newHelpText = document.createElement("div");
             newHelpText.className = "form-text text-warning";
-            newHelpText.innerHTML =
-              '<i class="fas fa-exclamation-triangle me-1"></i>Como coordinador, solo puedes crear administradores y docentes.';
+            newHelpText.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i>Como coordinador, solo puedes crear administradores y docentes.';
             selectRol.parentNode.appendChild(newHelpText);
           }
         } else {
-          // Para otros roles (admin), mostrar todas las opciones
-          selectRol.innerHTML +=
-            '<option value="administrador">Administrador</option>';
+          selectRol.innerHTML += '<option value="administrador">Administrador</option>';
           selectRol.innerHTML += '<option value="docente">Docente</option>';
-          selectRol.innerHTML +=
-            '<option value="padre">Padre de familia</option>';
+          selectRol.innerHTML += '<option value="padre">Padre de familia</option>';
           selectRol.innerHTML += '<option value="alumno">Alumno</option>';
         }
       }
 
       // Funciones de modales para usuarios
       window.mostrarModalUsuario = function (id = null) {
-        const modal = new bootstrap.Modal(
-          document.getElementById("modalUsuario")
-        );
-
-        // 🔒 Configurar roles permitidos para coordinador
+        const modal = new bootstrap.Modal(document.getElementById("modalUsuario"));
         configurarRolesPermitidos();
-
         if (id) {
           const usuario = usuarios.find((u) => u._id === id);
           if (usuario) {
@@ -1978,88 +1240,47 @@
             document.getElementById("usuarioNombre").value = usuario.nombre;
             document.getElementById("usuarioCorreo").value = usuario.correo;
             document.getElementById("usuarioRol").value = usuario.rol;
-            document.getElementById("usuarioCentro").value =
-              usuario.centroEducativo?._id || "";
-            document.getElementById("usuarioEstado").value = usuario.estado;
-            // No cargar la contraseña por seguridad
-            document
-              .getElementById("usuarioPassword")
-              .removeAttribute("required");
+            document.getElementById("usuarioEstado").value = usuario.estado || "activo";
+            if (usuario.centroEducativo) document.getElementById("usuarioCentro").value = usuario.centroEducativo._id;
+            const passwordInput = document.getElementById("usuarioPassword");
+            passwordInput.removeAttribute("required");
+            passwordInput.value = "";
+            passwordInput.placeholder = "Dejar en blanco para mantener la actual";
           }
         } else {
           document.getElementById("formUsuario").reset();
           document.getElementById("usuarioId").value = "";
-          document
-            .getElementById("usuarioPassword")
-            .setAttribute("required", "");
           document.getElementById("usuarioEstado").value = "activo";
+          document.getElementById("usuarioPassword").setAttribute("required", "");
+          document.getElementById("usuarioPassword").placeholder = "Mínimo 6 caracteres";
         }
-
         modal.show();
       };
 
-      // Funciones de gestión para centros
+      // Guardar centro
       window.guardarCentro = async function () {
         try {
           const id = document.getElementById("centroId").value;
-
-          // Obtener el email del responsable para extraer el nombre
-          const emailResponsable = (
-            document.getElementById("centroResponsable").value || ""
-          )
-            .trim()
-            .toLowerCase();
-          const nombreResponsable = emailResponsable
-            .split("@")[0]
-            .replace(/\./g, " ");
-          const telefonoResponsable = document
-            .getElementById("centroTelefono")
-            .value.trim();
-
-          // Limpiar el teléfono removiendo guiones y espacios
-          const telefonoLimpio = telefonoResponsable
-            ? telefonoResponsable.replace(/[-\s]/g, "")
-            : "";
-
-          // Validar que el teléfono tenga exactamente 8 dígitos si se proporciona
-          if (
-            telefonoLimpio &&
-            (telefonoLimpio.length !== 8 || !/^\d{8}$/.test(telefonoLimpio))
-          ) {
-            mostrarAlerta(
-              "📱 El teléfono debe tener exactamente 8 dígitos sin guiones (ej: 22334455)",
-              "danger"
-            );
-            return;
+          const emailResponsable = (document.getElementById("centroResponsable").value || "").trim().toLowerCase();
+          const nombreResponsable = emailResponsable.split("@")[0].replace(/\./g, " ");
+          const telefonoResponsable = document.getElementById("centroTelefono").value.trim();
+          const telefonoLimpio = telefonoResponsable ? telefonoResponsable.replace(/[-\s]/g, "") : "";
+          if (telefonoLimpio && (telefonoLimpio.length !== 8 || !/^\d{8}$/.test(telefonoLimpio))) {
+            mostrarAlerta("📱 El teléfono debe tener exactamente 8 dígitos sin guiones (ej: 22334455)", "danger"); return;
           }
-
-          // Validar que el email sea del dominio @mep.go.cr
           if (!emailResponsable.endsWith("@mep.go.cr")) {
-            mostrarAlerta(
-              "⚠️ El email del responsable debe usar el dominio @mep.go.cr (ej: director@mep.go.cr)",
-              "danger"
-            );
-            return;
+            mostrarAlerta("⚠️ El email del responsable debe usar el dominio @mep.go.cr (ej: director@mep.go.cr)", "danger"); return;
           }
-
           const data = {
             nombre: document.getElementById("centroNombre").value,
             codigoMEP: document.getElementById("centroCodigoMEP").value,
             provincia: document.getElementById("centroProvincia").value,
             canton: document.getElementById("centroCanton").value,
             distrito: document.getElementById("centroDistrito").value,
-            responsable: {
-              nombre: nombreResponsable,
-              email: emailResponsable,
-              telefono: telefonoLimpio || undefined, // Solo enviar si tiene valor
-            },
-            etiquetas: {
-              ubicacion: document.getElementById("centroUbicacion").value,
-              tipoInstitucion: document.getElementById("centroTipo").value,
-            },
+            responsable: { nombre: nombreResponsable, email: emailResponsable, telefono: telefonoLimpio || undefined },
+            etiquetas: { ubicacion: document.getElementById("centroUbicacion").value, tipoInstitucion: document.getElementById("centroTipo").value },
             descripcion: document.getElementById("centroDescripcion").value,
           };
-
           if (id) {
             await authenticatedPut(`/api/centros/${id}`, data);
             mostrarAlerta("Centro educativo actualizado correctamente");
@@ -2067,90 +1288,38 @@
             await authenticatedPost("/api/centros", data);
             mostrarAlerta("Centro educativo creado correctamente");
           }
-
-          bootstrap.Modal.getInstance(
-            document.getElementById("modalCentro")
-          ).hide();
+          bootstrap.Modal.getInstance(document.getElementById("modalCentro")).hide();
           await cargarCentros();
         } catch (error) {
-          // Mostrar mensaje de error más específico
           let errorMessage = "Error guardando centro educativo";
-          if (error?.response?.data?.mensaje) {
-            errorMessage = error.response.data.mensaje;
-          } else if (error?.response?.data?.error) {
-            errorMessage = error.response.data.error;
-          } else if (error?.message) {
-            errorMessage = error.message;
-          }
-
-          // Mensajes más claros para errores comunes
-          if (errorMessage.includes("dominio @mep.go.cr")) {
-            errorMessage =
-              "⚠️ El email del responsable debe usar el dominio @mep.go.cr (ej: director@mep.go.cr)";
-          } else if (errorMessage.includes("teléfono debe tener 8 dígitos")) {
-            errorMessage =
-              "📱 El teléfono debe tener exactamente 8 dígitos sin guiones (ej: 22334455)";
-          }
-
+          if (error?.response?.data?.mensaje) errorMessage = error.response.data.mensaje;
+          else if (error?.response?.data?.error) errorMessage = error.response.data.error;
+          else if (error?.message) errorMessage = error.message;
           mostrarAlerta(errorMessage, "danger");
         }
       };
 
+      // Guardar usuario
       window.guardarUsuario = async function () {
         try {
           const id = document.getElementById("usuarioId").value;
-
-          // Validar y obtener todos los campos necesarios
           const data = {
             nombre: document.getElementById("usuarioNombre").value,
             correo: document.getElementById("usuarioCorreo").value,
             rol: document.getElementById("usuarioRol").value,
             estado: document.getElementById("usuarioEstado").value || "activo",
             activo: true,
-            // Si es nuevo usuario o se proporcionó contraseña, incluirla
-            ...((!id || document.getElementById("usuarioPassword").value) && {
-              contrasenna: document.getElementById("usuarioPassword").value,
-            }),
-            // Si es admin o docente, incluir centro educativo
-            ...(["administrador", "docente"].includes(
-              document.getElementById("usuarioRol").value
-            ) && {
-              centroEducativo: document.getElementById("usuarioCentro").value,
-            }),
+            ...((!id || document.getElementById("usuarioPassword").value) && { contrasenna: document.getElementById("usuarioPassword").value }),
+            ...(["administrador", "docente"].includes(document.getElementById("usuarioRol").value) && { centroEducativo: document.getElementById("usuarioCentro").value }),
           };
-
-          // Validaciones
-          if (!data.nombre || !data.correo || !data.rol) {
-            throw new Error("Nombre, correo y rol son obligatorios");
+          if (!data.nombre || !data.correo || !data.rol) throw new Error("Nombre, correo y rol son obligatorios");
+          if (["administrador", "docente"].includes(data.rol) && !data.correo.endsWith("@mep.go.cr")) {
+            throw new Error("El correo debe ser del dominio @mep.go.cr para administradores y docentes");
           }
-
-          // Validar correo MEP para roles específicos
-          if (
-            ["administrador", "docente"].includes(data.rol) &&
-            !data.correo.endsWith("@mep.go.cr")
-          ) {
-            throw new Error(
-              "El correo debe ser del dominio @mep.go.cr para administradores y docentes"
-            );
+          if (["administrador", "docente"].includes(data.rol) && !data.centroEducativo) {
+            throw new Error("El centro educativo es obligatorio para administradores y docentes");
           }
-
-          // Validar centro educativo para roles específicos
-          if (
-            ["administrador", "docente"].includes(data.rol) &&
-            !data.centroEducativo
-          ) {
-            throw new Error(
-              "El centro educativo es obligatorio para administradores y docentes"
-            );
-          }
-
-          // Validar contraseña para nuevos usuarios
-          if (!id && !data.contrasenna) {
-            throw new Error(
-              "La contraseña es obligatoria para nuevos usuarios"
-            );
-          }
-
+          if (!id && !data.contrasenna) throw new Error("La contraseña es obligatoria para nuevos usuarios");
           if (id) {
             await authenticatedPut(`/api/usuarios/${id}`, data);
             mostrarAlerta("Usuario actualizado correctamente");
@@ -2158,10 +1327,7 @@
             await authenticatedPost("/api/usuarios", data);
             mostrarAlerta("Usuario creado correctamente");
           }
-
-          bootstrap.Modal.getInstance(
-            document.getElementById("modalUsuario")
-          ).hide();
+          bootstrap.Modal.getInstance(document.getElementById("modalUsuario")).hide();
           await cargarUsuarios();
         } catch (error) {
           mostrarAlerta(error.message || "Error guardando usuario", "danger");
@@ -2171,318 +1337,115 @@
       window.eliminarCentro = async function (id) {
         const ok = await confirmarAccion("¿Está seguro de eliminar este centro educativo?", "Sí, eliminar");
         if (!ok) return;
-        try {
-          await authenticatedDelete(`/api/centros/${id}`);
-          mostrarAlerta("Centro educativo eliminado correctamente");
-          await cargarCentros();
-        } catch (_error) {
-          mostrarAlerta("Error eliminando centro educativo", "danger");
-        }
+        try { await authenticatedDelete(`/api/centros/${id}`); mostrarAlerta("Centro educativo eliminado correctamente"); await cargarCentros(); }
+        catch (_) { mostrarAlerta("Error eliminando centro educativo", "danger"); }
       };
 
       window.eliminarUsuario = async function (id) {
         const ok = await confirmarAccion("¿Está seguro de eliminar este usuario?", "Sí, eliminar");
         if (!ok) return;
-        try {
-          await authenticatedDelete(`/api/usuarios/${id}`);
-          mostrarAlerta("Usuario eliminado correctamente");
-          await cargarUsuarios();
-        } catch (_error) {
-          mostrarAlerta("Error eliminando usuario", "danger");
-        }
+        try { await authenticatedDelete(`/api/usuarios/${id}`); mostrarAlerta("Usuario eliminado correctamente"); await cargarUsuarios(); }
+        catch (_) { mostrarAlerta("Error eliminando usuario", "danger"); }
       };
 
-      window.editarCentro = function (id) {
-        mostrarModalCentro(id);
-      };
+      window.editarCentro = function (id) { mostrarModalCentro(id); };
+      window.editarUsuario = function (id) { mostrarModalUsuario(id); };
 
-      window.editarUsuario = function (id) {
-        mostrarModalUsuario(id);
-      };
-
-      window.mostrarModalUsuario = function (id = null) {
-        const modal = new bootstrap.Modal(
-          document.getElementById("modalUsuario")
-        );
-
-        // Configurar roles permitidos para coordinador
-        configurarRolesPermitidos();
-
-        if (id) {
-          const usuario = usuarios.find((u) => u._id === id);
-          if (usuario) {
-            // Llenar el formulario con los datos del usuario
-            document.getElementById("usuarioId").value = usuario._id;
-            document.getElementById("usuarioNombre").value = usuario.nombre;
-            document.getElementById("usuarioCorreo").value = usuario.correo;
-            document.getElementById("usuarioRol").value = usuario.rol;
-            document.getElementById("usuarioEstado").value =
-              usuario.estado || "activo";
-
-            // Si tiene centro educativo asignado, seleccionarlo
-            if (usuario.centroEducativo) {
-              document.getElementById("usuarioCentro").value =
-                usuario.centroEducativo._id;
-            }
-
-            // La contraseña no se carga por seguridad
-            const passwordInput = document.getElementById("usuarioPassword");
-            passwordInput.removeAttribute("required");
-            passwordInput.value = ""; // Limpiar el campo
-            passwordInput.placeholder =
-              "Dejar en blanco para mantener la actual";
-          }
-        } else {
-          // Nuevo usuario
-          document.getElementById("formUsuario").reset();
-          document.getElementById("usuarioId").value = "";
-          document.getElementById("usuarioEstado").value = "activo";
-          document
-            .getElementById("usuarioPassword")
-            .setAttribute("required", "");
-          document.getElementById("usuarioPassword").placeholder =
-            "Mínimo 6 caracteres";
-        }
-
-        modal.show();
-      };
-
-      // Event listeners para filtros
+      // Filtros (listeners)
       document.addEventListener("DOMContentLoaded", function () {
-        // Filtros para centros
-        const filtrosCentros = [
-          "filtroProvincia",
-          "filtroUbicacion",
-          "filtroTipo",
-          "buscarCentro",
-        ];
-        filtrosCentros.forEach((filtroId) => {
-          const elemento = document.getElementById(filtroId);
-          if (elemento) {
-            elemento.addEventListener("change", filtrarCentros);
-            elemento.addEventListener("input", filtrarCentros);
-          }
+        ["filtroProvincia","filtroUbicacion","filtroTipo","buscarCentro"].forEach((id) => {
+          const el = document.getElementById(id); if (el) { el.addEventListener("change", filtrarCentros); el.addEventListener("input", filtrarCentros); }
         });
-
-        // Filtros para usuarios
-        const filtrosUsuarios = [
-          "filtroRolUsuario",
-          "filtroEstadoUsuario",
-          "filtroCentroUsuario",
-          "buscarUsuario",
-        ];
-        filtrosUsuarios.forEach((filtroId) => {
-          const elemento = document.getElementById(filtroId);
-          if (elemento) {
-            elemento.addEventListener("change", filtrarUsuarios);
-            elemento.addEventListener("input", filtrarUsuarios);
-          }
+        ["filtroRolUsuario","filtroEstadoUsuario","filtroCentroUsuario","buscarUsuario"].forEach((id) => {
+          const el = document.getElementById(id); if (el) { el.addEventListener("change", filtrarUsuarios); el.addEventListener("input", filtrarUsuarios); }
         });
       });
 
-      // Función para filtrar centros
+      // Filtrar centros
       function filtrarCentros() {
-        const provincia = document
-          .getElementById("filtroProvincia")
-          .value.toLowerCase();
-        const ubicacion = document
-          .getElementById("filtroUbicacion")
-          .value.toLowerCase();
+        const provincia = document.getElementById("filtroProvincia").value.toLowerCase();
+        const ubicacion = document.getElementById("filtroUbicacion").value.toLowerCase();
         const tipo = document.getElementById("filtroTipo").value.toLowerCase();
-        const busqueda = document
-          .getElementById("buscarCentro")
-          .value.toLowerCase();
-
+        const busqueda = document.getElementById("buscarCentro").value.toLowerCase();
         const centrosFiltrados = centros.filter((centro) => {
-          const coincideProvincia =
-            !provincia || centro.provincia.toLowerCase().includes(provincia);
-          const coincideUbicacion =
-            !ubicacion || centro.ubicacion.toLowerCase().includes(ubicacion);
-          const coincideTipo =
-            !tipo || centro.tipo.toLowerCase().includes(tipo);
-          const coincideBusqueda =
-            !busqueda ||
-            centro.nombre.toLowerCase().includes(busqueda) ||
-            centro.codigoMEP.toString().includes(busqueda);
-
-        return (
-            coincideProvincia &&
-            coincideUbicacion &&
-            coincideTipo &&
-            coincideBusqueda
-          );
+          const prov = (centro.provincia || "").toLowerCase();
+          const ubic = (centro.etiquetas?.ubicacion || "").toLowerCase();
+          const tipoInst = (centro.etiquetas?.tipoInstitucion || "").toLowerCase();
+          const nombre = (centro.nombre || "").toLowerCase();
+          const codigo = (centro.codigoMEP || "").toString().toLowerCase();
+          const coincideProvincia = !provincia || prov.includes(provincia);
+          const coincideUbicacion = !ubicacion || ubic.includes(ubicacion);
+          const coincideTipo = !tipo || tipoInst.includes(tipo);
+          const coincideBusqueda = !busqueda || nombre.includes(busqueda) || codigo.includes(busqueda);
+          return coincideProvincia && coincideUbicacion && coincideTipo && coincideBusqueda;
         });
-
         renderizarTablaCentrosFiltrados(centrosFiltrados);
       }
 
-      // Función para filtrar usuarios
+      // Filtrar usuarios
       function filtrarUsuarios() {
-        const rol = document
-          .getElementById("filtroRolUsuario")
-          .value.toLowerCase();
-        const estado = document
-          .getElementById("filtroEstadoUsuario")
-          .value.toLowerCase();
+        const rol = document.getElementById("filtroRolUsuario").value.toLowerCase();
+        const estado = document.getElementById("filtroEstadoUsuario").value.toLowerCase();
         const centro = document.getElementById("filtroCentroUsuario").value;
-        const busqueda = document
-          .getElementById("buscarUsuario")
-          .value.toLowerCase();
-
+        const busqueda = document.getElementById("buscarUsuario").value.toLowerCase();
         const usuariosFiltrados = usuarios.filter((usuario) => {
           const coincideRol = !rol || usuario.rol.toLowerCase().includes(rol);
-          const coincideEstado =
-            !estado || usuario.estado.toLowerCase().includes(estado);
-          const coincideCentro =
-            !centro || usuario.centroEducativo?._id === centro;
-          const coincideBusqueda =
-            !busqueda ||
-            usuario.nombre.toLowerCase().includes(busqueda) ||
-            usuario.correo.toLowerCase().includes(busqueda);
-
-          return (
-            coincideRol && coincideEstado && coincideCentro && coincideBusqueda
-          );
+          const coincideEstado = !estado || usuario.estado.toLowerCase().includes(estado);
+          const coincideCentro = !centro || usuario.centroEducativo?._id === centro;
+          const coincideBusqueda = !busqueda || usuario.nombre.toLowerCase().includes(busqueda) || usuario.correo.toLowerCase().includes(busqueda);
+          return coincideRol && coincideEstado && coincideCentro && coincideBusqueda;
         });
-
         renderizarTablaUsuariosFiltrados(usuariosFiltrados);
       }
 
-      // Renderizar tabla de centros filtrados
+      // Renderizar centros filtrados
       function renderizarTablaCentrosFiltrados(centrosFiltrados) {
         const tbody = document.getElementById("tablaCentros");
-
         if (centrosFiltrados.length === 0) {
-          tbody.innerHTML = `
-                    <tr><td colspan="6" class="text-center">
-                        <div class="empty-state">
-                            <i class="fas fa-search"></i>
-                            <p>No se encontraron centros con los filtros aplicados</p>
-                        </div>
-                    </td></tr>
-                `;
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">
+            <div class="empty-state"><i class="fas fa-search"></i><p>No se encontraron centros con los filtros aplicados</p></div>
+          </td></tr>`;
           return;
         }
-
-        tbody.innerHTML = centrosFiltrados
-          .map(
-            (centro) => `
-                <tr>
-                    <td><strong>${centro.nombre}</strong></td>
-                    <td><span class="badge bg-primary">${
-                      centro.codigoMEP
-                    }</span></td>
-                    <td>${centro.provincia}, ${
-              centro.canton
-            }<br><small class="text-muted">${centro.distrito}</small></td>
-                    <td><span class="badge bg-${
-                      centro.ubicacion === "urbano" ? "success" : "warning"
-                    }">${
-              centro.ubicacion
-            }</span><br><span class="badge bg-secondary">${
-              centro.tipo
-            }</span></td>
-                    <td><span class="badge bg-info">${
-                      centro.usuarios || 0
-                    } usuarios</span></td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-outline-primary" onclick="editarCentro('${
-                          centro._id
-                        }')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarCentro('${
-                          centro._id
-                        }')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `
-          )
-          .join("");
+        tbody.innerHTML = centrosFiltrados.map((centro) => {
+          const ubic = centro.etiquetas?.ubicacion || "N/A";
+          const tipoInst = centro.etiquetas?.tipoInstitucion || "N/A";
+          return `<tr>
+            <td><strong>${centro.nombre}</strong></td>
+            <td><span class="badge bg-primary">${centro.codigoMEP}</span></td>
+            <td>${centro.provincia}, ${centro.canton}<br><small class="text-muted">${centro.distrito}</small></td>
+            <td><span class="badge bg-${ubic === "urbano" ? "success" : "warning"}">${ubic}</span><br><span class="badge bg-secondary">${tipoInst}</span></td>
+            <td><span class="badge bg-info">${centro.usuariosAsociados || centro.usuarios || 0} usuarios</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editarCentro('${centro._id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="eliminarCentro('${centro._id}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`;
+        }).join("");
       }
 
-      // Renderizar tabla de usuarios filtrados
+      // Renderizar usuarios filtrados
       function renderizarTablaUsuariosFiltrados(usuariosFiltrados) {
         const tbody = document.getElementById("tablaUsuarios");
-
         if (usuariosFiltrados.length === 0) {
-          tbody.innerHTML = `
-                    <tr><td colspan="6" class="text-center">
-                        <div class="empty-state">
-                            <i class="fas fa-search"></i>
-                            <p>No se encontraron usuarios con los filtros aplicados</p>
-                        </div>
-                    </td></tr>
-                `;
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">
+            <div class="empty-state"><i class="fas fa-search"></i><p>No se encontraron usuarios con los filtros aplicados</p></div>
+          </td></tr>`;
           return;
         }
-
-        tbody.innerHTML = usuariosFiltrados
-          .map(
-            (usuario) => `
-                <tr>
-                    <td><strong>${usuario.nombre}</strong></td>
-                    <td>${usuario.correo}</td>
-                    <td><span class="badge bg-primary">${
-                      usuario.rol
-                    }</span></td>
-                    <td>${usuario.centroEducativo?.nombre || "Sin centro"}</td>
-                    <td><span class="badge bg-${
-                      usuario.estado === "activo"
-                        ? "success"
-                        : "inactivo" === usuario.estado
-                        ? "warning"
-                        : "danger"
-                    }">${usuario.estado}</span></td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario('${
-                          usuario._id
-                        }')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario('${
-                          usuario._id
-                        }')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `
-          )
-          .join("");
+        tbody.innerHTML = usuariosFiltrados.map((usuario) => `
+          <tr>
+            <td><strong>${usuario.nombre}</strong></td>
+            <td>${usuario.correo}</td>
+            <td><span class="badge bg-primary">${usuario.rol}</span></td>
+            <td>${usuario.centroEducativo?.nombre || "Sin centro"}</td>
+            <td><span class="badge bg-${usuario.estado === "activo" ? "success" : "inactivo" === usuario.estado ? "warning" : "danger"}">${usuario.estado}</span></td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary" onclick="editarUsuario('${usuario._id}')"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="eliminarUsuario('${usuario._id}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>`).join("");
       }
-
-      // Event listener para configuración
-      document
-        .getElementById("configForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-
-          try {
-            const data = {
-              nombreSistema: document.getElementById("nombreSistema").value,
-              mensajeGlobal: document.getElementById("mensajeGlobal").value,
-              logoURL: document.getElementById("logoURL").value,
-            };
-
-            await authenticatedPut("/api/configuracion", data);
-            mostrarAlerta("Configuración guardada correctamente");
-
-            // Actualizar mensaje global
-            const mensajeInfo = document.getElementById("mensajeGlobalInfo");
-            if (data.mensajeGlobal) {
-              mensajeInfo.querySelector("span").textContent =
-                data.mensajeGlobal;
-              mensajeInfo.classList.remove("d-none");
-            } else {
-              mensajeInfo.classList.add("d-none");
-            }
-          } catch (error) {
-            mostrarAlerta("Error guardando configuración", "danger");
-          }
-        });
 
       // Cargar datos al iniciar
       cargarDatos();

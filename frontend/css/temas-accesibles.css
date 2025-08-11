@@ -1,5 +1,4 @@
 /* 🌗 SISTEMA DE TEMAS ACCESIBLES - Cumple WCAG 2.1 AA/AAA
-   Soporte para modo claro, oscuro y múltiples niveles de contraste
    Compatible con Bootstrap 5 y sistema Costa Rica
 */
 
@@ -14,7 +13,7 @@
   --tema-texto-secundario: #6c757d;
   --tema-texto-muted: #868e96;
 
-  /* Costa Rica colors conservados */
+  /* Colores institucionales */
   --tema-azul-primario: #1e4a8c;
   --tema-azul-oscuro: #002b7f;
   --tema-rojo-primario: #d32f2f;
@@ -23,7 +22,7 @@
   /* Elementos UI */
   --tema-borde: #dee2e6;
   --tema-sombra: rgba(0, 0, 0, 0.1);
-  --tema-hover: rgba(30, 74, 140, 0.1);
+  --tema-hover: rgba(30, 74, 140, 0.08);
 
   /* Bootstrap overrides */
   --bs-body-bg: var(--tema-fondo);
@@ -48,40 +47,34 @@
 }
 
 /* MODO OSCURO */
-body.tema-oscuro {
+:root[data-theme="oscuro"], body.tema-oscuro {
   --tema-fondo: #121212;
   --tema-fondo-secundario: #1e1e1e;
   --tema-texto: #ffffff;
   --tema-texto-secundario: #b3b3b3;
   --tema-texto-muted: #8a8a8a;
 
-  /* Costa Rica colors adaptados */
   --tema-azul-primario: #4a7bb7;
   --tema-azul-oscuro: #3366a0;
   --tema-rojo-primario: #ef5350;
   --tema-blanco: #1e1e1e;
 
-  /* Elementos UI */
   --tema-borde: #404040;
   --tema-sombra: rgba(0, 0, 0, 0.3);
-  --tema-hover: rgba(74, 123, 183, 0.2);
+  --tema-hover: rgba(74, 123, 183, 0.15);
 
-  /* Bootstrap overrides */
   --bs-body-bg: var(--tema-fondo);
   --bs-body-color: var(--tema-texto);
   --bs-border-color: var(--tema-borde);
 
-  /* Cards y formularios */
   --tema-card-bg: #2d2d2d;
   --tema-input-bg: #3d3d3d;
   --tema-input-border: #555555;
   --tema-input-focus: #4a7bb7;
 
-  /* Navbar */
   --tema-navbar-bg: #1e1e1e;
   --tema-navbar-text: #ffffff;
 
-  /* Estados */
   --tema-success: #4caf50;
   --tema-warning: #ff9800;
   --tema-danger: #f44336;
@@ -89,40 +82,34 @@ body.tema-oscuro {
 }
 
 /* CONTRASTE ALTO */
-body.tema-contraste-alto {
+:root[data-theme="contraste-alto"], body.tema-contraste-alto {
   --tema-fondo: #000000;
   --tema-fondo-secundario: #000000;
   --tema-texto: #ffffff;
   --tema-texto-secundario: #ffffff;
   --tema-texto-muted: #cccccc;
 
-  /* Costa Rica colors en alto contraste */
   --tema-azul-primario: #ffffff;
   --tema-azul-oscuro: #ffffff;
   --tema-rojo-primario: #ffffff;
   --tema-blanco: #000000;
 
-  /* Elementos UI */
   --tema-borde: #ffffff;
   --tema-sombra: rgba(255, 255, 255, 0.3);
-  --tema-hover: rgba(255, 255, 255, 0.2);
+  --tema-hover: rgba(255, 255, 255, 0.12);
 
-  /* Bootstrap overrides */
   --bs-body-bg: #000000;
   --bs-body-color: #ffffff;
   --bs-border-color: #ffffff;
 
-  /* Cards y formularios */
   --tema-card-bg: #000000;
   --tema-input-bg: #000000;
   --tema-input-border: #ffffff;
   --tema-input-focus: #ffffff;
 
-  /* Navbar */
   --tema-navbar-bg: #000000;
   --tema-navbar-text: #ffffff;
 
-  /* Estados */
   --tema-success: #ffffff;
   --tema-warning: #ffffff;
   --tema-danger: #ffffff;
@@ -130,40 +117,34 @@ body.tema-contraste-alto {
 }
 
 /* CONTRASTE BAJO (Modo suave) */
-body.tema-contraste-bajo {
+:root[data-theme="contraste-bajo"], body.tema-contraste-bajo {
   --tema-fondo: #f5f5f5;
   --tema-fondo-secundario: #eeeeee;
   --tema-texto: #757575;
   --tema-texto-secundario: #9e9e9e;
   --tema-texto-muted: #bdbdbd;
 
-  /* Costa Rica colors suavizados */
   --tema-azul-primario: #5c7cba;
   --tema-azul-oscuro: #4a6ba3;
   --tema-rojo-primario: #e57373;
   --tema-blanco: #f5f5f5;
 
-  /* Elementos UI */
   --tema-borde: #e0e0e0;
   --tema-sombra: rgba(0, 0, 0, 0.05);
-  --tema-hover: rgba(92, 124, 186, 0.1);
+  --tema-hover: rgba(92, 124, 186, 0.08);
 
-  /* Bootstrap overrides */
   --bs-body-bg: var(--tema-fondo);
   --bs-body-color: var(--tema-texto);
   --bs-border-color: var(--tema-borde);
 
-  /* Cards y formularios */
   --tema-card-bg: #ffffff;
   --tema-input-bg: #ffffff;
   --tema-input-border: #e0e0e0;
   --tema-input-focus: #5c7cba;
 
-  /* Navbar */
   --tema-navbar-bg: #ffffff;
   --tema-navbar-text: var(--tema-azul-primario);
 
-  /* Estados */
   --tema-success: #81c784;
   --tema-warning: #ffb74d;
   --tema-danger: #e57373;
@@ -171,8 +152,6 @@ body.tema-contraste-bajo {
 }
 
 /* ===== APLICACIÓN DE TEMAS ===== */
-
-/* Fondo general */
 body {
   background-color: var(--tema-fondo) !important;
   color: var(--tema-texto) !important;
@@ -186,18 +165,11 @@ body {
   background-color: var(--tema-navbar-bg) !important;
   border-bottom: 1px solid var(--tema-borde);
 }
-
 .navbar-brand,
-.navbar-nav .nav-link {
-  color: var(--tema-navbar-text) !important;
-}
+.navbar-nav .nav-link { color: var(--tema-navbar-text) !important; }
+.navbar-nav .nav-link:hover { background-color: var(--tema-hover); border-radius: 6px; }
 
-.navbar-nav .nav-link:hover {
-  background-color: var(--tema-hover);
-  border-radius: 6px;
-}
-
-/* Cards */
+/* Cards y secciones */
 .card,
 .news-card,
 .login-section,
@@ -216,20 +188,16 @@ body {
   border: 1px solid var(--tema-input-border) !important;
   color: var(--tema-texto) !important;
 }
-
 .form-control:focus,
 .form-control-landing:focus {
   background-color: var(--tema-input-bg) !important;
   border-color: var(--tema-input-focus) !important;
-  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25) !important;
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25) !important;
 }
 
-/* Fallbacks para campos nativos y placeholders (evita texto blanco sobre fondo blanco) */
-input:not([type="button"]):not([type="submit"]):not([type="reset"]):not(
-    [type="checkbox"]
-  ):not([type="radio"]),
-textarea,
-select {
+/* Fallback nativos */
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
+textarea, select {
   color: var(--bs-body-color, var(--tema-texto, #212529)) !important;
   background-color: var(--tema-input-bg, #ffffff) !important;
 }
@@ -240,10 +208,10 @@ select {
 .form-control-landing::placeholder,
 textarea::placeholder {
   color: var(--tema-texto-secundario, #6c757d) !important;
-  opacity: 1 !important; /* asegúrate de que el color sea visible */
+  opacity: 1 !important;
 }
 
-/* Botones */
+/* Botones primarios */
 .btn-primary,
 .btn-cr-primary,
 .btn-login {
@@ -251,7 +219,6 @@ textarea::placeholder {
   border-color: var(--tema-azul-primario) !important;
   color: var(--tema-blanco) !important;
 }
-
 .btn-primary:hover,
 .btn-cr-primary:hover,
 .btn-login:hover {
@@ -260,157 +227,75 @@ textarea::placeholder {
 }
 
 /* Alertas */
-.alert {
-  border: 1px solid var(--tema-borde);
-}
+.alert { border: 1px solid var(--tema-borde); }
+.alert-success { background-color: var(--tema-success); color: var(--tema-blanco); border-color: var(--tema-success); }
+.alert-warning { background-color: var(--tema-warning); color: var(--tema-texto); border-color: var(--tema-warning); }
+.alert-danger { background-color: var(--tema-danger); color: var(--tema-blanco); border-color: var(--tema-danger); }
+.alert-info { background-color: var(--tema-info); color: var(--tema-blanco); border-color: var(--tema-info); }
+/* Alto contraste: evita texto blanco sobre fondo amarillo */
+:root[data-theme="contraste-alto"] .alert-warning,
+body.tema-contraste-alto .alert-warning { color: #000 !important; }
 
-.alert-success {
-  background-color: var(--tema-success);
-  color: var(--tema-blanco);
-  border-color: var(--tema-success);
-}
-
-.alert-warning {
-  background-color: var(--tema-warning);
-  color: var(--tema-texto);
-  border-color: var(--tema-warning);
-}
-
-.alert-danger {
-  background-color: var(--tema-danger);
-  color: var(--tema-blanco);
-  border-color: var(--tema-danger);
-}
-
-.alert-info {
-  background-color: var(--tema-info);
-  color: var(--tema-blanco);
-  border-color: var(--tema-info);
-}
-
-/* Badges */
-.badge {
-  color: var(--tema-blanco) !important;
-}
-
-/* Footer */
+/* Badges y footer */
+.badge { color: var(--tema-blanco) !important; }
 footer {
   background-color: var(--tema-fondo-secundario) !important;
   border-top: 1px solid var(--tema-borde) !important;
   color: var(--tema-texto-secundario) !important;
 }
 
-/* Texto secundario y muted */
-.text-muted {
-  color: var(--tema-texto-muted) !important;
-}
+/* Texto utilitario */
+.text-muted { color: var(--tema-texto-muted) !important; }
+.text-secondary { color: var(--tema-texto-secundario) !important; }
 
-.text-secondary {
-  color: var(--tema-texto-secundario) !important;
-}
-
-/* ===== SELECTOR DE TEMA ===== */
-.theme-selector {
-  position: relative;
-  display: inline-block;
-}
-
-.theme-toggle-btn {
-  background: var(--tema-card-bg);
-  border: 2px solid var(--tema-borde);
-  border-radius: 25px;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: var(--tema-texto);
-  font-size: 1.1rem;
-}
-
-.theme-toggle-btn:hover {
-  background: var(--tema-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px var(--tema-sombra);
-}
-
-.theme-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: var(--tema-card-bg);
-  border: 2px solid var(--tema-borde);
-  border-radius: 12px;
-  box-shadow: 0 8px 25px var(--tema-sombra);
-  min-width: 200px;
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-}
-
-.theme-dropdown.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.theme-option {
-  display: flex;
+/* ===== BOTÓN REDONDO DE TEMA (flotante) ===== */
+.theme-toggle {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: #ffffff;
+  color: #333;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+  display: inline-flex;
   align-items: center;
-  padding: 12px 16px;
+  justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  color: var(--tema-texto);
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
+  z-index: 11000;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+}
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.22);
+}
+.theme-toggle i { font-size: 18px; line-height: 1; }
+/* Variantes por tema */
+:root[data-theme="oscuro"] .theme-toggle {
+  background: #1e1e1e;
+  color: #f5f5f5;
+  border-color: rgba(255,255,255,0.18);
+}
+:root[data-theme="contraste-alto"] .theme-toggle {
+  background: #000;
+  color: #ff0;
+  border-color: #ff0;
+}
+:root[data-theme="contraste-bajo"] .theme-toggle {
+  background: #f5f5f5;
+  color: #222;
+  border-color: rgba(0,0,0,0.12);
 }
 
-.theme-option:hover {
-  background: var(--tema-hover);
-}
+/* ===== ANIMACIONES ===== */
+* { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
-.theme-option.active {
-  background: var(--tema-azul-primario);
-  color: var(--tema-blanco);
-}
-
-.theme-option i {
-  margin-right: 12px;
-  width: 20px;
-  text-align: center;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .theme-toggle-btn {
-    padding: 6px 10px;
-    font-size: 1rem;
-  }
-
-  .theme-dropdown {
-    min-width: 180px;
-  }
-}
-
-/* ===== ANIMACIONES DE TRANSICIÓN ===== */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease !important;
-}
-
-/* Mejoras de accesibilidad para usuarios con sensibilidad al movimiento */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-  }
-}
-
-/* Soporte para modo oscuro del sistema */
+/* Soporte para modo oscuro del sistema si el usuario no eligió manualmente */
 @media (prefers-color-scheme: dark) {
   :root:not(.tema-iniciado) {
-    /* Solo aplica si no se ha seleccionado tema manualmente */
     --tema-fondo: #121212;
     --tema-fondo-secundario: #1e1e1e;
     --tema-texto: #ffffff;
@@ -421,27 +306,55 @@ footer {
 }
 
 /* ===== Overrides de contraste en contenedores claros ===== */
-/* Asegura texto negro en componentes con fondo blanco dentro de la UI */
 .modal-content,
 .table-container {
-  background-color: #ffffff !important;
-  color: #212529 !important;
+  background-color: var(--tema-card-bg) !important;
+  color: var(--tema-texto) !important;
 }
-
 .modal-content .form-control,
 .modal-content .form-select,
 .modal-content textarea,
 .table-container .form-control,
 .table-container .form-select,
 .table-container textarea {
-  color: #212529 !important;
-  background-color: #ffffff !important;
+  color: var(--tema-texto) !important;
+  background-color: var(--tema-input-bg) !important;
 }
-
 .modal-content .form-control::placeholder,
 .modal-content textarea::placeholder,
 .table-container .form-control::placeholder,
 .table-container textarea::placeholder {
-  color: #6c757d !important;
+  color: var(--tema-texto-secundario) !important;
   opacity: 1 !important;
+}
+
+/* ===== Legibilidad de pestañas (Bootstrap tabs/pills) ===== */
+.nav-tabs { border-bottom: 1px solid var(--tema-borde) !important; }
+.nav-tabs .nav-link {
+  color: var(--tema-texto) !important;
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+}
+.nav-tabs .nav-link:hover {
+  color: var(--tema-texto) !important;
+  background-color: var(--tema-hover) !important;
+  border-color: var(--tema-borde) !important;
+}
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: var(--tema-texto) !important;
+  background-color: var(--tema-card-bg) !important;
+  border-color: var(--tema-borde) var(--tema-borde) var(--tema-card-bg) !important;
+}
+/* Forzar si vienen utilidades de texto claro */
+.nav-tabs .nav-link.text-white,
+.nav-tabs .nav-link.link-light { color: var(--tema-texto) !important; }
+
+/* Variante pills */
+.nav-pills .nav-link { color: var(--tema-texto) !important; background-color: transparent !important; }
+.nav-pills .nav-link:hover { background-color: var(--tema-hover) !important; }
+.nav-pills .nav-link.active {
+  color: var(--tema-blanco) !important;
+  background-color: var(--tema-azul-primario) !important;
+  border-color: var(--tema-azul-primario) !important;
 }
