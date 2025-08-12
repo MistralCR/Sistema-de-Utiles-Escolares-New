@@ -322,9 +322,9 @@ El proyecto incluye documentación técnica detallada:
 
 ### Desarrolladores
 
-- 👨‍💻 **Equipo**: Estudiantes de Ingeniería en Sistemas
-- 🏫 **Universidad**: [Nombre de Universidad]
-- 📅 **Período**: [Período Académico]
+- 👨‍💻 **Equipo**: Estudiantes de Desarrollo de Software
+- 🏫 **Universidad**: Universidad  Cenfotec
+- 📅 **Período**: 2025
 
 ### Contribuciones
 
